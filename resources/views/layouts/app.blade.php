@@ -51,36 +51,40 @@
 <body class="bg-uber-white text-uber-black antialiased">
 
     {{-- ===== NAVBAR ===== --}}
-    <header id="navbar" class="bg-uber-white border-b border-gray-200">
+    <header id="navbar" class="bg-uber-black text-uber-white">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-[72px]">
 
-                {{-- Logo --}}
+                {{-- Kiri: Logo & Menu --}}
                 <div class="flex items-center gap-8">
-                    <a href="{{ route('home') }}" class="text-2xl font-bold tracking-tight text-uber-black">
+                    <a href="{{ route('home') }}" class="text-2xl font-bold tracking-tight text-white hover:opacity-80 transition">
                         RentDrive
                     </a>
 
                     {{-- Desktop Nav --}}
-                    <div class="hidden md:flex items-center gap-8">
-                        <a href="{{ route('home') }}" class="nav-link ">Beranda</a>
-                        <a href="{{ route('browse') }}" class="nav-link">Cari Kendaraan</a>
+                    <div class="hidden md:flex items-center gap-1">
+                        <a href="{{ route('home') }}" class="px-4 py-2 text-sm font-medium bg-white/10 rounded-full text-white">Beranda</a>
+                        <a href="{{ route('browse') }}" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Pesan</a>
                         @auth
                             @if(Auth::user()->role !== 'admin')
-                                <a href="{{ route('booking.history') }}" class="nav-link">Riwayat Sewa</a>
+                                <a href="{{ route('booking.history') }}" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Riwayat Sewa</a>
                             @endif
                         @endauth
+                        <a href="{{ route('how.it.works') }}" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Tentang</a>
                     </div>
                 </div>
 
-                {{-- Desktop Auth / Menus --}}
-                <div class="hidden md:flex items-center gap-4 relative">
-                    <button id="auth-dropdown-toggle" class="flex items-center gap-2 bg-uber-white hover:bg-uber-chip transition-colors rounded-full px-4 py-2 font-medium text-sm">
-                        <span>{{ Auth::check() ? Auth::user()->name : 'Masuk / Daftar' }}</span>
-                        <i class="fas fa-user-circle text-xl"></i>
+                {{-- Kanan: Aksi & Auth --}}
+                <div class="hidden md:flex items-center gap-2 relative">
+                    <button class="text-sm font-medium text-white hover:bg-white/10 px-4 py-2 rounded-full transition">
+                        Bantuan
                     </button>
                     
-                    <div id="auth-dropdown" class="hidden absolute top-full right-0 mt-3 w-56 bg-uber-white border border-gray-200 shadow-uber py-2 z-[60]">
+                    <button id="auth-dropdown-toggle" class="flex items-center gap-2 bg-white text-black hover:bg-gray-200 transition-colors rounded-full px-5 py-2.5 ml-2 font-bold text-sm">
+                        <span>{{ Auth::check() ? Auth::user()->name : 'Masuk / Daftar' }}</span>
+                    </button>
+                    
+                    <div id="auth-dropdown" class="hidden absolute top-full right-0 mt-3 w-56 bg-uber-white border border-gray-200 shadow-xl rounded-xl py-2 z-[60] text-uber-black">
                         @auth
                             <div class="px-5 py-3 border-b border-gray-100">
                                 <p class="text-sm font-bold text-uber-black">{{ Auth::user()->name }}</p>
