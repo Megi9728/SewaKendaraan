@@ -84,28 +84,28 @@
                         <span>{{ Auth::check() ? Auth::user()->name : 'Masuk / Daftar' }}</span>
                     </button>
                     
-                    <div id="auth-dropdown" class="hidden absolute top-full right-0 mt-3 w-56 bg-uber-white border border-gray-200 shadow-xl rounded-xl py-2 z-[60] text-uber-black">
+                    <div id="auth-dropdown" class="hidden absolute top-full right-0 mt-3 w-64 bg-uber-white border border-gray-100 shadow-uber rounded-xl py-2 z-[60] text-uber-black">
                         @auth
-                            <div class="px-5 py-3 border-b border-gray-100">
-                                <p class="text-sm font-bold text-uber-black">{{ Auth::user()->name }}</p>
-                                <p class="text-xs text-uber-text mt-1">{{ Auth::user()->email }}</p>
+                            <div class="px-6 py-4 border-b border-gray-50">
+                                <p class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] mb-1 italic">Masuk Sebagai</p>
+                                <p class="text-base font-bold text-uber-black truncate">{{ Auth::user()->name }}</p>
                             </div>
                             <div class="p-2">
                                 @if(Auth::user()->role === 'admin')
-                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">Dashboard Admin</a>
+                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">Dashboard Admin</a>
                                 @else
-                                    <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">Profil</a>
+                                    <a href="{{ route('profile') }}" class="block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">Lihat Profil Akun</a>
                                 @endif
                                 
-                                <button onclick="event.preventDefault(); document.getElementById('base-logout-form').submit();" class="w-full text-left block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">
-                                    Keluar
+                                <button onclick="event.preventDefault(); document.getElementById('base-logout-form').submit();" class="w-full text-left block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">
+                                    Keluar dari Sistem
                                 </button>
                                 <form id="base-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
                             </div>
                         @else
-                            <div class="p-2 flex flex-col gap-2">
-                                <a href="{{ route('login') }}" class="btn-secondary w-full text-center">Masuk</a>
-                                <a href="{{ route('register') }}" class="btn-primary w-full text-center">Daftar</a>
+                            <div class="p-4 flex flex-col gap-3">
+                                <a href="{{ route('login') }}" class="btn-primary w-full text-center py-3.5 text-sm font-bold">Masuk</a>
+                                <a href="{{ route('register') }}" class="btn-secondary w-full text-center py-3.5 text-sm font-bold">Daftar Akun Baru</a>
                             </div>
                         @endauth
                     </div>
@@ -141,26 +141,38 @@
                              </div>
                          @endif
                      @endauth
+
+                     {{-- Guest Auth Links (Visible immediately) --}}
+                     @guest
+                        <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col gap-6">
+                            <a href="{{ route('login') }}" class="text-4xl font-bold text-uber-black tracking-tighter">Masuk</a>
+                            <a href="{{ route('register') }}" class="text-4xl font-bold text-uber-black tracking-tighter">Daftar Akun</a>
+                        </div>
+                     @endguest
                 </div>
 
                 {{-- Action / Profile --}}
                 <div class="mt-auto pt-10 border-t border-gray-100">
                     @auth
-                        <div class="mb-8">
-                             <p class="text-sm font-bold text-uber-muted uppercase tracking-widest mb-1 italic">Masuk Sebagai</p>
-                             <p class="text-2xl font-bold text-uber-black">{{ Auth::user()->name }}</p>
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            @if(Auth::user()->role !== 'admin')
-                                <a href="{{ route('profile') }}" class="btn-primary text-center py-5 text-lg">Lihat Profil</a>
-                            @endif
-                            <button onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();" class="btn-secondary text-center py-5 text-lg">Keluar Akun</button>
+                        <div class="mb-8 flex justify-between items-end">
+                            <div>
+                                <p class="text-sm font-bold text-uber-muted uppercase tracking-widest mb-1 italic">Masuk Sebagai</p>
+                                <p class="text-2xl font-bold text-uber-black">{{ Auth::user()->name }}</p>
+                            </div>
+                            <button onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();" class="text-sm font-bold text-red-600 uppercase tracking-widest border-b-2 border-red-600 pb-1">
+                                Keluar
+                            </button>
                             <form id="mobile-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
                         </div>
+                        
+                        @if(Auth::user()->role !== 'admin')
+                            <a href="{{ route('profile') }}" class="btn-primary w-full text-center py-5 text-lg block">Lihat Profil Akun</a>
+                        @endif
                     @else
-                        <div class="flex flex-col gap-4">
-                            <a href="{{ route('login') }}" class="btn-primary text-center py-5 text-lg">Masuk</a>
-                            <a href="{{ route('register') }}" class="btn-secondary text-center py-5 text-lg">Daftar Akun Baru</a>
+                        <div class="bg-uber-chip p-6 rounded-2xl">
+                            <p class="text-sm font-bold text-uber-black mb-1">Sudah jadi member?</p>
+                            <p class="text-xs text-uber-text mb-4">Masuk untuk kemudahan pemesanan.</p>
+                            <a href="{{ route('login') }}" class="btn-primary w-full text-center py-4 text-sm font-bold block">Masuk ke Akun</a>
                         </div>
                     @endauth
                 </div>

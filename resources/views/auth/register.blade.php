@@ -3,118 +3,75 @@
 @section('title', 'Daftar Akun Baru')
 
 @section('form-content')
-<div>
-    <h1 class="text-3xl font-black text-slate-900">Buat Akun Gratis 🚀</h1>
-    <p class="text-slate-500 mt-2">Bergabung dengan 50.000+ pengguna RentDrive</p>
+<div class="mb-10 text-center lg:text-left">
+    <h1 class="text-5xl font-bold text-uber-black tracking-tighter mb-4">Daftar Akun.</h1>
+    <p class="text-lg text-uber-text font-medium leading-relaxed max-w-sm mx-auto lg:mx-0">
+        Mulai petualangan Anda sekarang. Bergabung dengan ekosistem sewa armada terpercaya di Indonesia.
+    </p>
 </div>
 
-<form class="mt-8 space-y-4" action="{{ route('register.post') }}" method="POST">
+<form class="space-y-6" action="{{ route('register.post') }}" method="POST">
     @csrf
 
     @if($errors->any())
-    <div class="p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-semibold">
-        {{ $errors->first() }}
+    <div class="p-5 bg-uber-black text-uber-white rounded-lg text-xs font-bold uppercase tracking-widest leading-relaxed">
+        <i class="fas fa-exclamation-triangle mr-2"></i> {{ $errors->first() }}
     </div>
     @endif
 
     {{-- Nama Lengkap --}}
-    <div>
-        <label for="name" class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <i class="fas fa-user text-slate-400 text-sm"></i>
-            </div>
-            <input type="text" id="name" name="name" placeholder="Nama lengkap Anda" required
-                class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium text-sm
-                       focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 focus:bg-white transition-all">
-        </div>
+    <div class="space-y-2">
+        <label for="name" class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] block pl-1">Nama Lengkap</label>
+        <input type="text" id="name" name="name" placeholder="Nama sesuai identitas" required class="input-uber">
     </div>
 
     {{-- No. HP --}}
-    <div>
-        <label for="phone" class="block text-sm font-semibold text-slate-700 mb-2">No. WhatsApp</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <i class="fab fa-whatsapp text-slate-400 text-sm"></i>
-            </div>
-            <input type="tel" id="phone" name="phone" placeholder="08xx-xxxx-xxxx" required
-                class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium text-sm
-                       focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 focus:bg-white transition-all">
-        </div>
+    <div class="space-y-2">
+        <label for="phone" class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] block pl-1">No. WhatsApp</label>
+        <input type="tel" id="phone" name="phone" placeholder="08xx..." required class="input-uber">
     </div>
 
     {{-- Email --}}
-    <div>
-        <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <i class="fas fa-envelope text-slate-400 text-sm"></i>
-            </div>
-            <input type="email" id="email" name="email" placeholder="nama@email.com" required
-                class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium text-sm
-                       focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 focus:bg-white transition-all">
-        </div>
+    <div class="space-y-2">
+        <label for="email" class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] block pl-1">Alamat Email</label>
+        <input type="email" id="email" name="email" placeholder="nama@email.com" required class="input-uber">
     </div>
 
     {{-- Password --}}
-    <div>
-        <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">Password</label>
+    <div class="space-y-2">
+        <label for="password" class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] block pl-1">Sandi Keamanan</label>
         <div class="relative">
-            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <i class="fas fa-lock text-slate-400 text-sm"></i>
-            </div>
-            <input type="password" id="password" name="password" placeholder="Min. 8 karakter" required minlength="8"
-                class="w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium text-sm
-                       focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 focus:bg-white transition-all">
-            <button type="button" id="toggle-password" class="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-600">
+            <input type="password" id="password" name="password" placeholder="Min. 8 karakter" required class="input-uber pr-12">
+            <button type="button" id="toggle-password" class="absolute inset-y-0 right-5 flex items-center text-uber-muted hover:text-uber-black transition-colors focus:outline-none">
                 <i class="fas fa-eye-slash text-sm" id="eye-icon"></i>
             </button>
         </div>
-
-        {{-- Password Strength --}}
-        <div class="flex gap-1.5 mt-2" id="strength-bars">
-            <div class="h-1.5 flex-1 rounded-full bg-slate-200 strength-bar"></div>
-            <div class="h-1.5 flex-1 rounded-full bg-slate-200 strength-bar"></div>
-            <div class="h-1.5 flex-1 rounded-full bg-slate-200 strength-bar"></div>
-            <div class="h-1.5 flex-1 rounded-full bg-slate-200 strength-bar"></div>
-        </div>
-        <p class="text-xs text-slate-400 mt-1" id="strength-label">Kekuatan password</p>
     </div>
 
     {{-- Terms --}}
-    <label class="flex items-start gap-3 cursor-pointer mt-2">
-        <input type="checkbox" name="terms" required class="w-4 h-4 accent-blue-600 mt-0.5">
-        <span class="text-sm text-slate-600 font-medium leading-relaxed">
-            Saya setuju dengan <a href="#" class="text-blue-600 hover:underline">Syarat & Ketentuan</a>
-            dan <a href="#" class="text-blue-600 hover:underline">Kebijakan Privasi</a> RentDrive
-        </span>
-    </label>
-
-    {{-- Submit --}}
-    <button type="submit"
-        class="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-200 text-sm mt-2">
-        <i class="fas fa-user-plus mr-2"></i>Buat Akun Sekarang
-    </button>
-
-    {{-- Divider --}}
-    <div class="relative flex items-center gap-4">
-        <div class="flex-1 h-px bg-slate-200"></div>
-        <span class="text-xs text-slate-400 font-medium">atau</span>
-        <div class="flex-1 h-px bg-slate-200"></div>
+    <div class="flex items-start gap-3">
+        <input type="checkbox" name="terms" id="terms" required class="w-4 h-4 accent-uber-black border-2 border-gray-100 rounded-sm mt-0.5">
+        <label for="terms" class="text-[10px] text-uber-text font-bold uppercase tracking-widest leading-relaxed cursor-pointer select-none">
+            Saya menyetujui <span class="text-uber-black border-b border-uber-black">Ketentuan Layanan</span> dan <span class="text-uber-black border-b border-uber-black">Kebijakan Privasi</span>.
+        </label>
     </div>
 
-    {{-- Login link --}}
-    <p class="text-center text-sm text-slate-500">
-        Sudah punya akun?
-        <a href="{{ route('login') }}" class="text-blue-600 hover:underline font-bold">Masuk di sini</a>
+    {{-- Submit --}}
+    <button type="submit" class="w-full btn-uber-primary py-5 text-base shadow-uber">
+        Daftar Akun Gratis
+    </button>
+
+    {{-- Footer --}}
+    <p class="text-center text-sm font-medium text-uber-text pt-4">
+        Sudah memiliki akun?
+        <a href="{{ route('login') }}" class="text-uber-black hover:underline font-bold px-1">Masuk Sekarang</a>
     </p>
 </form>
 
 <script>
-    // Password visibility toggle
     document.getElementById('toggle-password').addEventListener('click', function() {
         const input = document.getElementById('password');
-        const icon  = document.getElementById('eye-icon');
+        const icon = document.getElementById('eye-icon');
         if (input.type === 'password') {
             input.type = 'text';
             icon.className = 'fas fa-eye text-sm';
@@ -122,29 +79,6 @@
             input.type = 'password';
             icon.className = 'fas fa-eye-slash text-sm';
         }
-    });
-
-    // Password strength indicator
-    document.getElementById('password').addEventListener('input', function() {
-        const val = this.value;
-        let strength = 0;
-        if (val.length >= 8) strength++;
-        if (/[A-Z]/.test(val)) strength++;
-        if (/[0-9]/.test(val)) strength++;
-        if (/[^A-Za-z0-9]/.test(val)) strength++;
-
-        const bars   = document.querySelectorAll('.strength-bar');
-        const colors = ['bg-red-400','bg-orange-400','bg-yellow-400','bg-green-500'];
-        const labels = ['Sangat Lemah','Sedang','Kuat','Sangat Kuat'];
-        const lcls   = ['text-red-500','text-orange-500','text-yellow-600','text-green-600'];
-
-        bars.forEach((bar, i) => {
-            bar.className = 'h-1.5 flex-1 rounded-full ' + (i < strength ? colors[strength-1] : 'bg-slate-200');
-        });
-
-        const lbl = document.getElementById('strength-label');
-        lbl.textContent  = strength > 0 ? labels[strength-1] : 'Kekuatan password';
-        lbl.className    = 'text-xs mt-1 ' + (strength > 0 ? lcls[strength-1] : 'text-slate-400');
     });
 </script>
 @endsection
