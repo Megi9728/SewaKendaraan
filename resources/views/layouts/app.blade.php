@@ -51,68 +51,133 @@
 <body class="bg-uber-white text-uber-black antialiased">
 
     {{-- ===== NAVBAR ===== --}}
-    <header id="navbar" class="bg-uber-white border-b border-gray-200">
+    <header id="navbar" class="bg-uber-black text-uber-white">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-[72px]">
 
-                {{-- Logo --}}
+                {{-- Kiri: Logo & Menu --}}
                 <div class="flex items-center gap-8">
-                    <a href="{{ route('home') }}" class="text-2xl font-bold tracking-tight text-uber-black">
+                    <a href="{{ route('home') }}" class="text-2xl font-bold tracking-tight text-white hover:opacity-80 transition">
                         RentDrive
                     </a>
 
                     {{-- Desktop Nav --}}
-                    <div class="hidden md:flex items-center gap-8">
-                        <a href="{{ route('home') }}" class="nav-link ">Beranda</a>
-                        <a href="{{ route('browse') }}" class="nav-link">Cari Kendaraan</a>
+                    <div class="hidden md:flex items-center gap-1">
+                        <a href="{{ route('home') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('home') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Beranda</a>
+                        <a href="{{ route('browse') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Pesan</a>
                         @auth
                             @if(Auth::user()->role !== 'admin')
-                                <a href="{{ route('booking.history') }}" class="nav-link">Riwayat Sewa</a>
+                                <a href="{{ route('booking.history') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('booking.history') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Riwayat Sewa</a>
                             @endif
                         @endauth
+                        <a href="{{ route('how.it.works') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('how.it.works') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Tentang</a>
                     </div>
                 </div>
 
-                {{-- Desktop Auth / Menus --}}
-                <div class="hidden md:flex items-center gap-4 relative">
-                    <button id="auth-dropdown-toggle" class="flex items-center gap-2 bg-uber-white hover:bg-uber-chip transition-colors rounded-full px-4 py-2 font-medium text-sm">
+                {{-- Kanan: Aksi & Auth --}}
+                <div class="hidden md:flex items-center gap-2 relative">
+                    <a href="{{ route('help') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('help') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">
+                        Bantuan
+                    </a>
+                    
+                    <button id="auth-dropdown-toggle" class="flex items-center gap-2 bg-white text-black hover:bg-gray-200 transition-colors rounded-full px-5 py-2.5 ml-2 font-bold text-sm">
                         <span>{{ Auth::check() ? Auth::user()->name : 'Masuk / Daftar' }}</span>
-                        <i class="fas fa-user-circle text-xl"></i>
                     </button>
                     
-                    <div id="auth-dropdown" class="hidden absolute top-full right-0 mt-3 w-56 bg-uber-white border border-gray-200 shadow-uber py-2 z-[60]">
+                    <div id="auth-dropdown" class="hidden absolute top-full right-0 mt-3 w-64 bg-uber-white border border-gray-100 shadow-uber rounded-xl py-2 z-[60] text-uber-black">
                         @auth
-                            <div class="px-5 py-3 border-b border-gray-100">
-                                <p class="text-sm font-bold text-uber-black">{{ Auth::user()->name }}</p>
-                                <p class="text-xs text-uber-text mt-1">{{ Auth::user()->email }}</p>
+                            <div class="px-6 py-4 border-b border-gray-50">
+                                <p class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] mb-1 italic">Masuk Sebagai</p>
+                                <p class="text-base font-bold text-uber-black truncate">{{ Auth::user()->name }}</p>
                             </div>
                             <div class="p-2">
                                 @if(Auth::user()->role === 'admin')
-                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">Dashboard Admin</a>
+                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">Dashboard Admin</a>
                                 @else
-                                    <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">Profil</a>
+                                    <a href="{{ route('profile') }}" class="block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">Lihat Profil Akun</a>
                                 @endif
                                 
-                                <button onclick="event.preventDefault(); document.getElementById('base-logout-form').submit();" class="w-full text-left block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">
-                                    Keluar
+                                <button onclick="event.preventDefault(); document.getElementById('base-logout-form').submit();" class="w-full text-left block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">
+                                    Keluar dari Sistem
                                 </button>
                                 <form id="base-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
                             </div>
                         @else
-                            <div class="p-2 flex flex-col gap-2">
-                                <a href="{{ route('login') }}" class="btn-secondary w-full text-center">Masuk</a>
-                                <a href="{{ route('register') }}" class="btn-primary w-full text-center">Daftar</a>
+                            <div class="p-4 flex flex-col gap-3">
+                                <a href="{{ route('login') }}" class="btn-primary w-full text-center py-3.5 text-sm font-bold">Masuk</a>
+                                <a href="{{ route('register') }}" class="btn-secondary w-full text-center py-3.5 text-sm font-bold">Daftar Akun Baru</a>
                             </div>
                         @endauth
                     </div>
                 </div>
 
                 {{-- Mobile Hamburger --}}
-                <button id="menu-toggle" class="md:hidden text-uber-black">
-                    <i id="menu-icon" class="fas fa-bars text-xl"></i>
+                <button id="menu-toggle" class="md:hidden text-uber-white z-[80] relative focus:outline-none">
+                    <i id="menu-icon" class="fas fa-bars text-2xl"></i>
                 </button>
             </div>
         </nav>
+
+        {{-- Mobile Overlay Menu (Uber Style) --}}
+        <div id="mobile-menu" class="fixed inset-0 bg-uber-white z-[70] translate-x-full transition-transform duration-300 ease-in-out md:hidden overflow-y-auto">
+            <div class="flex flex-col h-full pt-28 px-10 pb-16">
+                {{-- Nav Links --}}
+                <div class="flex flex-col gap-8 mb-12">
+                     <a href="{{ route('home') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('home') ? 'underline underline-offset-8' : '' }}">Beranda</a>
+                     <a href="{{ route('browse') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'underline underline-offset-8' : '' }}">Pesan</a>
+                     @auth
+                         @if(Auth::user()->role !== 'admin')
+                             <a href="{{ route('booking.history') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('booking.history') ? 'underline underline-offset-8' : '' }}">Riwayat</a>
+                         @endif
+                     @endauth
+                     <a href="{{ route('how.it.works') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('how.it.works') ? 'underline underline-offset-8' : '' }}">Tentang</a>
+                     <a href="{{ route('help') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('help') ? 'underline underline-offset-8' : '' }}">Bantuan</a>
+
+                     {{-- Simplified Admin Link --}}
+                     @auth
+                         @if(Auth::user()->role === 'admin')
+                             <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col gap-8">
+                                 <a href="{{ route('admin.dashboard') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->is('admin*') ? 'underline underline-offset-8' : '' }}">Panel Admin</a>
+                             </div>
+                         @endif
+                     @endauth
+
+                     {{-- Guest Auth Links (Visible immediately) --}}
+                     @guest
+                        <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col gap-6">
+                            <a href="{{ route('login') }}" class="text-4xl font-bold text-uber-black tracking-tighter">Masuk</a>
+                            <a href="{{ route('register') }}" class="text-4xl font-bold text-uber-black tracking-tighter">Daftar Akun</a>
+                        </div>
+                     @endguest
+                </div>
+
+                {{-- Action / Profile --}}
+                <div class="mt-auto pt-10 border-t border-gray-100">
+                    @auth
+                        <div class="mb-8 flex justify-between items-end">
+                            <div>
+                                <p class="text-sm font-bold text-uber-muted uppercase tracking-widest mb-1 italic">Masuk Sebagai</p>
+                                <p class="text-2xl font-bold text-uber-black">{{ Auth::user()->name }}</p>
+                            </div>
+                            <button onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();" class="text-sm font-bold text-red-600 uppercase tracking-widest border-b-2 border-red-600 pb-1">
+                                Keluar
+                            </button>
+                            <form id="mobile-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
+                        </div>
+                        
+                        @if(Auth::user()->role !== 'admin')
+                            <a href="{{ route('profile') }}" class="btn-primary w-full text-center py-5 text-lg block">Lihat Profil Akun</a>
+                        @endif
+                    @else
+                        <div class="bg-uber-chip p-6 rounded-2xl">
+                            <p class="text-sm font-bold text-uber-black mb-1">Sudah jadi member?</p>
+                            <p class="text-xs text-uber-text mb-4">Masuk untuk kemudahan pemesanan.</p>
+                            <a href="{{ route('login') }}" class="btn-primary w-full text-center py-4 text-sm font-bold block">Masuk ke Akun</a>
+                        </div>
+                    @endauth
+                </div>
+            </div>
+        </div>
     </header>
 
     {{-- ===== KONTEN UTAMA ===== --}}
@@ -176,9 +241,30 @@
     {{-- ===== VANILLA JS ===== --}}
     <script>
         const menuToggle = document.getElementById('menu-toggle');
+        const menuIcon = document.getElementById('menu-icon');
+        const mobileMenu = document.getElementById('mobile-menu');
         const authDropdownToggle = document.getElementById('auth-dropdown-toggle');
         const authDropdown = document.getElementById('auth-dropdown');
 
+        // Toggle Mobile Menu
+        if (menuToggle && mobileMenu) {
+            menuToggle.addEventListener('click', () => {
+                const isOpen = !mobileMenu.classList.contains('translate-x-full');
+                if (isOpen) {
+                    mobileMenu.classList.add('translate-x-full');
+                    menuIcon.classList.replace('fa-times', 'fa-bars');
+                    menuToggle.classList.replace('text-uber-black', 'text-uber-white');
+                    document.body.classList.remove('overflow-hidden');
+                } else {
+                    mobileMenu.classList.remove('translate-x-full');
+                    menuIcon.classList.replace('fa-bars', 'fa-times');
+                    menuToggle.classList.replace('text-uber-white', 'text-uber-black');
+                    document.body.classList.add('overflow-hidden');
+                }
+            });
+        }
+
+        // Desktop Auth Dropdown
         if (authDropdownToggle) {
             authDropdownToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
