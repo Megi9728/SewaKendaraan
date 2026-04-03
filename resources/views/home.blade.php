@@ -13,7 +13,7 @@
         </h1>
         
         <form action="{{ route('browse') }}" method="GET" class="max-w-md space-y-4 relative">
-            <div class="relative z-10 hidden sm:block">
+            <div class="relative z-10">
                 <select name="domicile" class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition border-r-8 border-transparent">
                     <option value="">Lokasi Pengambilan</option>
                     <option value="Jakarta">Jakarta</option>
@@ -24,7 +24,7 @@
                 </select>
             </div>
 
-            <div class="relative z-10 hidden sm:block">
+            <div class="relative z-10">
                 <select name="type" class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition border-r-8 border-transparent">
                     <option value="">Tipe Kendaraan</option>
                     <option value="Mobil">Mobil</option>
@@ -34,9 +34,9 @@
                 </select>
             </div>
 
-            <div class="relative z-10 hidden sm:flex gap-2">
-                <input type="date" name="start_date" class="w-1/2 bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition" min="{{ date('Y-m-d') }}" title="Mulai">
-                <input type="date" name="end_date" class="w-1/2 bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition" min="{{ date('Y-m-d') }}" title="Selesai">
+            <div class="relative z-10 flex flex-col sm:flex-row gap-2">
+                <input type="date" name="start_date" class="w-full sm:w-1/2 bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition" min="{{ date('Y-m-d') }}" title="Mulai">
+                <input type="date" name="end_date" class="w-full sm:w-1/2 bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition" min="{{ date('Y-m-d') }}" title="Selesai">
             </div>
             
             <button type="submit" class="btn-primary w-full sm:w-auto inline-block text-center mt-2 font-bold text-lg px-12 py-3.5 shadow-uber">
