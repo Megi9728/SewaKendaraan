@@ -46,14 +46,22 @@
                         $statusColors = [
                             'Pending' => 'bg-orange-100 text-orange-600 border-orange-200',
                             'Confirmed' => 'bg-blue-100 text-blue-600 border-blue-200',
+                            'On_Delivery' => 'bg-sky-100 text-sky-600 border-sky-200',
+                            'Picked_Up' => 'bg-indigo-100 text-indigo-600 border-indigo-200',
                             'Active' => 'bg-indigo-100 text-indigo-600 border-indigo-200',
+                            'Waiting_Pickup' => 'bg-yellow-100 text-yellow-600 border-yellow-200',
                             'Completed' => 'bg-green-100 text-green-600 border-green-200',
                             'Cancelled' => 'bg-red-100 text-red-600 border-red-200',
                             'Rejected' => 'bg-slate-100 text-slate-600 border-slate-200',
                         ];
+                        $statusLabels = [
+                            'On_Delivery' => 'Sedang Diantar',
+                            'Picked_Up' => 'Sudah Diambil',
+                            'Waiting_Pickup' => 'Menunggu Penjemputan/Penyelesaian',
+                        ];
                     @endphp
                     <span class="text-[10px] font-black px-3 py-1.5 rounded-lg border {{ $statusColors[$booking->status] }} uppercase tracking-widest">
-                         {{ $booking->status }}
+                         {{ $statusLabels[$booking->status] ?? $booking->status }}
                     </span>
                 </div>
                 <h3 class="text-2xl font-black text-slate-900 mb-1 truncate">{{ $booking->vehicle->name }}</h3>
@@ -106,10 +114,48 @@
                         <p class="font-bold text-green-800">Lunas</p>
                         <p class="text-green-600 text-xs">Menunggu serah terima mobil</p>
                     </div>
+                @elseif($booking->status === 'On_Delivery')
+                    <div class="bg-sky-50 border border-sky-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-sky-800">Mobil Diantar</p>
+                        <p class="text-sky-600 text-xs mb-3">Sopir kami sedang menuju lokasi Anda</p>
+                        <form action="{{ route('booking.status.update', $booking->id) }}" method="POST">
+                            @csrf @method('PUT')
+                            <input type="hidden" name="status" value="Active">
+                            <button class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Konfirmasi Mobil Sampai</button>
+                        </form>
+                    </div>
+                @elseif($booking->status === 'Picked_Up')
+                    <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-indigo-800">Mobil Siap</p>
+                        <p class="text-indigo-600 text-xs mb-3">Admin menyatakan mobil sudah diambil</p>
+                        <form action="{{ route('booking.status.update', $booking->id) }}" method="POST">
+                            @csrf @method('PUT')
+                            <input type="hidden" name="status" value="Active">
+                            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Saya Setuju (Pakai Mobil)</button>
+                        </form>
+                    </div>
                 @elseif($booking->status === 'Active')
                     <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl mb-2 text-center text-sm">
                         <p class="font-bold text-indigo-800">Masa Sewa</p>
-                        <p class="text-indigo-600 text-xs">Mobil sedang Anda gunakan</p>
+                        <p class="text-indigo-600 text-xs mb-3">Mobil sedang Anda gunakan</p>
+                        @if($booking->delivery_type === 'delivery')
+                            <form action="{{ route('booking.status.update', $booking->id) }}" method="POST">
+                                @csrf @method('PUT')
+                                <input type="hidden" name="status" value="Waiting_Pickup">
+                                <button class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Minta Penjemputan Mobil</button>
+                            </form>
+                        @else
+                            <form action="{{ route('booking.status.update', $booking->id) }}" method="POST">
+                                @csrf @method('PUT')
+                                <input type="hidden" name="status" value="Waiting_Pickup">
+                                <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Konfirmasi Mobil Dikembalikan</button>
+                            </form>
+                        @endif
+                    </div>
+                @elseif($booking->status === 'Waiting_Pickup')
+                    <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-yellow-800">Proses Akhir</p>
+                        <p class="text-yellow-600 text-xs">Menunggu konfirmasi admin untuk menyelesaikan sewa</p>
                     </div>
                 @elseif($booking->status === 'Completed')
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl mb-2 text-center text-sm">

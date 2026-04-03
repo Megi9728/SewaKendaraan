@@ -38,9 +38,9 @@ class BookingController extends Controller
         $days = $start->diffInDays($end);
         if($days <= 0) $days = 1;
 
-        $serviceFee = 50000;
+        $serviceFee = 0;
         $subtotal = $vehicle->price_per_day * $days;
-        $totalPrice = $subtotal + $serviceFee;
+        $totalPrice = $subtotal;
 
         $bookingData = [
             'start_date' => $request->start_date,
@@ -49,6 +49,7 @@ class BookingController extends Controller
             'subtotal' => $subtotal,
             'service_fee' => $serviceFee,
             'total_price' => $totalPrice,
+            'delivery_fee_amount' => 50000,
         ];
 
         return view('checkout', compact('vehicle', 'bookingData'));
@@ -79,7 +80,7 @@ class BookingController extends Controller
         if($days <= 0) $days = 1;
 
         // Hitung total harga
-        $serviceFee = 50000;
+        $serviceFee = $request->delivery_type === 'delivery' ? 50000 : 0;
         $totalPrice = ($vehicle->price_per_day * $days) + $serviceFee;
 
         // Upload KTP & SIM
@@ -152,5 +153,23 @@ class BookingController extends Controller
         }
 
         return back()->with('success', 'Terima kasih atas ulasan Anda!');
+    }
+
+    /**
+     * Update status pesanan oleh pengguna
+     */
+    public function updateStatus(Request $request, Booking $booking)
+    {
+        if ($booking->user_id !== Auth::id()) abort(403);
+
+        $request->validate([
+            'status' => 'required|string|in:Active,Waiting_Pickup'
+        ]);
+
+        $booking->update([
+            'status' => $request->status
+        ]);
+
+        return back()->with('success', 'Status pesanan berhasil diperbarui!');
     }
 }

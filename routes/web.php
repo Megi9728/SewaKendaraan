@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pesan', [\App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
     Route::post('/pesan/{booking}/pay', [\App\Http\Controllers\BookingController::class, 'pay'])->name('booking.pay');
     Route::post('/pesan/{booking}/review', [\App\Http\Controllers\BookingController::class, 'review'])->name('booking.review');
+    Route::put('/pesan/{booking}/status', [\App\Http\Controllers\BookingController::class, 'updateStatus'])->name('booking.status.update');
     Route::get('/riwayat-sewa', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.history');
 });
 // ============================================================

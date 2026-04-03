@@ -15,7 +15,7 @@
         <form action="{{ route('browse') }}" method="GET" class="max-w-md space-y-4 relative">
             <div class="relative z-10 hidden sm:block">
                 <select name="domicile" class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition border-r-8 border-transparent">
-                    <option value="">Lokasi Pengambilan</option>
+                    <option value="">Semua Lokasi Pengambilan</option>
                     <option value="Jakarta">Jakarta</option>
                     <option value="Bogor">Bogor</option>
                     <option value="Depok">Depok</option>
@@ -26,7 +26,7 @@
 
             <div class="relative z-10 hidden sm:block">
                 <select name="type" class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition border-r-8 border-transparent">
-                    <option value="">Tipe Kendaraan</option>
+                    <option value="">Semua Tipe Kendaraan</option>
                     <option value="Mobil">Mobil</option>
                     <option value="Motor">Motor</option>
                     <option value="Minibus">Minibus</option>

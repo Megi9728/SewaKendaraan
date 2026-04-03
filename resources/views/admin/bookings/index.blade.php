@@ -100,6 +100,15 @@
                                     'Completed' => 'bg-green-100 text-green-600',
                                     'Cancelled' => 'bg-red-100 text-red-600',
                                     'Rejected' => 'bg-slate-100 text-slate-600',
+                                    'On_Delivery' => 'bg-sky-100 text-sky-600',
+                                    'Picked_Up' => 'bg-indigo-100 text-indigo-600',
+                                    'Active' => 'bg-indigo-100 text-indigo-600',
+                                    'Waiting_Pickup' => 'bg-yellow-100 text-yellow-600',
+                                ];
+                                $statusLabels = [
+                                    'On_Delivery' => 'Sedang Diantar',
+                                    'Picked_Up' => 'Sudah Diambil',
+                                    'Waiting_Pickup' => 'Menunggu Penjemputan',
                                 ];
                                 $payColors = [
                                     'unpaid' => 'bg-red-50 text-red-600',
@@ -113,10 +122,10 @@
                                 ];
                             @endphp
                             <div class="flex flex-col gap-2 items-start">
-                                <span class="text-[10px] font-bold px-2 py-1 rounded {{ $colors[$booking->status] }} uppercase tracking-wider">
-                                    {{ $booking->status }}
+                                <span class="text-[10px] font-bold px-2 py-1 rounded {{ $colors[$booking->status] ?? 'bg-slate-100' }} uppercase tracking-wider">
+                                    {{ $statusLabels[$booking->status] ?? $booking->status }}
                                 </span>
-                                <span class="text-[10px] font-bold px-2 py-1 rounded {{ $payColors[$booking->payment_status] }} uppercase tracking-wider">
+                                <span class="text-[10px] font-bold px-2 py-1 rounded {{ $payColors[$booking->payment_status] ?? 'bg-slate-100' }} uppercase tracking-wider">
                                     {{ $payLabels[$booking->payment_status] ?? 'Unknown' }}
                                 </span>
                             </div>
@@ -138,23 +147,37 @@
                                 @endif
 
                                 @if($booking->status === 'Confirmed' && $booking->payment_status === 'fully_paid')
-                                    <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
-                                        @csrf @method('PUT')
-                                        <input type="hidden" name="status" value="Active">
-                                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
-                                            <i class="fas fa-key"></i> KONFIRMASI PENGAMBILAN
-                                        </button>
-                                    </form>
+                                    @if($booking->delivery_type === 'delivery')
+                                        <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                            @csrf @method('PUT')
+                                            <input type="hidden" name="status" value="On_Delivery">
+                                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+                                                <i class="fas fa-truck"></i> KONFIRMASI PENGANTARAN
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                            @csrf @method('PUT')
+                                            <input type="hidden" name="status" value="Picked_Up">
+                                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+                                                <i class="fas fa-key"></i> KONFIRMASI DIAMBIL
+                                            </button>
+                                        </form>
+                                    @endif
                                 @endif
 
-                                @if($booking->status === 'Active')
+                                @if($booking->status === 'Waiting_Pickup')
                                     <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
                                         @csrf @method('PUT')
                                         <input type="hidden" name="status" value="Completed">
                                         <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
-                                            <i class="fas fa-flag-checkered"></i> KONFIRMASI PENGEMBALIAN
+                                            <i class="fas fa-flag-checkered"></i> KONFIRMASI SEWA SELESAI
                                         </button>
                                     </form>
+                                @endif
+
+                                @if($booking->status === 'Active' && $booking->delivery_type === 'self-pickup')
+                                     <p class="text-[10px] font-bold text-slate-400 italic">User harus mengembalikan mobil</p>
                                 @endif
                             </div>
                         </td>

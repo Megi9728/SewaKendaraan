@@ -90,7 +90,7 @@
 
         {{-- ==== BAGIAN KANAN: RINGKASAN PESANAN ==== --}}
         <div class="lg:w-1/3">
-            <div class="bg-white border border-slate-100 rounded-[2rem] shadow-xl p-6 md:p-8 sticky top-24">
+            <div class="bg-white border border-slate-100 rounded-[2rem] shadow-xl p-6 md:p-8 top-24">
                 <h3 class="font-black text-slate-800 text-lg mb-6">Ringkasan Pesanan</h3>
 
                 {{-- Kendaraan Info --}}
@@ -126,15 +126,15 @@
                         <span>Biaya Sewa × {{ $bookingData['days'] }} Hari</span>
                         <span class="font-bold text-slate-800">Rp {{ number_format($bookingData['subtotal'], 0, ',', '.') }}</span>
                     </div>
-                    <div class="flex justify-between text-sm text-slate-600">
-                        <span>Biaya Layanan & Pajak</span>
-                        <span class="font-bold text-slate-800">Rp {{ number_format($bookingData['service_fee'], 0, ',', '.') }}</span>
+                    <div class="flex justify-between text-sm text-slate-600" id="service-fee-row" style="display: none;">
+                        <span>Biaya Layanan Antar Jemput</span>
+                        <span class="font-bold text-slate-800">Rp {{ number_format($bookingData['delivery_fee_amount'], 0, ',', '.') }}</span>
                     </div>
                 </div>
 
                 <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
                     <span class="font-bold text-slate-800">Total Bayar</span>
-                    <span class="text-2xl font-black text-blue-600">Rp {{ number_format($bookingData['total_price'], 0, ',', '.') }}</span>
+                    <span class="text-2xl font-black text-blue-600" id="total-price-display" data-subtotal="{{ $bookingData['subtotal'] }}" data-fee="{{ $bookingData['delivery_fee_amount'] }}">Rp {{ number_format($bookingData['subtotal'], 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>
@@ -148,14 +148,28 @@
         const wrapper = document.getElementById('delivery_location_wrapper');
         const input = document.getElementById('delivery_location');
         const val = document.querySelector('input[name="delivery_type"]:checked').value;
+        const totalDisplay = document.getElementById('total-price-display');
+        const subtotal = parseInt(totalDisplay.dataset.subtotal);
+        const fee = parseInt(totalDisplay.dataset.fee);
+        
+        let total = subtotal;
+
         if (val === 'delivery') {
             wrapper.classList.remove('hidden');
             input.required = true;
+            document.getElementById('service-fee-row').style.display = 'flex';
+            total += fee;
         } else {
             wrapper.classList.add('hidden');
             input.required = false;
+            document.getElementById('service-fee-row').style.display = 'none';
         }
+
+        totalDisplay.innerText = 'Rp ' + total.toLocaleString('id-ID');
     }
+    
+    // Inisialisasi awal saat render
+    toggleDeliveryLocation();
 </script>
 <style>
     .animate-fade-in {
