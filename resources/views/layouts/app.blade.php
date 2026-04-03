@@ -63,22 +63,22 @@
 
                     {{-- Desktop Nav --}}
                     <div class="hidden md:flex items-center gap-1">
-                        <a href="{{ route('home') }}" class="px-4 py-2 text-sm font-medium bg-white/10 rounded-full text-white">Beranda</a>
-                        <a href="{{ route('browse') }}" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Pesan</a>
+                        <a href="{{ route('home') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('home') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Beranda</a>
+                        <a href="{{ route('browse') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Pesan</a>
                         @auth
                             @if(Auth::user()->role !== 'admin')
-                                <a href="{{ route('booking.history') }}" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Riwayat Sewa</a>
+                                <a href="{{ route('booking.history') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('booking.history') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Riwayat Sewa</a>
                             @endif
                         @endauth
-                        <a href="{{ route('how.it.works') }}" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Tentang</a>
+                        <a href="{{ route('how.it.works') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('how.it.works') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Tentang</a>
                     </div>
                 </div>
 
                 {{-- Kanan: Aksi & Auth --}}
                 <div class="hidden md:flex items-center gap-2 relative">
-                    <button class="text-sm font-medium text-white hover:bg-white/10 px-4 py-2 rounded-full transition">
+                    <a href="{{ route('help') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('help') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">
                         Bantuan
-                    </button>
+                    </a>
                     
                     <button id="auth-dropdown-toggle" class="flex items-center gap-2 bg-white text-black hover:bg-gray-200 transition-colors rounded-full px-5 py-2.5 ml-2 font-bold text-sm">
                         <span>{{ Auth::check() ? Auth::user()->name : 'Masuk / Daftar' }}</span>

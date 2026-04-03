@@ -62,6 +62,10 @@ Route::get('/cara-kerja', function () {
     return view('how-it-works');
 })->name('how.it.works');
 
+Route::get('/bantuan', function () {
+    return view('help');
+})->name('help');
+
 // ============================================================
 // AUTENTIKASI
 // ============================================================
