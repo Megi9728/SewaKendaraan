@@ -1,27 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 // ============================================================
-// HALAMAN PUBLIK
+// HALAMAN PUBLIK (Home, Browse, Detail)
 // ============================================================
 
-// Homepage / Beranda
 Route::get('/', function () {
-    return view('home');
+    $vehicles = \App\Models\Vehicle::latest()->take(3)->get();
+    return view('home', compact('vehicles'));
 })->name('home');
 
-// Halaman Jelajahi Semua Kendaraan
-Route::get('/jelajahi', function () {
-    return view('browse');
+Route::get('/jelajah', function () {
+    $vehicles = \App\Models\Vehicle::latest()->get();
+    return view('browse', compact('vehicles'));
 })->name('browse');
 
-// Halaman Detail Kendaraan
-Route::get('/kendaraan/{id}', function ($id) {
-    return view('vehicle-detail', ['id' => $id]);
+Route::get('/mobil/{vehicle}', function (\App\Models\Vehicle $vehicle) {
+    return view('vehicle-detail', compact('vehicle'));
 })->name('vehicle.detail');
 
-// Halaman Cara Kerja
 Route::get('/cara-kerja', function () {
     return view('how-it-works');
 })->name('how.it.works');
@@ -34,26 +33,56 @@ Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Halaman User Terautentikasi (Profil & Booking)
+Route::middleware('auth')->group(function () {
+    Route::get('/profil', [AuthController::class, 'profile'])->name('profile');
+    Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
+
+    // Sistem Booking
+    Route::post('/pesan', [\App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
+    Route::get('/riwayat-sewa', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.history');
+});
 // ============================================================
-// HALAMAN ADMIN (protected - akan pakai middleware nanti)
+// HALAMAN ADMIN (protected with auth and admin middleware)
 // ============================================================
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/dashboard', function () {
-        return view('admin.dashboard');
+        $stats = [
+            'total_vehicles' => \App\Models\Vehicle::count(),
+            'pending_bookings' => \App\Models\Booking::where('status', 'Pending')->count(),
+            'rented_vehicles' => \App\Models\Vehicle::where('status', 'Disewa')->count(),
+            'total_revenue' => \App\Models\Booking::where('status', 'Completed')->sum('total_price'),
+        ];
+        
+        $recentBookings = \App\Models\Booking::with(['user', 'vehicle'])->latest()->take(5)->get();
+
+        return view('admin.dashboard', compact('stats', 'recentBookings'));
     })->name('dashboard');
 
-    Route::get('/kendaraan', function () {
-        return view('admin.vehicles.index');
-    })->name('kendaraan');
+    // CRUD Kendaraan
+    Route::get('/kendaraan', [\App\Http\Controllers\Admin\VehicleController::class, 'index'])->name('kendaraan');
+    Route::post('/kendaraan', [\App\Http\Controllers\Admin\VehicleController::class, 'store'])->name('kendaraan.store');
+    Route::put('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'update'])->name('kendaraan.update');
+    Route::delete('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroy'])->name('kendaraan.destroy');
 
-    Route::get('/pemesanan', function () {
-        return view('admin.bookings.index');
-    })->name('pemesanan');
+    // Profil Admin (Dashboard view)
+    Route::get('/profil', [AuthController::class, 'profile'])->name('profile');
+    Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
+
+    // Manajemen Pemesanan
+    Route::get('/pemesanan', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('pemesanan');
+    Route::put('/pemesanan/{booking}', [\App\Http\Controllers\Admin\BookingController::class, 'update'])->name('pemesanan.update');
 
 });

@@ -8,8 +8,14 @@
     <p class="text-slate-500 mt-2">Bergabung dengan 50.000+ pengguna RentDrive</p>
 </div>
 
-<form class="mt-8 space-y-4" action="#" method="POST">
+<form class="mt-8 space-y-4" action="{{ route('register.post') }}" method="POST">
     @csrf
+
+    @if($errors->any())
+    <div class="p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-semibold">
+        {{ $errors->first() }}
+    </div>
+    @endif
 
     {{-- Nama Lengkap --}}
     <div>

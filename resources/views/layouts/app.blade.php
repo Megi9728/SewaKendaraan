@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="RentDrive - Platform sewa kendaraan terpercaya di Indonesia. Pilih dari ratusan armada mobil dan motor berkualitas.">
     <title>@yield('title', 'RentDrive') - Sewa Kendaraan Terpercaya</title>
+    <link rel="icon" href="data:,">
 
     {{-- Tailwind CSS CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -70,13 +71,62 @@
                     </div>
 
                     {{-- Desktop CTA --}}
-                    <div class="hidden md:flex items-center gap-3">
-                        <a href="{{ route('login') }}" class="btn-ghost">Masuk</a>
-                        <a href="{{ route('register') }}" class="btn-primary">Daftar Gratis</a>
-                        {{-- Link testing admin --}}
-                        <a href="{{ route('admin.dashboard') }}" class="text-xs text-slate-300 hover:text-blue-500 transition-colors ml-2" title="Admin Panel">
-                            <i class="fas fa-lock"></i>
-                        </a>
+                    <div class="hidden md:flex items-center relative">
+                        <button id="auth-dropdown-toggle" class="btn-primary flex items-center gap-2.5">
+                            <i class="fas fa-user-circle"></i>
+                            <span>{{ Auth::check() ? Auth::user()->name : 'Masuk' }}</span>
+                            <i class="fas fa-chevron-down text-[10px] transition-transform duration-200" id="dropdown-chevron"></i>
+                        </button>
+                        
+                        <div id="auth-dropdown" class="hidden absolute top-full right-0 mt-3 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-[60] transform origin-top-right transition-all duration-200">
+                            @auth
+                                <div class="px-5 py-3 border-b border-slate-100">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Akun Saya</p>
+                                        @if(Auth::user()->role === 'admin')
+                                            <span class="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md font-bold uppercase">Admin</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-slate-900 font-bold truncate">{{ Auth::user()->email }}</p>
+                                </div>
+                                <div class="p-2">
+                                    @if(Auth::user()->role === 'admin')
+                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-xl transition-all">
+                                            <i class="fas fa-th-large w-5 text-blue-600"></i> Dashboard Admin
+                                        </a>
+                                    @else
+                                        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-xl transition-all">
+                                            <i class="fas fa-history w-5"></i> Riwayat Sewa
+                                        </a>
+                                        <a href="{{ route('profile') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-xl transition-all">
+                                            <i class="fas fa-user-edit w-5"></i> Profil Saya
+                                        </a>
+                                    @endif
+                                    
+                                    <hr class="my-2 border-slate-100">
+                                    <button onclick="event.preventDefault(); document.getElementById('base-logout-form').submit();" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all text-left">
+                                        <i class="fas fa-sign-out-alt w-5"></i> Keluar
+                                    </button>
+                                    <form id="base-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
+                                </div>
+                            @else
+                                <div class="px-5 py-3 border-b border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Selamat Datang</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">Silakan pilih akses anda</p>
+                                </div>
+                                <div class="p-2">
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-xl transition-all">
+                                        <i class="fas fa-user-shield w-5 text-blue-600"></i> Panel Admin
+                                    </a>
+                                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-xl transition-all">
+                                        <i class="fas fa-sign-in-alt w-5"></i> Masuk
+                                    </a>
+                                    <a href="{{ route('register') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-xl transition-all">
+                                        <i class="fas fa-user-plus w-5"></i> Daftar Baru
+                                    </a>
+                                </div>
+                            @endauth
+                        </div>
                     </div>
 
                     {{-- Mobile Hamburger --}}
@@ -87,20 +137,62 @@
             </div>
 
             {{-- Mobile Dropdown Menu --}}
-            <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100">
-                <div class="px-4 py-4 space-y-1">
-                    <a href="{{ route('home') }}" class="block px-4 py-3 rounded-xl text-slate-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition">
-                        <i class="fas fa-home mr-2 w-4"></i> Beranda
+            <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white">
+                <div class="px-4 py-6 space-y-2">
+                    <a href="{{ route('home') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-blue-50 hover:text-blue-600 transition tracking-tight">
+                        <i class="fas fa-home w-5"></i> Beranda
                     </a>
-                    <a href="{{ route('browse') }}" class="block px-4 py-3 rounded-xl text-slate-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition">
-                        <i class="fas fa-car mr-2 w-4"></i> Jelajahi Armada
+                    <a href="{{ route('browse') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-blue-50 hover:text-blue-600 transition tracking-tight">
+                        <i class="fas fa-car w-5"></i> Jelajahi Armada
                     </a>
-                    <a href="{{ route('how.it.works') }}" class="block px-4 py-3 rounded-xl text-slate-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition">
-                        <i class="fas fa-info-circle mr-2 w-4"></i> Cara Kerja
+                    <a href="{{ route('how.it.works') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-blue-50 hover:text-blue-600 transition tracking-tight">
+                        <i class="fas fa-info-circle w-5"></i> Cara Kerja
                     </a>
-                    <div class="pt-3 border-t border-slate-100 flex gap-3">
-                        <a href="{{ route('login') }}" class="flex-1 text-center bg-slate-100 text-slate-700 font-semibold py-3 rounded-xl hover:bg-slate-200 transition text-sm">Masuk</a>
-                        <a href="{{ route('register') }}" class="flex-1 text-center bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition text-sm">Daftar</a>
+
+                    <div class="pt-6 mt-4 border-t border-slate-100">
+                        @auth
+                            {{-- User Info Mobile --}}
+                            <div class="px-4 py-4 mb-4 bg-slate-50 rounded-2xl flex items-center gap-4">
+                                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-lg">
+                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-slate-900 font-black truncate leading-none mb-1">{{ Auth::user()->name }}</p>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">{{ Auth::user()->role === 'admin' ? 'Administrator' : 'Pelanggan Aktif' }}</span>
+                                </div>
+                            </div>
+
+                            {{-- Dynamic Links Mobile --}}
+                            <div class="space-y-1">
+                                @if(Auth::user()->role === 'admin')
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-blue-600 font-black bg-blue-50 transition border border-blue-100">
+                                        <i class="fas fa-th-large w-5"></i> Dashboard Admin
+                                    </a>
+                                @else
+                                    <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition">
+                                        <i class="fas fa-history w-5"></i> Riwayat Sewa
+                                    </a>
+                                @endif
+
+                                <a href="{{ route('profile') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition">
+                                    <i class="fas fa-user-edit w-5"></i> Edit Profil
+                                </a>
+
+                                <hr class="my-4 border-slate-50">
+                                
+                                <button onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();" class="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-red-500 font-black bg-red-50 hover:bg-red-100 transition shadow-sm shadow-red-100">
+                                    <i class="fas fa-sign-out-alt w-5 text-lg"></i>
+                                    KELUAR SEKARANG
+                                </button>
+                                <form id="mobile-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
+                            </div>
+                        @else
+                            {{-- Guest Buttons Mobile --}}
+                            <div class="flex flex-col gap-3">
+                                <a href="{{ route('login') }}" class="w-full text-center bg-slate-100 text-slate-700 font-black py-4 rounded-2xl hover:bg-slate-200 transition text-sm">MASUK</a>
+                                <a href="{{ route('register') }}" class="w-full text-center bg-blue-600 text-white font-black py-4 rounded-2xl hover:bg-blue-700 transition text-sm shadow-lg shadow-blue-100">DAFTAR AKUN</a>
+                            </div>
+                        @endauth
                     </div>
                 </div>
             </div>
@@ -181,21 +273,44 @@
 
     {{-- ===== VANILLA JS: Mobile Menu & Navbar Scroll ===== --}}
     <script>
-        // Mobile menu toggle
+        // Elements
         const menuToggle = document.getElementById('menu-toggle');
         const mobileMenu = document.getElementById('mobile-menu');
         const menuIcon = document.getElementById('menu-icon');
+        const authDropdownToggle = document.getElementById('auth-dropdown-toggle');
+        const authDropdown = document.getElementById('auth-dropdown');
+        const dropdownChevron = document.getElementById('dropdown-chevron');
 
-        menuToggle.addEventListener('click', () => {
-            const isHidden = mobileMenu.classList.toggle('hidden');
-            menuIcon.className = isHidden ? 'fas fa-bars text-lg' : 'fas fa-times text-lg';
-        });
+        // Mobile menu toggle
+        if (menuToggle) {
+            menuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isHidden = mobileMenu.classList.toggle('hidden');
+                menuIcon.className = isHidden ? 'fas fa-bars text-lg' : 'fas fa-times text-lg';
+            });
+        }
 
-        // Close mobile menu on outside click
+        // Auth dropdown toggle
+        if (authDropdownToggle) {
+            authDropdownToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isHidden = authDropdown.classList.toggle('hidden');
+                dropdownChevron.classList.toggle('rotate-180', !isHidden);
+            });
+        }
+
+        // Close dropdowns on outside click
         document.addEventListener('click', (e) => {
-            if (!menuToggle.contains(e.target) && !mobileMenu.contains(e.target)) {
+            // Close mobile menu
+            if (mobileMenu && !mobileMenu.classList.contains('hidden') && !menuToggle.contains(e.target) && !mobileMenu.contains(e.target)) {
                 mobileMenu.classList.add('hidden');
                 menuIcon.className = 'fas fa-bars text-lg';
+            }
+            
+            // Close auth dropdown
+            if (authDropdown && !authDropdown.classList.contains('hidden') && !authDropdownToggle.contains(e.target) && !authDropdown.contains(e.target)) {
+                authDropdown.classList.add('hidden');
+                dropdownChevron.classList.remove('rotate-180');
             }
         });
     </script>

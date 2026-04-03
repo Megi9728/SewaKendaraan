@@ -15,11 +15,11 @@
 
     {{-- Breadcrumb --}}
     <nav class="flex items-center gap-2 text-sm text-slate-400 mb-8">
-        <a href="{{ route('home') }}" class="hover:text-blue-600 transition-colors">Beranda</a>
-        <i class="fas fa-chevron-right text-xs"></i>
-        <a href="{{ route('browse') }}" class="hover:text-blue-600 transition-colors">Jelajahi</a>
-        <i class="fas fa-chevron-right text-xs"></i>
-        <span class="text-slate-700 font-medium">Toyota Innova Zenix</span>
+        <a href="{{ route('home') }}" class="hover:text-blue-600 transition-colors font-medium">Beranda</a>
+        <i class="fas fa-chevron-right text-[10px]"></i>
+        <a href="{{ route('browse') }}" class="hover:text-blue-600 transition-colors font-medium">Jelajahi</a>
+        <i class="fas fa-chevron-right text-[10px]"></i>
+        <span class="text-slate-900 font-bold tracking-tight">{{ $vehicle->name }}</span>
     </nav>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -28,163 +28,82 @@
         <div class="lg:col-span-2">
 
             {{-- Main Image --}}
-            <div class="bg-slate-100 rounded-3xl overflow-hidden h-80 sm:h-96 relative">
-                <img id="main-image" src="https://images.unsplash.com/photo-1570733577524-3a047079e80d?auto=format&fit=crop&q=80&w=900"
-                    class="w-full h-full object-cover" alt="Toyota Innova Zenix">
+            <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden h-[450px] relative shadow-sm group">
+                <img id="main-image" src="{{ $vehicle->image ? (strpos($vehicle->image, 'http') === 0 ? $vehicle->image : asset('storage/' . $vehicle->image)) : 'https://placehold.co/900x600?text=No+Image' }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" alt="{{ $vehicle->name }}">
 
                 {{-- Badge --}}
-                <div class="absolute top-4 left-4 flex gap-2">
-                    <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full">✅ Tersedia</span>
-                    <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full">🔥 Terlaris</span>
+                <div class="absolute top-6 left-6 flex gap-2">
+                    <span class="{{ $vehicle->status == 'Tersedia' ? 'bg-green-500' : 'bg-blue-600' }} text-white text-[11px] font-bold px-4 py-2 rounded-xl flex items-center gap-2 shadow-xl shadow-black/10 uppercase tracking-widest">
+                        <i class="fas {{ $vehicle->status == 'Tersedia' ? 'fa-check-circle' : 'fa-clock' }}"></i> {{ $vehicle->status }}
+                    </span>
+                    <span class="bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-bold px-4 py-2 rounded-xl flex items-center gap-2 shadow-xl shadow-black/10 uppercase tracking-widest">
+                        <i class="fas fa-certificate text-blue-400"></i> Premium
+                    </span>
                 </div>
-
-                {{-- Wishlist --}}
-                <button id="wishlist-detail-btn" class="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shadow-lg">
-                    <i class="far fa-heart"></i>
-                </button>
-            </div>
-
-            {{-- Thumbnail Gallery --}}
-            <div class="flex gap-3 mt-4 overflow-x-auto pb-2">
-                @php
-                $thumbs = [
-                    'https://images.unsplash.com/photo-1570733577524-3a047079e80d?auto=format&fit=crop&q=80&w=300',
-                    'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=300',
-                    'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=300',
-                    'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=300',
-                ];
-                @endphp
-                @foreach($thumbs as $i => $thumb)
-                <div class="thumb-img flex-shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 {{ $i === 0 ? 'border-blue-600 active' : 'border-transparent' }}"
-                    data-src="{{ $thumb }}" onclick="switchImage(this)">
-                    <img src="{{ $thumb }}" class="w-full h-full object-cover">
-                </div>
-                @endforeach
             </div>
 
             {{-- Tabs --}}
-            <div class="mt-8 border-b border-slate-200">
-                <div class="flex gap-0">
-                    @foreach(['Spesifikasi' => 'tab-spek', 'Fasilitas' => 'tab-fasilitas', 'Syarat Sewa' => 'tab-syarat', 'Ulasan' => 'tab-ulasan'] as $label => $tabId)
-                    <button class="tab-btn px-5 py-3 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors {{ $loop->first ? 'active' : '' }}"
-                        data-tab="{{ $tabId }}">{{ $label }}</button>
+            <div class="mt-10 border-b border-slate-200">
+                <div class="flex gap-8">
+                    @foreach(['Spesifikasi' => 'tab-spek', 'Syarat Sewa' => 'tab-syarat', 'Ulasan' => 'tab-ulasan'] as $label => $tabId)
+                    <button class="tab-btn pb-4 text-sm font-bold text-slate-400 hover:text-blue-600 transition-all relative {{ $loop->first ? 'active' : '' }}"
+                        data-tab="{{ $tabId }}">
+                        {{ $label }}
+                    </button>
                     @endforeach
                 </div>
             </div>
 
             {{-- Tab Content: Spesifikasi --}}
-            <div id="tab-spek" class="tab-content py-6">
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div id="tab-spek" class="tab-content py-8">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-5">
                     @php
                     $specs = [
-                        ['icon' => 'fas fa-users', 'label' => 'Kapasitas', 'value' => '7 Penumpang'],
-                        ['icon' => 'fas fa-cog', 'label' => 'Transmisi', 'value' => 'Matic CVT'],
-                        ['icon' => 'fas fa-gas-pump', 'label' => 'Bahan Bakar', 'value' => 'Bensin'],
-                        ['icon' => 'fas fa-tachometer-alt', 'label' => 'Mesin', 'value' => '2.0L Hybrid'],
-                        ['icon' => 'fas fa-palette', 'label' => 'Warna', 'value' => 'Putih Pearl'],
-                        ['icon' => 'fas fa-calendar', 'label' => 'Tahun', 'value' => '2024'],
+                        ['icon' => 'fas fa-users', 'label' => 'Kapasitas', 'value' => $vehicle->seats . ' Penumpang'],
+                        ['icon' => 'fas fa-cog', 'label' => 'Transmisi', 'value' => $vehicle->transmission],
+                        ['icon' => 'fas fa-gas-pump', 'label' => 'Kategori', 'value' => $vehicle->type],
+                        ['icon' => 'fas fa-star', 'label' => 'Rating', 'value' => $vehicle->rating . ' / 5.0'],
+                        ['icon' => 'fas fa-shield-alt', 'label' => 'Asuransi', 'value' => 'Terlindungi'],
+                        ['icon' => 'fas fa-calendar-check', 'label' => 'Tahun', 'value' => '2023 - 2024'],
                     ];
                     @endphp
                     @foreach($specs as $spec)
-                    <div class="bg-slate-50 rounded-2xl p-4 flex items-center gap-3">
-                        <div class="w-9 h-9 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div class="bg-white border border-slate-50 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
                             <i class="{{ $spec['icon'] }} text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-400 font-medium">{{ $spec['label'] }}</p>
-                            <p class="font-bold text-slate-800 text-sm">{{ $spec['value'] }}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">{{ $spec['label'] }}</p>
+                            <p class="font-extrabold text-slate-800 text-sm leading-tight">{{ $spec['value'] }}</p>
                         </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Tab Content: Fasilitas --}}
-            <div id="tab-fasilitas" class="tab-content py-6 hidden">
-                <div class="grid grid-cols-2 gap-3">
-                    @php
-                    $fasilitas = ['AC Double Blower', 'Kursi Captain', 'Sunroof', 'Kamera Mundur', 'Apple CarPlay', 'Wireless Charging', 'USB Port x4', 'Sensor Parkir', 'Keyless Entry', 'Head Unit Touchscreen'];
-                    @endphp
-                    @foreach($fasilitas as $f)
-                    <div class="flex items-center gap-3 text-sm text-slate-700">
-                        <i class="fas fa-check-circle text-green-500 flex-shrink-0"></i>
-                        <span>{{ $f }}</span>
                     </div>
                     @endforeach
                 </div>
             </div>
 
             {{-- Tab Content: Syarat Sewa --}}
-            <div id="tab-syarat" class="tab-content py-6 hidden">
-                <ul class="space-y-3 text-sm text-slate-700">
-                    @php
-                    $syarat = [
-                        'KTP asli yang masih berlaku (wajib)',
-                        'SIM A yang masih berlaku',
-                        'Jaminan: KTP/KK/Paspor atau uang tunai Rp 500.000',
-                        'Usia minimal penyewa: 21 tahun',
-                        'Tidak diperkenankan untuk antar-kota tanpa izin',
-                        'Pengisian bensin menjadi tanggung jawab penyewa',
-                        'Kendaraan dikembalikan dalam kondisi bersih',
-                        'Keterlambatan pengembalian dikenakan denda Rp 50.000/jam',
-                    ];
-                    @endphp
-                    @foreach($syarat as $s)
-                    <li class="flex items-start gap-3">
-                        <i class="fas fa-info-circle text-blue-500 mt-0.5 flex-shrink-0"></i>
-                        <span>{{ $s }}</span>
-                    </li>
-                    @endforeach
-                </ul>
+            <div id="tab-syarat" class="tab-content py-8 hidden space-y-4">
+                @foreach (['KTP asli yang masih berlaku', 'SIM A yang masih berlaku (untuk mobil)', 'Jaminan identitas asli', 'Minimal usia 21 tahun', 'Dilarang membawa barang berbau tajam'] as $s)
+                <div class="flex items-center gap-4 text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <i class="fas fa-check-circle text-blue-600"></i>
+                    <span class="text-sm font-medium">{{ $s }}</span>
+                </div>
+                @endforeach
             </div>
 
             {{-- Tab Content: Ulasan --}}
-            <div id="tab-ulasan" class="tab-content py-6 hidden">
-                <div class="flex items-center gap-6 mb-6 p-5 bg-blue-50 rounded-2xl">
-                    <div class="text-center">
-                        <p class="text-5xl font-black text-blue-600">4.9</p>
-                        <div class="flex gap-1 mt-1 justify-center">
-                            @for($i = 0; $i < 5; $i++)<i class="fas fa-star text-yellow-400 text-sm"></i>@endfor
+            <div id="tab-ulasan" class="tab-content py-8 hidden">
+                <div class="bg-blue-600 rounded-3xl p-8 text-white flex flex-col md:flex-row items-center gap-10 shadow-xl shadow-blue-100">
+                    <div class="text-center md:text-left">
+                        <p class="text-6xl font-black mb-2">{{ $vehicle->rating }}</p>
+                        <div class="flex gap-1 text-yellow-400 mb-2 justify-center md:justify-start">
+                            @for($i=0; $i<5; $i++) <i class="fas fa-star text-sm"></i> @endfor
                         </div>
-                        <p class="text-xs text-slate-500 mt-1">128 Ulasan</p>
+                        <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Skor Kepuasan</p>
                     </div>
-                    <div class="flex-1 space-y-1.5">
-                        @foreach([['5',92],['4',28],['3',6],['2',2],['1',0]] as [$star,$count])
-                        <div class="flex items-center gap-2 text-xs">
-                            <span class="w-2 text-slate-500">{{ $star }}</span>
-                            <i class="fas fa-star text-yellow-400 text-xs"></i>
-                            <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-yellow-400 rounded-full" style="width: {{ ($count/128)*100 }}%"></div>
-                            </div>
-                            <span class="text-slate-400 w-6">{{ $count }}</span>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Sample reviews --}}
-                @php
-                $ulasan = [
-                    ['name'=>'Budi S.','date'=>'25 Mar 2025','text'=>'Mobilnya sangat terawat dan bersih. Proses booking mudah, rekomen!','avatar'=>'B','rating'=>5],
-                    ['name'=>'Sari D.','date'=>'18 Mar 2025','text'=>'Pelayanan cepat dan responsif. Pasti sewa lagi di sini.','avatar'=>'S','rating'=>5],
-                ];
-                @endphp
-                <div class="space-y-4">
-                    @foreach($ulasan as $u)
-                    <div class="border border-slate-100 rounded-2xl p-5">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">{{ $u['avatar'] }}</div>
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm">{{ $u['name'] }}</p>
-                                <p class="text-xs text-slate-400">{{ $u['date'] }}</p>
-                            </div>
-                            <div class="ml-auto flex gap-0.5">
-                                @for($i=0;$i<$u['rating'];$i++)<i class="fas fa-star text-yellow-400 text-xs"></i>@endfor
-                            </div>
-                        </div>
-                        <p class="text-sm text-slate-600">"{{ $u['text'] }}"</p>
-                    </div>
-                    @endforeach
+                    <div class="h-px md:h-16 w-full md:w-px bg-white/20"></div>
+                    <p class="text-sm leading-relaxed opacity-90 max-w-md italic font-medium">"Kendaraan ini sangat diminati oleh pelanggan kami karena kondisinya yang selalu prima dan performa yang tangguh untuk perjalanan jauh."</p>
                 </div>
             </div>
 
@@ -192,89 +111,135 @@
 
         {{-- ===== RIGHT: BOOKING CARD ===== --}}
         <div class="lg:col-span-1">
-            <div class="bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sticky top-22">
+            <div class="bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl p-8 sticky top-24">
 
                 {{-- Price --}}
-                <div class="mb-5">
-                    <p class="text-slate-400 text-sm">Harga per hari</p>
-                    <p class="text-4xl font-black text-slate-900 mt-1">Rp 650.000</p>
-                    <p class="text-xs text-slate-400 mt-1">Sudah termasuk asuransi dasar</p>
+                <div class="mb-8">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Harga Sewa</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-black text-slate-900 leading-none">Rp {{ number_format($vehicle->price_per_day, 0, ',', '.') }}</span>
+                        <span class="text-slate-400 font-bold">/ hari</span>
+                    </div>
                 </div>
 
-                <div class="flex gap-1 mb-5">
-                    @for($i=0;$i<5;$i++)<i class="fas fa-star text-yellow-400 text-sm"></i>@endfor
-                    <span class="text-sm text-slate-500 ml-2">4.9 (128 ulasan)</span>
-                </div>
+                {{-- Booking Form --}}
+                @auth
+                <form action="{{ route('booking.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
 
-                {{-- Date Picker --}}
-                <div class="space-y-3 mb-5">
-                    <div class="border border-slate-200 rounded-2xl overflow-hidden divide-y divide-slate-200">
-                        <div class="p-4">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide block mb-1">Tanggal Mulai</label>
-                            <input type="date" id="book-start" class="w-full text-slate-800 font-semibold bg-transparent focus:outline-none text-sm">
+                    {{-- Date Picker --}}
+                    <div class="space-y-4 mb-8">
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Tanggal Mulai</label>
+                                <input type="date" name="start_date" id="book-start" class="w-full bg-transparent text-slate-900 font-bold focus:outline-none text-sm p-0">
+                            </div>
+                            <hr class="border-slate-200">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Tanggal Selesai</label>
+                                <input type="date" name="end_date" id="book-end" class="w-full bg-transparent text-slate-900 font-bold focus:outline-none text-sm p-0">
+                            </div>
                         </div>
-                        <div class="p-4">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide block mb-1">Tanggal Selesai</label>
-                            <input type="date" id="book-end" class="w-full text-slate-800 font-semibold bg-transparent focus:outline-none text-sm">
+                    </div>
+
+                    {{-- Price Breakdown --}}
+                    <div id="price-breakdown" class="bg-blue-50/50 rounded-2xl p-6 mb-8 space-y-3 text-sm hidden border border-blue-100/50 transition-all duration-500">
+                        <div class="flex justify-between text-slate-600">
+                            <span class="font-medium text-xs">Sewa {{ number_format($vehicle->price_per_day, 0, ',', '.') }} × <span id="days-count" class="font-bold">0</span> hari</span>
+                            <span id="subtotal" class="font-bold text-slate-900">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span class="font-medium text-xs">Biaya Layanan & Pajak</span>
+                            <span class="font-bold text-slate-900">Rp 50.000</span>
+                        </div>
+                        <div class="pt-4 border-t border-blue-200/50 flex justify-between items-center text-slate-900">
+                            <span class="font-bold">Total Pembayaran</span>
+                            <span id="grand-total" class="text-xl font-black text-blue-600">Rp 0</span>
                         </div>
                     </div>
-                </div>
 
-                {{-- Price Breakdown --}}
-                <div id="price-breakdown" class="bg-slate-50 rounded-2xl p-4 mb-5 space-y-2 text-sm hidden">
-                    <div class="flex justify-between text-slate-600">
-                        <span>Rp 650.000 × <span id="days-count">0</span> hari</span>
-                        <span id="subtotal">Rp 0</span>
+                    {{-- CTA --}}
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl transition-all active:scale-95 shadow-xl shadow-blue-200 text-sm flex items-center justify-center gap-3">
+                        <i class="fas fa-calendar-check lg:text-lg"></i>
+                        PESAN SEKARANG
+                    </button>
+                </form>
+                @else
+                    {{-- Date Picker (Static for Guests) --}}
+                    <div class="space-y-4 mb-8">
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Tanggal Mulai</label>
+                                <input type="date" id="book-start" class="w-full bg-transparent text-slate-900 font-bold focus:outline-none text-sm p-0">
+                            </div>
+                            <hr class="border-slate-200">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Tanggal Selesai</label>
+                                <input type="date" id="book-end" class="w-full bg-transparent text-slate-900 font-bold focus:outline-none text-sm p-0">
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex justify-between text-slate-600">
-                        <span>Biaya layanan</span>
-                        <span>Rp 25.000</span>
-                    </div>
-                    <div class="flex justify-between font-bold text-slate-900 pt-2 border-t border-slate-200">
-                        <span>Total</span>
-                        <span id="grand-total" class="text-blue-600">Rp 0</span>
-                    </div>
-                </div>
 
-                {{-- CTA --}}
-                <a href="{{ route('login') }}" class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-blue-200 text-sm">
-                    <i class="fas fa-calendar-check mr-2"></i>Pesan Sekarang
-                </a>
-                <p class="text-center text-xs text-slate-400 mt-3">Tidak akan dikenakan biaya sekarang</p>
+                    <a href="{{ route('login') }}" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-5 rounded-2xl transition-all active:scale-95 shadow-xl shadow-slate-200 text-sm">
+                        <i class="fas fa-sign-in-alt mr-2"></i> LOGIN UNTUK MEMESAN
+                    </a>
+                @endauth
+                
+                <p class="text-center text-[10px] font-bold text-slate-400 mt-5 uppercase tracking-widest">Proses cepat & tanpa biaya admin</p>
 
-                {{-- Contact --}}
+                <hr class="my-8 border-slate-100">
+
+                {{-- Chat CS --}}
                 <a href="https://wa.me/6281234567890" target="_blank"
-                    class="flex items-center justify-center gap-2 w-full border border-green-200 hover:bg-green-50 text-green-600 font-semibold py-3 rounded-2xl mt-3 transition-all text-sm">
-                    <i class="fab fa-whatsapp text-lg"></i> Tanya via WhatsApp
+                    class="flex items-center justify-center gap-3 w-full bg-green-50 hover:bg-green-100 text-green-600 font-bold py-4 rounded-2xl transition-all text-sm border border-green-100">
+                    <i class="fab fa-whatsapp text-xl"></i> Konsultasi via WhatsApp
                 </a>
             </div>
         </div>
     </div>
 
     {{-- Related Vehicles --}}
-    <div class="mt-16">
-        <h2 class="text-2xl font-black text-slate-900 mb-6">Kendaraan <span class="text-blue-600">Serupa</span></h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            @php
-            $related = [
-                ['name'=>'Mitsubishi Xpander','type'=>'MPV','price'=>'Rp 500.000','img'=>'https://images.unsplash.com/photo-1583267746897-2cf415887172?auto=format&fit=crop&q=80&w=600'],
-                ['name'=>'Honda CR-V Turbo','type'=>'SUV','price'=>'Rp 750.000','img'=>'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=600'],
-                ['name'=>'Daihatsu Xenia','type'=>'MPV','price'=>'Rp 380.000','img'=>'https://images.unsplash.com/photo-1603553329474-99f95f35394f?auto=format&fit=crop&q=80&w=600'],
-            ];
-            @endphp
+    <div class="mt-24">
+        @php
+            $related = \App\Models\Vehicle::where('id', '!=', $vehicle->id)->where('type', $vehicle->type)->take(3)->get();
+            if($related->count() < 3) {
+                $related = \App\Models\Vehicle::where('id', '!=', $vehicle->id)->latest()->take(3)->get();
+            }
+        @endphp
+        <div class="flex items-center justify-between mb-10">
+            <div>
+                <h2 class="text-3xl font-black text-slate-900">Kendaraan <span class="text-blue-600">Serupa</span></h2>
+                <p class="text-slate-400 text-sm mt-1">Mungkin Anda juga tertarik dengan armada ini</p>
+            </div>
+            <a href="{{ route('browse') }}" class="text-blue-600 font-bold text-sm hover:underline">Lihat Semua</a>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($related as $r)
-            <a href="{{ route('vehicle.detail', 1) }}" class="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                <div class="h-44 overflow-hidden">
-                    <img src="{{ $r['img'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $r['name'] }}">
+            <div class="group bg-white rounded-3xl border border-slate-100 p-4 hover:shadow-2xl transition-all duration-500">
+                <div class="h-44 rounded-2xl overflow-hidden mb-5">
+                    <img src="{{ $r->image ? (strpos($r->image, 'http') === 0 ? $r->image : asset('storage/' . $r->image)) : 'https://placehold.co/600x400?text=No+Image' }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" alt="{{ $r->name }}">
                 </div>
-                <div class="p-4 flex justify-between items-center">
-                    <div>
-                        <p class="font-bold text-slate-900 text-sm">{{ $r['name'] }}</p>
-                        <p class="text-slate-400 text-xs">{{ $r['type'] }}</p>
+                <div class="px-2 pb-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-slate-900 font-bold text-lg leading-none mb-1">{{ $r->name }}</p>
+                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">{{ $r->type }}</p>
+                        </div>
+                        <a href="{{ route('vehicle.detail', $r->id) }}" class="w-10 h-10 bg-slate-50 text-slate-400 hover:bg-blue-600 hover:text-white rounded-xl flex items-center justify-center transition-all">
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
                     </div>
-                    <p class="font-black text-blue-600 text-sm">{{ $r['price'] }}<small class="text-slate-400 font-normal">/hr</small></p>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+                        <div class="flex items-center gap-3 text-slate-400">
+                             <span class="flex items-center gap-1 text-[10px] font-bold"><i class="fas fa-users text-blue-400"></i> {{ $r->seats }}</span>
+                             <span class="flex items-center gap-1 text-[10px] font-bold"><i class="fas fa-cog text-blue-400"></i> {{ $r->transmission }}</span>
+                        </div>
+                        <p class="font-black text-blue-600">Rp {{ number_format($r->price_per_day, 0, ',', '.') }}<small class="text-slate-400 text-[10px] font-normal uppercase ml-1">/hari</small></p>
+                    </div>
                 </div>
-            </a>
+            </div>
             @endforeach
         </div>
     </div>
@@ -284,19 +249,12 @@
 
 @push('scripts')
 <script>
-    // Image gallery switcher
-    function switchImage(el) {
-        document.getElementById('main-image').src = el.getAttribute('data-src');
-        document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active', 'border-blue-600'));
-        el.classList.add('active', 'border-blue-600');
-    }
-
     // Tab system
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'text-blue-600', 'font-black'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            this.classList.add('active');
+            this.classList.add('active', 'text-blue-600', 'font-black');
             document.getElementById(this.dataset.tab).classList.remove('hidden');
         });
     });
@@ -305,14 +263,16 @@
     const startInput = document.getElementById('book-start');
     const endInput   = document.getElementById('book-end');
     const priceBreakdown = document.getElementById('price-breakdown');
-    const pricePerDay = 650000;
-    const serviceFee  = 25000;
+    const pricePerDay = {{ $vehicle->price_per_day }};
+    const serviceFee  = 50000;
 
     const fmt = d => d.toISOString().split('T')[0];
     const today = new Date();
     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
     startInput.value = fmt(today);
+    startInput.min = fmt(today);
     endInput.value   = fmt(tomorrow);
+    endInput.min = fmt(tomorrow);
     updatePrice();
 
     function updatePrice() {
@@ -339,13 +299,5 @@
         updatePrice();
     });
     endInput.addEventListener('change', updatePrice);
-
-    // Wishlist
-    document.getElementById('wishlist-detail-btn').addEventListener('click', function() {
-        const icon = this.querySelector('i');
-        icon.classList.toggle('far');
-        icon.classList.toggle('fas');
-        icon.classList.toggle('text-red-500');
-    });
 </script>
 @endpush

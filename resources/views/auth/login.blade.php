@@ -8,8 +8,14 @@
     <p class="text-slate-500 mt-2">Masuk ke akun RentDrive Anda</p>
 </div>
 
-<form class="mt-8 space-y-5" action="#" method="POST">
+<form class="mt-8 space-y-5" action="{{ route('login.post') }}" method="POST">
     @csrf
+
+    @if($errors->any())
+    <div class="p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-semibold">
+        {{ $errors->first() }}
+    </div>
+    @endif
 
     {{-- Email --}}
     <div>

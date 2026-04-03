@@ -7,13 +7,6 @@
     .hero-bg {
         background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%);
     }
-    .floating-card {
-        animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); }
-    }
     .card-hover {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -39,77 +32,50 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
+            {{-- Text Content --}}
+            <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 text-blue-100 text-xs font-semibold px-4 py-2 rounded-full mb-8">
+                <i class="fas fa-location-dot text-red-400"></i>
+                Jangkauan Wilayah Jabodetabek
+            </span>
+            
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black leading-tight">
+                Sewa Kendaraan<br>
+                <span class="text-blue-200 text-5xl sm:text-7xl">Se-Jabodetabek</span>
+            </h1>
+            
+            <p class="mt-6 text-blue-100 text-lg sm:text-xl leading-relaxed max-w-2xl">
+                Mobil & motor berkualitas siap antar jemput ke lokasi Anda. Temukan armada terbaik untuk perjalanan Anda di Jakarta, Bogor, Depok, Tangerang, dan Bekasi.
+            </p>
 
-            {{-- Left: Text --}}
-            <div>
-                <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 text-blue-100 text-xs font-semibold px-4 py-2 rounded-full mb-6">
-                    <i class="fas fa-star text-yellow-400"></i>
-                    #1 Platform Sewa Kendaraan Indonesia
-                </span>
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight">
-                    Perjalanan Nyaman<br>
-                    <span class="text-blue-200">Mulai dari Sini</span>
-                </h1>
-                <p class="mt-5 text-blue-100 text-lg leading-relaxed max-w-lg">
-                    Ribuan armada mobil & motor berkualitas tersedia 24 jam. Harga transparan, proses cepat, tanpa biaya tersembunyi.
-                </p>
-
-                {{-- Stats --}}
-                <div class="flex gap-8 mt-8">
-                    <div>
-                        <p class="text-3xl font-black">500+</p>
-                        <p class="text-blue-200 text-sm">Armada Unit</p>
-                    </div>
-                    <div class="w-px bg-white/20"></div>
-                    <div>
-                        <p class="text-3xl font-black">50K+</p>
-                        <p class="text-blue-200 text-sm">Pelanggan Puas</p>
-                    </div>
-                    <div class="w-px bg-white/20"></div>
-                    <div>
-                        <p class="text-3xl font-black">4.9⭐</p>
-                        <p class="text-blue-200 text-sm">Rating Rata-rata</p>
-                    </div>
+            {{-- Stats --}}
+            <div class="flex flex-wrap justify-center gap-8 md:gap-12 mt-10">
+                <div class="text-center">
+                    <p class="text-3xl sm:text-4xl font-black">500+</p>
+                    <p class="text-blue-200 text-sm">Armada Unit</p>
                 </div>
-
-                <div class="flex gap-4 mt-10">
-                    <a href="{{ route('browse') }}" class="bg-white text-blue-700 font-bold px-7 py-3.5 rounded-xl hover:bg-blue-50 transition-all active:scale-95 shadow-xl">
-                        <i class="fas fa-search mr-2"></i>Cari Kendaraan
-                    </a>
-                    <a href="{{ route('how.it.works') }}" class="border border-white/40 hover:bg-white/10 font-semibold px-7 py-3.5 rounded-xl transition-all">
-                        <i class="fas fa-play mr-2"></i>Cara Kerja
-                    </a>
+                <div class="hidden sm:block w-px h-10 bg-white/20 my-auto"></div>
+                <div class="text-center">
+                    <p class="text-3xl sm:text-4xl font-black">50K+</p>
+                    <p class="text-blue-200 text-sm">Pelanggan Puas</p>
+                </div>
+                <div class="hidden sm:block w-px h-10 bg-white/20 my-auto"></div>
+                <div class="text-center">
+                    <p class="text-2xl sm:text-4xl font-black flex items-center justify-center gap-2">
+                        4.9<i class="fas fa-star text-yellow-400 text-xl sm:text-2xl"></i>
+                    </p>
+                    <p class="text-blue-200 text-sm">Rating Rata-rata</p>
                 </div>
             </div>
 
-            {{-- Right: Floating Card --}}
-            <div class="hidden lg:flex justify-center">
-                <div class="relative">
-                    <div class="floating-card bg-white/15 backdrop-blur-md border border-white/20 rounded-3xl p-6 w-72 shadow-2xl">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-car text-white"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-sm">Toyota Alphard</p>
-                                <p class="text-blue-200 text-xs">MPV Premium</p>
-                            </div>
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&q=80&w=400" class="w-full h-36 object-cover rounded-2xl mb-4" alt="Alphard">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-blue-200 text-xs">Harga per hari</p>
-                                <p class="text-2xl font-black">Rp 1,2 Jt</p>
-                            </div>
-                            <span class="bg-green-400 text-green-900 text-xs font-bold px-3 py-1.5 rounded-full">Tersedia</span>
-                        </div>
-                    </div>
-                    {{-- Badge floating --}}
-                    <div class="absolute -bottom-4 -right-4 bg-yellow-400 text-yellow-900 font-black text-sm px-4 py-2 rounded-full shadow-lg">
-                        🔥 Promo Hari Ini!
-                    </div>
-                </div>
+            {{-- CTA Buttons --}}
+            <div class="flex flex-col sm:flex-row gap-4 mt-12 w-full sm:w-auto">
+                <a href="{{ route('browse') }}" class="bg-white text-blue-700 font-bold px-10 py-4 rounded-xl hover:bg-blue-50 transition-all active:scale-95 shadow-xl text-lg">
+                    <i class="fas fa-search mr-2"></i>Cari Kendaraan
+                </a>
+                <a href="{{ route('how.it.works') }}" class="border border-white/40 hover:bg-white/10 font-semibold px-10 py-4 rounded-xl transition-all text-lg">
+                    <i class="fas fa-play mr-2"></i>Cara Kerja
+                </a>
             </div>
         </div>
     </div>
@@ -123,17 +89,31 @@
 </section>
 
 {{-- ===== SEARCH BAR SECTION ===== --}}
-<section class="max-w-4xl mx-auto px-4 -mt-2 relative z-10">
+<section class="max-w-6xl mx-auto px-4 -mt-2 relative z-10">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6">
-        <h2 class="text-lg font-bold text-slate-800 mb-5">Cari Kendaraan Tersedia</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h2 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2">
+            <i class="fas fa-sliders text-blue-500"></i>
+            Tentukan Perjalanan Anda
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-2 font-black">Lokasi Penjemputan</label>
+                <select id="filter-location" class="search-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 cursor-pointer">
+                    <option value="">Semua Lokasi</option>
+                    <option value="jakarta">Jakarta</option>
+                    <option value="bogor">Bogor</option>
+                    <option value="depok">Depok</option>
+                    <option value="tangerang">Tangerang</option>
+                    <option value="bekasi">Bekasi</option>
+                </select>
+            </div>
             <div>
                 <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-2">Jenis Kendaraan</label>
                 <select id="filter-type" class="search-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 cursor-pointer">
                     <option value="">Semua Jenis</option>
-                    <option value="mobil">🚗 Mobil</option>
-                    <option value="motor">🏍️ Motor</option>
-                    <option value="minibus">🚐 Minibus</option>
+                    <option value="mobil">Mobil</option>
+                    <option value="motor">Motor</option>
+                    <option value="minibus">Minibus</option>
                 </select>
             </div>
             <div>
@@ -145,8 +125,8 @@
                 <input type="date" id="filter-end" class="search-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700">
             </div>
             <div class="flex items-end">
-                <a href="{{ route('browse') }}" id="btn-search" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-center text-sm shadow-md">
-                    <i class="fas fa-search mr-2"></i>Cari Sekarang
+                <a href="{{ route('browse') }}" id="btn-search" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all active:scale-95 text-center text-sm shadow-md">
+                    Cari Sekarang
                 </a>
             </div>
         </div>
@@ -163,9 +143,9 @@
         @php
         $categories = [
             ['icon' => 'fas fa-car', 'label' => 'Mobil Sedan', 'count' => '45 Unit', 'color' => 'bg-blue-50 text-blue-600', 'border' => 'border-blue-100'],
-            ['icon' => 'fas fa-shuttle-van', 'label' => 'MPV / SUV', 'count' => '32 Unit', 'color' => 'bg-purple-50 text-purple-600', 'border' => 'border-purple-100'],
-            ['icon' => 'fas fa-motorcycle', 'label' => 'Motor', 'count' => '120 Unit', 'color' => 'bg-orange-50 text-orange-600', 'border' => 'border-orange-100'],
-            ['icon' => 'fas fa-bus', 'label' => 'Minibus / ELF', 'count' => '18 Unit', 'color' => 'bg-green-50 text-green-600', 'border' => 'border-green-100'],
+            ['icon' => 'fas fa-shuttle-van', 'label' => 'MPV / SUV', 'count' => '32 Unit', 'color' => 'bg-blue-50 text-blue-600', 'border' => 'border-blue-100'],
+            ['icon' => 'fas fa-motorcycle', 'label' => 'Motor', 'count' => '120 Unit', 'color' => 'bg-blue-50 text-blue-600', 'border' => 'border-blue-100'],
+            ['icon' => 'fas fa-bus', 'label' => 'Minibus / ELF', 'count' => '18 Unit', 'color' => 'bg-blue-50 text-blue-600', 'border' => 'border-blue-100'],
         ];
         @endphp
         @foreach($categories as $cat)
@@ -192,64 +172,97 @@
         </a>
     </div>
 
-    @php
-    $vehicles = [
-        ['name' => 'Toyota Innova Zenix', 'type' => 'MPV', 'seats' => 7, 'transmission' => 'Matic', 'price' => 'Rp 650.000', 'status' => 'Tersedia', 'status_color' => 'bg-green-100 text-green-700', 'img' => 'https://images.unsplash.com/photo-1570733577524-3a047079e80d?auto=format&fit=crop&q=80&w=600', 'rating' => '4.9', 'reviews' => 128],
-        ['name' => 'Honda CR-V Turbo', 'type' => 'SUV', 'seats' => 5, 'transmission' => 'Matic', 'price' => 'Rp 750.000', 'status' => 'Tersedia', 'status_color' => 'bg-green-100 text-green-700', 'img' => 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=600', 'rating' => '4.8', 'reviews' => 95],
-        ['name' => 'Honda PCX 160', 'type' => 'Motor Sport', 'seats' => 2, 'transmission' => 'Matic', 'price' => 'Rp 120.000', 'status' => 'Disewa', 'status_color' => 'bg-orange-100 text-orange-700', 'img' => 'https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&q=80&w=600', 'rating' => '4.7', 'reviews' => 210],
-    ];
-    @endphp
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
         @foreach($vehicles as $v)
         <div class="card-hover bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm group">
             {{-- Image --}}
             <div class="relative overflow-hidden h-52">
-                <img src="{{ $v['img'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $v['name'] }}">
+                <img src="{{ $v->image ? (strpos($v->image, 'http') === 0 ? $v->image : asset('storage/' . $v->image)) : 'https://placehold.co/600x400?text=No+Image' }}" 
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $v->name }}">
                 <div class="absolute top-3 left-3">
-                    <span class="text-xs font-bold px-3 py-1.5 rounded-full {{ $v['status_color'] }}">
-                        {{ $v['status'] }}
+                    @php
+                        $statusColor = $v->status == 'Tersedia' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700';
+                    @endphp
+                    <span class="text-[10px] font-bold px-3 py-1.5 rounded-full {{ $statusColor }} uppercase tracking-wider">
+                        {{ $v->status }}
                     </span>
-                </div>
-                <div class="absolute top-3 right-3">
-                    <button class="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors wishlist-btn shadow-sm">
-                        <i class="far fa-heart text-sm"></i>
-                    </button>
                 </div>
             </div>
 
             {{-- Content --}}
-            <div class="p-5">
-                <div class="flex justify-between items-start">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
                     <div>
-                        <h3 class="font-bold text-slate-900">{{ $v['name'] }}</h3>
-                        <p class="text-slate-400 text-sm mt-0.5">{{ $v['type'] }}</p>
+                        <h3 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ $v->name }}</h3>
+                        <p class="text-slate-400 text-xs mt-1 uppercase tracking-widest font-bold">{{ $v->type }}</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-black text-blue-600">{{ $v['price'] }}</p>
-                        <p class="text-slate-400 text-xs">/hari</p>
+                        <p class="font-black text-blue-600 text-lg">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</p>
+                        <p class="text-slate-400 text-[10px] uppercase font-bold tracking-widest">/ hari</p>
                     </div>
                 </div>
 
                 {{-- Specs --}}
-                <div class="flex gap-4 mt-4 text-xs text-slate-500 border-t border-slate-50 pt-4">
-                    <span class="flex items-center gap-1"><i class="fas fa-users"></i> {{ $v['seats'] }} Kursi</span>
-                    <span class="flex items-center gap-1"><i class="fas fa-cog"></i> {{ $v['transmission'] }}</span>
-                    <span class="flex items-center gap-1 ml-auto"><i class="fas fa-star text-yellow-400"></i> {{ $v['rating'] }} ({{ $v['reviews'] }})</span>
+                <div class="flex gap-4 mb-6 text-xs text-slate-500 border-t border-slate-50 pt-4">
+                    <span class="flex items-center gap-1.5"><i class="fas fa-users text-blue-400"></i> {{ $v->seats }} Kursi</span>
+                    <span class="flex items-center gap-1.5"><i class="fas fa-cog text-blue-400"></i> {{ $v->transmission }}</span>
+                    <span class="flex items-center gap-1.5 ml-auto"><i class="fas fa-star text-yellow-500"></i> {{ $v->rating }}</span>
                 </div>
 
                 {{-- Action --}}
-                <div class="mt-4 flex gap-2">
-                    <a href="{{ route('vehicle.detail', 1) }}" class="flex-1 text-center border border-slate-200 hover:border-blue-300 hover:text-blue-600 text-slate-600 font-semibold py-2.5 rounded-xl text-sm transition-all">
+                <div class="flex gap-2">
+                    <a href="{{ route('vehicle.detail', $v->id) }}" class="flex-1 text-center border border-slate-200 hover:border-blue-300 hover:text-blue-600 text-slate-600 font-bold py-3 rounded-xl text-xs transition-all uppercase tracking-widest">
                         Detail
                     </a>
-                    <a href="{{ route('vehicle.detail', 1) }}" class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all">
-                        <i class="fas fa-calendar-check mr-1"></i> Sewa
+                    <a href="{{ route('vehicle.detail', $v->id) }}" class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs transition-all uppercase tracking-widest shadow-lg shadow-blue-100">
+                        Sewa
                     </a>
                 </div>
             </div>
         </div>
         @endforeach
+    </div>
+    </div>
+</section>
+
+{{-- ===== AREA LAYANAN SECTION ===== --}}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
+    <div class="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-14 shadow-sm relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 opacity-[0.03]">
+            <i class="fas fa-map-location-dot text-[20rem] text-blue-600 -rotate-12"></i>
+        </div>
+        <div class="relative z-10">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div>
+                    <h2 class="text-4xl font-black text-slate-900">Area Jangkauan <span class="text-blue-600">Layanan</span></h2>
+                    <p class="text-slate-500 mt-4 text-lg max-w-xl">Kami melayani layanan antar-jemput kendaraan langsung ke lokasi Anda di seluruh wilayah Jabodetabek tanpa biaya tambahan.</p>
+                </div>
+                <div class="flex items-center gap-3 bg-blue-50 px-5 py-3 rounded-2xl border border-blue-100">
+                    <i class="fas fa-circle-check text-blue-600 text-xl"></i>
+                    <span class="text-blue-800 font-bold text-sm">Gratis Antar Jemput</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                @php
+                $cities = [
+                    ['name' => 'Jakarta', 'icon' => 'fas fa-city'],
+                    ['name' => 'Bogor', 'icon' => 'fas fa-mountain-city'],
+                    ['name' => 'Depok', 'icon' => 'fas fa-building-user'],
+                    ['name' => 'Tangerang', 'icon' => 'fas fa-plane-up'],
+                    ['name' => 'Bekasi', 'icon' => 'fas fa-industry'],
+                ];
+                @endphp
+                @foreach($cities as $city)
+                <div class="flex flex-col items-center p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50 hover:shadow-lg hover:shadow-blue-900/5 transition-all group cursor-default">
+                    <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-5 group-hover:bg-blue-600 group-hover:text-white transition-all transform group-hover:-translate-y-1">
+                        <i class="{{ $city['icon'] }} text-2xl"></i>
+                    </div>
+                    <span class="font-extrabold text-slate-800 tracking-tight text-lg">{{ $city['name'] }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 </section>
 

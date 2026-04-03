@@ -105,56 +105,66 @@
                 </div>
             </div>
 
-            {{-- Vehicle Cards Grid --}}
-            @php
-            $allVehicles = [
-                ['id'=>1,'name'=>'Toyota Innova Zenix','type'=>'MPV','seats'=>7,'tx'=>'Matic','price'=>'Rp 650.000','status'=>'Tersedia','sc'=>'bg-green-100 text-green-700','img'=>'https://images.unsplash.com/photo-1570733577524-3a047079e80d?auto=format&fit=crop&q=80&w=600','rating'=>'4.9','rev'=>128,'badge'=>'Terlaris'],
-                ['id'=>2,'name'=>'Honda CR-V Turbo','type'=>'SUV','seats'=>5,'tx'=>'Matic','price'=>'Rp 750.000','status'=>'Tersedia','sc'=>'bg-green-100 text-green-700','img'=>'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=600','rating'=>'4.8','rev'=>95,'badge'=>null],
-                ['id'=>3,'name'=>'Honda PCX 160','type'=>'Motor','seats'=>2,'tx'=>'Matic','price'=>'Rp 120.000','status'=>'Disewa','sc'=>'bg-orange-100 text-orange-700','img'=>'https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&q=80&w=600','rating'=>'4.7','rev'=>210,'badge'=>null],
-                ['id'=>4,'name'=>'Toyota Alphard','type'=>'MPV Mewah','seats'=>7,'tx'=>'Matic','price'=>'Rp 1.200.000','status'=>'Tersedia','sc'=>'bg-green-100 text-green-700','img'=>'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&q=80&w=600','rating'=>'5.0','rev'=>64,'badge'=>'Premium'],
-                ['id'=>5,'name'=>'Yamaha NMAX 155','type'=>'Motor','seats'=>2,'tx'=>'Matic','price'=>'Rp 100.000','status'=>'Tersedia','sc'=>'bg-green-100 text-green-700','img'=>'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=600','rating'=>'4.6','rev'=>175,'badge'=>null],
-                ['id'=>6,'name'=>'Mitsubishi Xpander','type'=>'MPV','seats'=>7,'tx'=>'Manual','price'=>'Rp 500.000','status'=>'Tersedia','sc'=>'bg-green-100 text-green-700','img'=>'https://images.unsplash.com/photo-1583267746897-2cf415887172?auto=format&fit=crop&q=80&w=600','rating'=>'4.7','rev'=>88,'badge'=>null],
-                ['id'=>7,'name'=>'Daihatsu Xenia','type'=>'MPV','seats'=>7,'tx'=>'Manual','price'=>'Rp 380.000','status'=>'Tersedia','sc'=>'bg-green-100 text-green-700','img'=>'https://images.unsplash.com/photo-1603553329474-99f95f35394f?auto=format&fit=crop&q=80&w=600','rating'=>'4.5','rev'=>55,'badge'=>null],
-                ['id'=>8,'name'=>'Toyota Calya','type'=>'LCGC','seats'=>7,'tx'=>'Manual','price'=>'Rp 300.000','status'=>'Disewa','sc'=>'bg-orange-100 text-orange-700','img'=>'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&q=80&w=600','rating'=>'4.4','rev'=>42,'badge'=>null],
-                ['id'=>9,'name'=>'Honda Beat Street','type'=>'Motor','seats'=>2,'tx'=>'Matic','price'=>'Rp 75.000','status'=>'Tersedia','sc'=>'bg-green-100 text-green-700','img'=>'https://images.unsplash.com/photo-1558981285-6f0c94958bb6?auto=format&fit=crop&q=80&w=600','rating'=>'4.5','rev'=>320,'badge'=>null],
-            ];
-            @endphp
-
-            <div id="vehicle-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                @foreach($allVehicles as $v)
-                <div class="vehicle-card bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-                    <div class="relative overflow-hidden h-48">
-                        <img src="{{ $v['img'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $v['name'] }}">
-                        <div class="absolute top-3 left-3 flex gap-2">
-                            <span class="text-xs font-bold px-3 py-1 rounded-full {{ $v['sc'] }}">{{ $v['status'] }}</span>
-                            @if($v['badge'])
-                            <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-600 text-white">{{ $v['badge'] }}</span>
-                            @endif
+            <div id="vehicle-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 mt-12">
+                @foreach($vehicles as $v)
+                <div class="vehicle-card group bg-white rounded-3xl p-5 border border-slate-100 hover:border-blue-200 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-100/50"
+                    data-type="{{ strtolower($v->type) }}"
+                    data-price="{{ $v->price_per_day }}">
+                    
+                    {{-- Image --}}
+                    <div class="relative h-48 mb-6 overflow-hidden rounded-2xl bg-slate-50">
+                        <img src="{{ $v->image ? (strpos($v->image, 'http') === 0 ? $v->image : asset('storage/' . $v->image)) : 'https://placehold.co/600x400?text=No+Image' }}" 
+                             alt="{{ $v->name }}" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700">
+                        <div class="absolute top-4 left-4">
+                            @php
+                                $statusClass = $v->status == 'Tersedia' ? 'bg-green-500' : ($v->status == 'Perawatan' ? 'bg-orange-500' : 'bg-blue-600');
+                            @endphp
+                            <span class="{{ $statusClass }} text-white text-[10px] font-bold px-3 py-1 rounded-lg uppercase tracking-wider shadow-lg">
+                                {{ $v->status }}
+                            </span>
                         </div>
-                        <button class="wishlist-btn absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shadow-sm">
-                            <i class="far fa-heart text-sm"></i>
-                        </button>
                     </div>
-                    <div class="p-5">
+
+                    {{-- Info --}}
+                    <div class="p-2 space-y-4">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h3 class="font-bold text-slate-900 text-sm">{{ $v['name'] }}</h3>
-                                <p class="text-slate-400 text-xs mt-0.5">{{ $v['type'] }}</p>
+                                <h3 class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ $v->name }}</h3>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ $v->type }}</p>
                             </div>
-                            <div class="text-right">
-                                <p class="font-black text-blue-600 text-sm">{{ $v['price'] }}</p>
-                                <p class="text-slate-400 text-xs">/hari</p>
+                            <div class="flex items-center gap-1 text-orange-400 bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">
+                                <i class="fas fa-star text-[10px]"></i>
+                                <span class="text-xs font-bold text-slate-900">{{ $v->rating }}</span>
                             </div>
                         </div>
-                        <div class="flex gap-3 mt-3 text-xs text-slate-500 border-t border-slate-50 pt-3">
-                            <span><i class="fas fa-users mr-1"></i>{{ $v['seats'] }} Kursi</span>
-                            <span><i class="fas fa-cog mr-1"></i>{{ $v['tx'] }}</span>
-                            <span class="ml-auto"><i class="fas fa-star text-yellow-400 mr-1"></i>{{ $v['rating'] }} ({{ $v['rev'] }})</span>
+
+                        {{-- Specs Grid --}}
+                        <div class="grid grid-cols-2 gap-3 py-4 border-y border-slate-50">
+                            <div class="flex items-center gap-2 text-slate-500">
+                                <div class="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-xs text-blue-600">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="text-xs font-medium">{{ $v->seats }} Kursi</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-slate-500">
+                                <div class="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-xs text-blue-600">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <span class="text-xs font-medium">{{ $v->transmission }}</span>
+                            </div>
                         </div>
-                        <div class="mt-4 flex gap-2">
-                            <a href="{{ route('vehicle.detail', $v['id']) }}" class="flex-1 text-center border border-slate-200 hover:border-blue-300 hover:text-blue-600 text-slate-600 font-semibold py-2 rounded-xl text-xs transition-all">Detail</a>
-                            <a href="{{ route('vehicle.detail', $v['id']) }}" class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl text-xs transition-all">
-                                <i class="fas fa-calendar-check mr-1"></i>Sewa
+
+                        <div class="flex items-center justify-between pt-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mulai Dari</p>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-lg font-black text-blue-600">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</span>
+                                    <span class="text-xs text-slate-400 font-medium">/hari</span>
+                                </div>
+                            </div>
+                            <a href="{{ route('vehicle.detail', $v->id) }}" class="w-11 h-11 bg-slate-900 group-hover:bg-blue-600 text-white rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg shadow-slate-200">
+                                <i class="fas fa-arrow-right text-sm"></i>
                             </a>
                         </div>
                     </div>

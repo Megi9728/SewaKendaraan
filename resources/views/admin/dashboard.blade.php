@@ -7,144 +7,157 @@
 @section('content')
 
 {{-- ===== STAT CARDS ===== --}}
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
-    @php
-    $stats = [
-        ['label'=>'Total Pendapatan','value'=>'Rp 48,5 Jt','sub'=>'+12% dari bulan lalu','icon'=>'fas fa-wallet','color'=>'bg-blue-100 text-blue-600','trend'=>'up'],
-        ['label'=>'Pemesanan Aktif','value'=>'28','sub'=>'3 menunggu konfirmasi','icon'=>'fas fa-calendar-check','color'=>'bg-purple-100 text-purple-600','trend'=>'up'],
-        ['label'=>'Total Armada','value'=>'215','sub'=>'187 unit siap disewa','icon'=>'fas fa-car','color'=>'bg-green-100 text-green-600','trend'=>'stable'],
-        ['label'=>'Pelanggan Baru','value'=>'142','sub'=>'+8 hari ini','icon'=>'fas fa-users','color'=>'bg-orange-100 text-orange-600','trend'=>'up'],
-    ];
-    @endphp
-    @foreach($stats as $s)
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex items-start gap-4 hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 {{ $s['color'] }} rounded-2xl flex items-center justify-center flex-shrink-0">
-            <i class="{{ $s['icon'] }} text-lg"></i>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7 flex items-start gap-5 hover:shadow-xl transition-all duration-500 group">
+        <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-100 group-hover:scale-110 transition-transform">
+            <i class="fas fa-wallet text-xl"></i>
         </div>
         <div class="min-w-0">
-            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">{{ $s['label'] }}</p>
-            <p class="text-2xl font-white text-slate-900 mt-1">{{ $s['value'] }}</p>
-            <p class="text-xs mt-1 {{ $s['trend'] === 'up' ? 'text-green-600' : 'text-slate-400' }}">
-                @if($s['trend'] === 'up')<i class="fas fa-arrow-up mr-1"></i>@endif
-                {{ $s['sub'] }}
-            </p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1">Total Omzet</p>
+            <p class="text-2xl font-black text-slate-900 leading-none">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</p>
+            <p class="text-[10px] text-green-600 font-bold mt-2 uppercase tracking-wider">Transaksi Selesai</p>
         </div>
     </div>
-    @endforeach
+
+    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7 flex items-start gap-5 hover:shadow-xl transition-all duration-500 group">
+        <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-100 group-hover:scale-110 transition-transform">
+            <i class="fas fa-clock text-xl"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1">Butuh Konfirmasi</p>
+            <p class="text-2xl font-black text-slate-900 leading-none">{{ $stats['pending_bookings'] }} <span class="text-xs text-slate-400 font-bold">Booking</span></p>
+            <p class="text-[10px] text-orange-400 font-bold mt-2 uppercase tracking-wider">Menunggu Persetujuan</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7 flex items-start gap-5 hover:shadow-xl transition-all duration-500 group">
+        <div class="w-14 h-14 bg-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-100 group-hover:scale-110 transition-transform">
+            <i class="fas fa-car text-xl"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1">Sedang Jalan</p>
+            <p class="text-2xl font-black text-slate-900 leading-none">{{ $stats['rented_vehicles'] }} <span class="text-xs text-slate-400 font-bold">Unit</span></p>
+            <p class="text-[10px] text-purple-400 font-bold mt-2 uppercase tracking-wider">Status: Disewa</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7 flex items-start gap-5 hover:shadow-xl transition-all duration-500 group">
+        <div class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-100 group-hover:scale-110 transition-transform">
+            <i class="fas fa-boxes-stacked text-xl"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1">Total Armada</p>
+            <p class="text-2xl font-black text-slate-900 leading-none">{{ $stats['total_vehicles'] }} <span class="text-xs text-slate-400 font-bold">Unit</span></p>
+            <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-wider">Semua Kategori</p>
+        </div>
+    </div>
 </div>
 
 {{-- ===== CONTENT GRID ===== --}}
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
 
-    {{-- Recent Bookings (col-span-2) --}}
-    <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div class="flex justify-between items-center px-6 py-5 border-b border-slate-100">
-            <h2 class="font-bold text-slate-900">Pemesanan Terbaru</h2>
-            <a href="{{ route('admin.pemesanan') }}" class="text-xs text-blue-600 hover:underline font-semibold">Lihat Semua →</a>
+    {{-- Recent Bookings --}}
+    <div class="xl:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div class="flex justify-between items-center px-8 py-7 border-b border-slate-50">
+            <div>
+                <h2 class="text-xl font-black text-slate-900 leading-none">Aktivitas Terkini</h2>
+                <p class="text-xs text-slate-400 mt-2 font-medium">5 pesanan terbaru yang masuk ke sistem</p>
+            </div>
+            <a href="{{ route('admin.pemesanan') }}" class="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:translate-x-1 transition-transform">Lihat Semua <i class="fas fa-arrow-right"></i></a>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-slate-50">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50/50">
                     <tr>
-                        <th class="text-left px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Pelanggan</th>
-                        <th class="text-left px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Kendaraan</th>
-                        <th class="text-left px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Durasi</th>
-                        <th class="text-left px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Total</th>
-                        <th class="text-left px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3.5"></th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pelanggan</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Unit</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Durasi</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
-                    @php
-                    $bookings = [
-                        ['name'=>'Budi Santoso','vehicle'=>'Innova Zenix','dur'=>'3 hari','total'=>'Rp 1.975.000','status'=>'Aktif','sc'=>'bg-green-100 text-green-700'],
-                        ['name'=>'Sari Dewi','vehicle'=>'Honda PCX','dur'=>'1 hari','total'=>'Rp 145.000','status'=>'Selesai','sc'=>'bg-slate-100 text-slate-500'],
-                        ['name'=>'Riko Pratama','vehicle'=>'Toyota Alphard','dur'=>'2 hari','total'=>'Rp 2.425.000','status'=>'Menunggu','sc'=>'bg-yellow-100 text-yellow-700'],
-                        ['name'=>'Dina Rahayu','vehicle'=>'Honda CR-V','dur'=>'5 hari','total'=>'Rp 3.775.000','status'=>'Aktif','sc'=>'bg-green-100 text-green-700'],
-                        ['name'=>'Andi Wijaya','vehicle'=>'Yamaha NMAX','dur'=>'2 hari','total'=>'Rp 225.000','status'=>'Dibatalkan','sc'=>'bg-red-100 text-red-600'],
-                    ];
-                    @endphp
-                    @foreach($bookings as $b)
-                    <tr class="hover:bg-slate-50/70 transition-colors">
-                        <td class="px-6 py-4 font-semibold text-slate-800">{{ $b['name'] }}</td>
-                        <td class="px-6 py-4 text-slate-500">{{ $b['vehicle'] }}</td>
-                        <td class="px-6 py-4 text-slate-500">{{ $b['dur'] }}</td>
-                        <td class="px-6 py-4 font-bold text-blue-600">{{ $b['total'] }}</td>
-                        <td class="px-6 py-4">
-                            <span class="text-xs font-bold px-3 py-1 rounded-full {{ $b['sc'] }}">{{ $b['status'] }}</span>
+                    @forelse($recentBookings as $b)
+                    <tr class="hover:bg-slate-50/30 transition-colors">
+                        <td class="px-8 py-5 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-black uppercase">
+                                {{ substr($b->user->name, 0, 1) }}
+                            </div>
+                            <p class="text-sm font-bold text-slate-800">{{ $b->user->name }}</p>
                         </td>
-                        <td class="px-6 py-4">
-                            <button class="text-slate-400 hover:text-blue-600 transition-colors">
-                                <i class="fas fa-eye text-sm"></i>
-                            </button>
+                        <td class="px-8 py-5 text-sm font-bold text-slate-600">{{ $b->vehicle->name }}</td>
+                        <td class="px-8 py-5 text-xs text-slate-400 font-bold italic">{{ $b->days }} Hari</td>
+                        <td class="px-8 py-5 text-sm font-black text-blue-600">Rp {{ number_format($b->total_price, 0, ',', '.') }}</td>
+                        <td class="px-8 py-5">
+                            @php
+                                $colors = [
+                                    'Pending' => 'bg-orange-100 text-orange-600',
+                                    'Confirmed' => 'bg-blue-100 text-blue-600',
+                                    'Completed' => 'bg-green-100 text-green-700',
+                                    'Cancelled' => 'bg-red-100 text-red-600',
+                                ];
+                            @endphp
+                            <span class="text-[10px] font-black px-3 py-1.5 rounded-lg {{ $colors[$b->status] ?? 'bg-slate-100 text-slate-600' }} uppercase tracking-widest">
+                                {{ $b->status }}
+                            </span>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-8 py-20 text-center">
+                            <i class="fas fa-mug-hot text-3xl text-slate-200 mb-3"></i>
+                            <p class="text-sm font-bold text-slate-400">Belum ada aktivitas pesanan hari ini.</p>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 
-    {{-- Right column --}}
-    <div class="space-y-6">
-
-        {{-- Ketersediaan Armada --}}
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-            <h2 class="font-bold text-slate-900 mb-5">Status Armada</h2>
-            @php
-            $fleet = [
-                ['type'=>'Tersedia','count'=>187,'total'=>215,'color'=>'bg-green-500','pct'=>87],
-                ['type'=>'Sedang Disewa','count'=>21,'total'=>215,'color'=>'bg-blue-500','pct'=>10],
-                ['type'=>'Perawatan','count'=>7,'total'=>215,'color'=>'bg-orange-400','pct'=>3],
-            ];
-            @endphp
-            <div class="space-y-4">
-                @foreach($fleet as $f)
+    {{-- Ketersediaan Armada --}}
+    <div class="space-y-8">
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8">
+            <h2 class="text-xl font-black text-slate-900 mb-6">Status Armada</h2>
+            <div class="space-y-6">
+                @php
+                    $availablePct = $stats['total_vehicles'] > 0 ? round(($stats['total_vehicles'] - $stats['rented_vehicles']) / $stats['total_vehicles'] * 100) : 0;
+                    $rentedPct = $stats['total_vehicles'] > 0 ? round($stats['rented_vehicles'] / $stats['total_vehicles'] * 100) : 0;
+                @endphp
                 <div>
-                    <div class="flex justify-between text-sm font-medium mb-1.5">
-                        <span class="text-slate-600">{{ $f['type'] }}</span>
-                        <span class="text-slate-900 font-bold">{{ $f['count'] }}</span>
+                    <div class="flex justify-between items-center mb-3">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tersedia untuk Sewa</p>
+                        <p class="font-black text-slate-900">{{ $stats['total_vehicles'] - $stats['rented_vehicles'] }} <span class="text-[10px] text-slate-400">Unit</span></p>
                     </div>
-                    <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div class="{{ $f['color'] }} h-full rounded-full transition-all duration-700" style="width: {{ $f['pct'] }}%"></div>
+                    <div class="h-3 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="bg-green-500 h-full rounded-full transition-all duration-1000" style="width: {{ $availablePct }}%"></div>
                     </div>
                 </div>
-                @endforeach
+
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sedang Beroperasi</p>
+                        <p class="font-black text-slate-900">{{ $stats['rented_vehicles'] }} <span class="text-[10px] text-slate-400">Unit</span></p>
+                    </div>
+                    <div class="h-3 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000" style="width: {{ $rentedPct }}%"></div>
+                    </div>
+                </div>
             </div>
 
-            {{-- Donut summary --}}
-            <div class="mt-5 pt-5 border-t border-slate-100 flex gap-3 flex-wrap">
-                <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>Tersedia</span>
-                <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Disewa</span>
-                <span class="flex items-center gap-1.5 text-xs text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>Perawatan</span>
+            <div class="mt-10 pt-8 border-t border-slate-50 flex flex-wrap gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Ready</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-blue-600"></div>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Disewa</span>
+                </div>
             </div>
         </div>
 
-        {{-- Aksi Cepat --}}
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-            <h2 class="font-bold text-slate-900 mb-4">Aksi Cepat</h2>
-            <div class="space-y-2">
-                <a href="{{ route('admin.kendaraan') }}" class="flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl group transition-colors">
-                    <div class="w-9 h-9 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
-                        <i class="fas fa-plus text-sm"></i>
-                    </div>
-                    <span class="text-sm font-semibold text-slate-700 group-hover:text-blue-700">Tambah Kendaraan Baru</span>
-                </a>
-                <a href="{{ route('admin.pemesanan') }}" class="flex items-center gap-3 p-3 hover:bg-purple-50 rounded-xl group transition-colors">
-                    <div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
-                        <i class="fas fa-list-check text-sm"></i>
-                    </div>
-                    <span class="text-sm font-semibold text-slate-700 group-hover:text-purple-700">Kelola Pemesanan</span>
-                </a>
-                <a href="{{ route('home') }}" target="_blank" class="flex items-center gap-3 p-3 hover:bg-green-50 rounded-xl group transition-colors">
-                    <div class="w-9 h-9 bg-green-100 text-green-600 rounded-xl flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-all">
-                        <i class="fas fa-globe text-sm"></i>
-                    </div>
-                    <span class="text-sm font-semibold text-slate-700 group-hover:text-green-700">Lihat Website Publik</span>
-                </a>
-            </div>
-        </div>
     </div>
 </div>
 
