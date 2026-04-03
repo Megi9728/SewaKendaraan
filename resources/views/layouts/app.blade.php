@@ -133,13 +133,11 @@
                      <a href="{{ route('how.it.works') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('how.it.works') ? 'underline underline-offset-8' : '' }}">Tentang</a>
                      <a href="{{ route('help') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('help') ? 'underline underline-offset-8' : '' }}">Bantuan</a>
 
-                     {{-- Admin Contextual Links --}}
+                     {{-- Simplified Admin Link --}}
                      @auth
                          @if(Auth::user()->role === 'admin')
                              <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col gap-8">
-                                 <p class="text-sm font-bold text-uber-muted uppercase tracking-[0.2em] italic">Admin Panel</p>
-                                 <a href="{{ route('admin.kendaraan') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('admin.kendaraan') ? 'underline underline-offset-8' : '' }}">Kelola Unit</a>
-                                 <a href="{{ route('admin.pemesanan') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('admin.pemesanan') ? 'underline underline-offset-8' : '' }}">Daftar Pesanan</a>
+                                 <a href="{{ route('admin.dashboard') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->is('admin*') ? 'underline underline-offset-8' : '' }}">Panel Admin</a>
                              </div>
                          @endif
                      @endauth
@@ -153,9 +151,7 @@
                              <p class="text-2xl font-bold text-uber-black">{{ Auth::user()->name }}</p>
                         </div>
                         <div class="flex flex-col gap-4">
-                            @if(Auth::user()->role === 'admin')
-                                <a href="{{ route('admin.dashboard') }}" class="btn-primary text-center py-5 text-lg">Dashboard Admin</a>
-                            @else
+                            @if(Auth::user()->role !== 'admin')
                                 <a href="{{ route('profile') }}" class="btn-primary text-center py-5 text-lg">Lihat Profil</a>
                             @endif
                             <button onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();" class="btn-secondary text-center py-5 text-lg">Keluar Akun</button>
