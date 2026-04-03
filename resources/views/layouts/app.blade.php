@@ -112,11 +112,53 @@
                 </div>
 
                 {{-- Mobile Hamburger --}}
-                <button id="menu-toggle" class="md:hidden text-uber-black">
-                    <i id="menu-icon" class="fas fa-bars text-xl"></i>
+                <button id="menu-toggle" class="md:hidden text-uber-white z-[80] relative focus:outline-none">
+                    <i id="menu-icon" class="fas fa-bars text-2xl"></i>
                 </button>
             </div>
         </nav>
+
+        {{-- Mobile Overlay Menu (Uber Style) --}}
+        <div id="mobile-menu" class="fixed inset-0 bg-uber-white z-[70] translate-x-full transition-transform duration-300 ease-in-out md:hidden overflow-y-auto">
+            <div class="flex flex-col h-full pt-28 px-10 pb-16">
+                {{-- Nav Links --}}
+                <div class="flex flex-col gap-8 mb-12">
+                     <a href="{{ route('home') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('home') ? 'underline underline-offset-8' : '' }}">Beranda</a>
+                     <a href="{{ route('browse') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'underline underline-offset-8' : '' }}">Pesan</a>
+                     @auth
+                         @if(Auth::user()->role !== 'admin')
+                             <a href="{{ route('booking.history') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('booking.history') ? 'underline underline-offset-8' : '' }}">Riwayat</a>
+                         @endif
+                     @endauth
+                     <a href="{{ route('how.it.works') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('how.it.works') ? 'underline underline-offset-8' : '' }}">Tentang</a>
+                     <a href="{{ route('help') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('help') ? 'underline underline-offset-8' : '' }}">Bantuan</a>
+                </div>
+
+                {{-- Action / Profile --}}
+                <div class="mt-auto pt-10 border-t border-gray-100">
+                    @auth
+                        <div class="mb-8">
+                             <p class="text-sm font-bold text-uber-muted uppercase tracking-widest mb-1 italic">Masuk Sebagai</p>
+                             <p class="text-2xl font-bold text-uber-black">{{ Auth::user()->name }}</p>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            @if(Auth::user()->role === 'admin')
+                                <a href="{{ route('admin.dashboard') }}" class="btn-primary text-center py-5 text-lg">Dashboard Admin</a>
+                            @else
+                                <a href="{{ route('profile') }}" class="btn-primary text-center py-5 text-lg">Lihat Profil</a>
+                            @endif
+                            <button onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();" class="btn-secondary text-center py-5 text-lg">Keluar Akun</button>
+                            <form id="mobile-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
+                        </div>
+                    @else
+                        <div class="flex flex-col gap-4">
+                            <a href="{{ route('login') }}" class="btn-primary text-center py-5 text-lg">Masuk</a>
+                            <a href="{{ route('register') }}" class="btn-secondary text-center py-5 text-lg">Daftar Akun Baru</a>
+                        </div>
+                    @endauth
+                </div>
+            </div>
+        </div>
     </header>
 
     {{-- ===== KONTEN UTAMA ===== --}}
@@ -180,9 +222,30 @@
     {{-- ===== VANILLA JS ===== --}}
     <script>
         const menuToggle = document.getElementById('menu-toggle');
+        const menuIcon = document.getElementById('menu-icon');
+        const mobileMenu = document.getElementById('mobile-menu');
         const authDropdownToggle = document.getElementById('auth-dropdown-toggle');
         const authDropdown = document.getElementById('auth-dropdown');
 
+        // Toggle Mobile Menu
+        if (menuToggle && mobileMenu) {
+            menuToggle.addEventListener('click', () => {
+                const isOpen = !mobileMenu.classList.contains('translate-x-full');
+                if (isOpen) {
+                    mobileMenu.classList.add('translate-x-full');
+                    menuIcon.classList.replace('fa-times', 'fa-bars');
+                    menuToggle.classList.replace('text-uber-black', 'text-uber-white');
+                    document.body.classList.remove('overflow-hidden');
+                } else {
+                    mobileMenu.classList.remove('translate-x-full');
+                    menuIcon.classList.replace('fa-bars', 'fa-times');
+                    menuToggle.classList.replace('text-uber-white', 'text-uber-black');
+                    document.body.classList.add('overflow-hidden');
+                }
+            });
+        }
+
+        // Desktop Auth Dropdown
         if (authDropdownToggle) {
             authDropdownToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
