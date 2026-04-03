@@ -46,6 +46,7 @@
                         $statusColors = [
                             'Pending' => 'bg-orange-100 text-orange-600 border-orange-200',
                             'Confirmed' => 'bg-blue-100 text-blue-600 border-blue-200',
+                            'Active' => 'bg-indigo-100 text-indigo-600 border-indigo-200',
                             'Completed' => 'bg-green-100 text-green-600 border-green-200',
                             'Cancelled' => 'bg-red-100 text-red-600 border-red-200',
                             'Rejected' => 'bg-slate-100 text-slate-600 border-slate-200',
@@ -78,13 +79,69 @@
                 </div>
             </div>
 
-            {{-- Action --}}
-            <div class="w-full md:w-auto flex flex-col gap-2">
-                <a href="{{ route('vehicle.detail', $booking->vehicle_id) }}" class="w-full text-center border border-slate-200 hover:border-blue-600 hover:text-blue-600 text-slate-600 font-bold py-4 px-6 rounded-2xl transition-all text-sm">
-                    Detail Mobil
-                </a>
+            {{-- Action & Payment Status --}}
+            <div class="w-full md:w-1/3 flex flex-col gap-2 relative">
+                @if($booking->payment_status === 'unpaid' && $booking->status === 'Confirmed')
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-blue-800 mb-2">Data Terverifikasi!</p>
+                        <p class="text-blue-600 mb-3">Silakan bayar DP 30%: <strong>Rp {{ number_format($booking->total_price * 0.3, 0, ',', '.') }}</strong></p>
+                        <form action="{{ route('booking.pay', $booking->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="payment_type" value="dp">
+                            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Bayar DP 30%</button>
+                        </form>
+                    </div>
+                @elseif($booking->payment_status === 'dp_paid' && $booking->status === 'Confirmed')
+                    <div class="bg-orange-50 border border-orange-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-orange-800 mb-2">DP Terbayar</p>
+                        <p class="text-orange-600 mb-3">Sisa pelunasan: <strong>Rp {{ number_format($booking->total_price * 0.7, 0, ',', '.') }}</strong></p>
+                        <form action="{{ route('booking.pay', $booking->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="payment_type" value="full">
+                            <button class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Lunasi Sekarang</button>
+                        </form>
+                    </div>
+                @elseif($booking->status === 'Confirmed' && $booking->payment_status === 'fully_paid')
+                    <div class="bg-green-50 border border-green-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-green-800">Lunas</p>
+                        <p class="text-green-600 text-xs">Menunggu serah terima mobil</p>
+                    </div>
+                @elseif($booking->status === 'Active')
+                    <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-indigo-800">Masa Sewa</p>
+                        <p class="text-indigo-600 text-xs">Mobil sedang Anda gunakan</p>
+                    </div>
+                @elseif($booking->status === 'Completed')
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-slate-800">Selesai</p>
+                        <p class="text-slate-600 text-xs mb-3">Mobil telah dikembalikan</p>
+                        
+                        @if(!$booking->rating)
+                            <button type="button" onclick="openReviewModal({{ $booking->id }})" class="w-full bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-2 px-4 rounded-lg text-xs transition mb-2">Beri Ulasan</button>
+                        @else
+                            <div class="flex gap-1 justify-center text-yellow-400 mb-3 text-xs">
+                                @for($i=1; $i<=5; $i++)
+                                    <i class="fas fa-star {{ $i <= $booking->rating ? '' : 'text-slate-300' }}"></i>
+                                @endfor
+                            </div>
+                        @endif
+                        
+                        <a href="{{ route('vehicle.detail', $booking->vehicle_id) }}" class="block w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Sewa Kembali</a>
+                    </div>
+                @elseif($booking->status === 'Rejected')
+                    <div class="bg-red-50 border border-red-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-red-800">Ditolak</p>
+                        @if($booking->rejection_reason)
+                            <p class="text-red-600 text-xs mt-1 mb-3">Alasan: <strong>{{ $booking->rejection_reason }}</strong></p>
+                        @else
+                            <p class="text-red-600 text-xs mb-3">Pesanan ditolak oleh admin</p>
+                        @endif
+                        <a href="{{ route('vehicle.detail', $booking->vehicle_id) }}" class="block w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Sewa Kembali</a>
+                    </div>
+                @endif
+                
                 @if($booking->status === 'Pending')
-                <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Menunggu Admin...</p>
+                <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Menunggu Admin Verifikasi KTP & SIM...</p>
                 @endif
             </div>
         </div>
@@ -92,4 +149,59 @@
     </div>
     @endif
 </div>
+
+{{-- Modal Ulasan --}}
+<div id="modal-review" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeReviewModal()"></div>
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md z-10 overflow-hidden text-center p-8">
+        <h3 class="text-xl font-black text-slate-900 mb-2">Beri Ulasan</h3>
+        <p class="text-slate-500 text-sm mb-6">Bagaimana pengalaman Anda menyewa mobil ini?</p>
+        
+        <form id="form-review" action="" method="POST">
+            @csrf
+            
+            <div class="flex justify-center gap-2 mb-4">
+                <input type="hidden" name="rating" id="rating-val" value="5" required>
+                @for($i=1; $i<=5; $i++)
+                <button type="button" onclick="setRating({{ $i }})" class="star-btn text-2xl text-yellow-400 focus:outline-none transition-transform hover:scale-110" data-val="{{ $i }}">
+                    <i class="fas fa-star"></i>
+                </button>
+                @endfor
+            </div>
+            
+            <textarea name="review" rows="3" class="w-full bg-slate-50 text-slate-900 border border-slate-200 rounded-xl p-4 text-sm focus:outline-none focus:border-yellow-500 mb-6" placeholder="Ketik pengalaman Anda di sini (opsional)..."></textarea>
+            
+            <div class="flex gap-3">
+                <button type="button" onclick="closeReviewModal()" class="flex-1 font-semibold py-3 rounded-xl transition-all text-sm border border-slate-200 text-slate-600 hover:bg-slate-50">Batal</button>
+                <button type="submit" class="flex-1 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-3 rounded-xl transition-all active:scale-95 text-sm">Kirim Ulasan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
+
+@push('scripts')
+<script>
+    function openReviewModal(id) {
+        document.getElementById('form-review').action = `/pesan/${id}/review`;
+        document.getElementById('modal-review').classList.remove('hidden');
+        setRating(5);
+    }
+    function closeReviewModal() {
+        document.getElementById('modal-review').classList.add('hidden');
+    }
+    function setRating(val) {
+        document.getElementById('rating-val').value = val;
+        document.querySelectorAll('.star-btn').forEach(btn => {
+            if (parseInt(btn.dataset.val) <= val) {
+                btn.classList.add('text-yellow-400');
+                btn.classList.remove('text-slate-200');
+            } else {
+                btn.classList.remove('text-yellow-400');
+                btn.classList.add('text-slate-200');
+            }
+        });
+    }
+</script>
+@endpush

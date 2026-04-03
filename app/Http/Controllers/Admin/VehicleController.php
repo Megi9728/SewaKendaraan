@@ -24,6 +24,7 @@ class VehicleController extends Controller
             'transmission' => 'required',
             'price_per_day' => 'required|integer',
             'status' => 'required',
+            'domicile' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
         ]);
@@ -47,6 +48,7 @@ class VehicleController extends Controller
             'transmission' => 'required',
             'price_per_day' => 'required|integer',
             'status' => 'required',
+            'domicile' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
         ]);

@@ -12,8 +12,45 @@ Route::get('/', function () {
     return view('home', compact('vehicles'));
 })->name('home');
 
-Route::get('/jelajah', function () {
-    $vehicles = \App\Models\Vehicle::latest()->get();
+Route::get('/jelajah', function (\Illuminate\Http\Request $request) {
+    $query = \App\Models\Vehicle::query();
+
+    if ($request->filled('domicile')) {
+        $query->where('domicile', $request->domicile);
+    }
+
+    if ($request->filled('type')) {
+        $query->where('type', $request->type);
+    }
+
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        $conflictingBookings = \App\Models\Booking::whereNotIn('status', ['Cancelled', 'Rejected', 'Completed'])
+            ->where(function ($q) use ($request) {
+                $q->whereBetween('start_date', [$request->start_date, $request->end_date])
+                  ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                  ->orWhere(function ($q2) use ($request) {
+                      $q2->where('start_date', '<=', $request->start_date)
+                         ->where('end_date', '>=', $request->end_date);
+                  });
+            })
+            ->pluck('vehicle_id');
+
+        $query->whereNotIn('id', $conflictingBookings);
+    }
+
+    // Sort Logic
+    $sort = $request->get('sort', 'latest');
+    if ($sort === 'price_asc') {
+        $query->orderBy('price_per_day', 'asc');
+    } elseif ($sort === 'price_desc') {
+        $query->orderBy('price_per_day', 'desc');
+    } elseif ($sort === 'rating') {
+        $query->orderBy('rating', 'desc');
+    } else {
+        $query->latest();
+    }
+
+    $vehicles = $query->get();
     return view('browse', compact('vehicles'));
 })->name('browse');
 
@@ -49,7 +86,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
 
     // Sistem Booking
+    Route::get('/pesan/{vehicle}/checkout', [\App\Http\Controllers\BookingController::class, 'checkout'])->name('checkout');
     Route::post('/pesan', [\App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
+    Route::post('/pesan/{booking}/pay', [\App\Http\Controllers\BookingController::class, 'pay'])->name('booking.pay');
+    Route::post('/pesan/{booking}/review', [\App\Http\Controllers\BookingController::class, 'review'])->name('booking.review');
     Route::get('/riwayat-sewa', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.history');
 });
 // ============================================================

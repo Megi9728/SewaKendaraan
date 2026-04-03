@@ -12,30 +12,38 @@
             kapan pun.
         </h1>
         
-        <div class="max-w-md space-y-4 relative">
-            {{-- Decoration line connecting inputs --}}
-            <div class="absolute left-[19px] top-[26px] bottom-[26px] w-[2px] bg-uber-black z-0"></div>
-
+        <form action="{{ route('browse') }}" method="GET" class="max-w-md space-y-4 relative">
             <div class="relative z-10 hidden sm:block">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <div class="w-2.5 h-2.5 bg-uber-black rounded-full"></div>
-                </div>
-                <input type="text" placeholder="Lokasi penjemputan" 
-                    class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-medium text-uber-black placeholder-gray-500 pl-11 pr-4 py-3.5 transition">
+                <select name="domicile" class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition border-r-8 border-transparent">
+                    <option value="">Lokasi Pengambilan</option>
+                    <option value="Jakarta">Jakarta</option>
+                    <option value="Bogor">Bogor</option>
+                    <option value="Depok">Depok</option>
+                    <option value="Tangerang">Tangerang</option>
+                    <option value="Bekasi">Bekasi</option>
+                </select>
             </div>
 
             <div class="relative z-10 hidden sm:block">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <div class="w-2.5 h-2.5 bg-transparent border-[2.5px] border-uber-black"></div>
-                </div>
-                <input type="date" placeholder="Kapan selesai?" 
-                    class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-medium text-uber-black placeholder-gray-500 pl-11 pr-4 py-3.5 transition">
+                <select name="type" class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition border-r-8 border-transparent">
+                    <option value="">Tipe Kendaraan</option>
+                    <option value="Mobil">Mobil</option>
+                    <option value="Motor">Motor</option>
+                    <option value="Minibus">Minibus</option>
+                    <option value="SUV">SUV</option>
+                    <option value="MPV">MPV</option>
+                </select>
+            </div>
+
+            <div class="relative z-10 hidden sm:flex gap-2">
+                <input type="date" name="start_date" class="w-1/2 bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition" min="{{ date('Y-m-d') }}" title="Tanggal Mulai">
+                <input type="date" name="end_date" class="w-1/2 bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition" min="{{ date('Y-m-d') }}" title="Tanggal Selesai">
             </div>
             
-            <a href="{{ route('browse') }}" class="btn-primary w-full sm:w-auto inline-block text-center mt-2 font-bold text-lg px-8">
-                Lihat harga armada
-            </a>
-        </div>
+            <button type="submit" class="btn-primary w-full sm:w-auto inline-block text-center mt-2 font-bold text-lg px-8 py-3">
+                Cari Kendaraan
+            </button>
+        </form>
     </div>
 
     <div class="w-full md:w-[55%]">
@@ -47,6 +55,7 @@
 </section>
 
 {{-- ===== APP PROMO COMPONENT ===== --}}
+@guest
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="bg-gray-50 rounded-[12px] p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 border border-gray-100">
         <div class="w-full md:w-2/3">
@@ -63,6 +72,7 @@
         </div>
     </div>
 </section>
+@endguest
 
 {{-- ===== VEHICLE CATALOGUE ===== --}}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mb-16">

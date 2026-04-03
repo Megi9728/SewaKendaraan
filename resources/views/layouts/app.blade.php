@@ -62,16 +62,19 @@
                     </a>
 
                     {{-- Desktop Nav --}}
-                    <div class="hidden md:flex items-center gap-2">
-                        <a href="{{ route('home') }}" class="nav-link bg-uber-chip">Beranda</a>
-                        <a href="{{ route('browse') }}" class="nav-link">Pesan</a>
-                        <a href="{{ route('how.it.works') }}" class="nav-link">Tentang</a>
+                    <div class="hidden md:flex items-center gap-8">
+                        <a href="{{ route('home') }}" class="nav-link ">Beranda</a>
+                        <a href="{{ route('browse') }}" class="nav-link">Cari Kendaraan</a>
+                        @auth
+                            @if(Auth::user()->role !== 'admin')
+                                <a href="{{ route('booking.history') }}" class="nav-link">Riwayat Sewa</a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
 
                 {{-- Desktop Auth / Menus --}}
                 <div class="hidden md:flex items-center gap-4 relative">
-                    <a href="{{ route('browse') }}" class="font-medium text-sm hover:underline">Support</a>
                     <button id="auth-dropdown-toggle" class="flex items-center gap-2 bg-uber-white hover:bg-uber-chip transition-colors rounded-full px-4 py-2 font-medium text-sm">
                         <span>{{ Auth::check() ? Auth::user()->name : 'Masuk / Daftar' }}</span>
                         <i class="fas fa-user-circle text-xl"></i>
@@ -87,7 +90,6 @@
                                 @if(Auth::user()->role === 'admin')
                                     <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">Dashboard Admin</a>
                                 @else
-                                    <a href="#" class="block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">Riwayat Pemesanan</a>
                                     <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-uber-black hover:bg-uber-chip transition">Profil</a>
                                 @endif
                                 

@@ -15,7 +15,7 @@
 
         {{-- ===== SIDEBAR FILTER ===== --}}
         <aside class="lg:w-72 flex-shrink-0">
-            <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm sticky top-20" id="filter-panel">
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm top-20" id="filter-panel">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="font-bold text-slate-900">Filter</h2>
                     <button id="reset-filter" class="text-xs text-blue-600 hover:underline font-semibold">Reset Semua</button>
@@ -24,30 +24,34 @@
                 {{-- Jenis Kendaraan --}}
                 <div class="mb-6">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Jenis Kendaraan</p>
-                    <div class="space-y-2" id="type-filters">
+                    <select name="jenis" class="w-full bg-slate-50 border border-slate-200 text-sm font-medium text-slate-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
                         @php
                         $types = ['Semua' => '', 'Mobil Sedan' => 'sedan', 'MPV / SUV' => 'mpv', 'Motor' => 'motor', 'Minibus' => 'minibus'];
                         @endphp
                         @foreach($types as $label => $val)
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="jenis" value="{{ $val }}" class="w-4 h-4 text-blue-600 accent-blue-600" {{ $loop->first ? 'checked' : '' }}>
-                            <span class="text-sm text-slate-700 group-hover:text-blue-600 transition-colors font-medium">{{ $label }}</span>
-                        </label>
+                            <option value="{{ $val }}" {{ (request('type') && strtolower(request('type')) == strtolower($val)) ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
-                    </div>
+                    </select>
+                </div>
+
+                {{-- Wilayah --}}
+                <div class="mb-6 border-t border-slate-100 pt-6">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Wilayah Domisili</p>
+                    <select name="wilayah" class="w-full bg-slate-50 border border-slate-200 text-sm font-medium text-slate-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        @foreach(['Semua', 'Jakarta', 'Bogor', 'Depok', 'Tangerang', 'Bekasi'] as $wilayah)
+                            <option value="{{ $wilayah == 'Semua' ? '' : strtolower($wilayah) }}" {{ (request('domicile') && strtolower(request('domicile')) == strtolower($wilayah)) ? 'selected' : '' }}>{{ $wilayah }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 {{-- Transmisi --}}
                 <div class="mb-6 border-t border-slate-100 pt-6">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Transmisi</p>
-                    <div class="space-y-2">
+                    <select name="transmisi" class="w-full bg-slate-50 border border-slate-200 text-sm font-medium text-slate-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
                         @foreach(['Semua', 'Matic', 'Manual'] as $tx)
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="transmisi" value="{{ strtolower($tx) }}" class="w-4 h-4 accent-blue-600" {{ $loop->first ? 'checked' : '' }}>
-                            <span class="text-sm text-slate-700 group-hover:text-blue-600 transition-colors font-medium">{{ $tx }}</span>
-                        </label>
+                            <option value="{{ $tx == 'Semua' ? '' : strtolower($tx) }}">{{ $tx }}</option>
                         @endforeach
-                    </div>
+                    </select>
                 </div>
 
                 {{-- Range Harga --}}
@@ -74,7 +78,7 @@
                     </div>
                 </div>
 
-                <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl mt-6 transition-all active:scale-95">
+                <button id="apply-filter" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl mt-6 transition-all active:scale-95">
                     <i class="fas fa-filter mr-2"></i>Terapkan Filter
                 </button>
             </div>
@@ -83,10 +87,16 @@
         {{-- ===== GRID KENDARAAN ===== --}}
         <div class="flex-1">
 
-            {{-- Sort & Count Bar --}}
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
-                <p class="text-slate-500 text-sm"><span class="font-bold text-slate-900">215 kendaraan</span> ditemukan</p>
-                <div class="flex items-center gap-3">
+            {{-- Search, Sort & Count Bar --}}
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 w-full">
+                <p class="text-slate-500 text-sm flex-shrink-0"><span id="vehicle-count-text" class="font-bold text-slate-900">{{ $vehicles->count() }} kendaraan</span> ditemukan</p>
+                
+                <div class="flex-1 w-full max-w-sm relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="search-input" placeholder="Cari nama atau merk kendaraan..." class="w-full bg-white border border-slate-200 text-sm font-medium text-slate-600 pl-10 pr-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 transition-shadow">
+                </div>
+
+                <div class="flex items-center gap-3 flex-shrink-0">
                     {{-- View Toggle --}}
                     <div class="flex gap-1 bg-slate-100 p-1 rounded-xl">
                         <button id="view-grid" class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-blue-600 transition-all">
@@ -96,11 +106,11 @@
                             <i class="fas fa-list text-sm"></i>
                         </button>
                     </div>
-                    <select class="bg-white border border-slate-200 text-sm font-medium text-slate-600 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
-                        <option>Paling Populer</option>
-                        <option>Harga Terendah</option>
-                        <option>Harga Tertinggi</option>
-                        <option>Rating Terbaik</option>
+                    <select id="sort-select" class="bg-white border border-slate-200 text-sm font-medium text-slate-600 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        <option value="latest" {{ request('sort') == 'latest' || !request('sort') ? 'selected' : '' }}>Paling Baru / Populer</option>
+                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Harga Terendah</option>
+                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Harga Tertinggi</option>
+                        <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating Terbaik</option>
                     </select>
                 </div>
             </div>
@@ -108,8 +118,12 @@
             <div id="vehicle-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 mt-12">
                 @foreach($vehicles as $v)
                 <div class="vehicle-card group bg-white rounded-3xl p-5 border border-slate-100 hover:border-blue-200 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-100/50"
+                    data-name="{{ strtolower($v->name) }}"
                     data-type="{{ strtolower($v->type) }}"
-                    data-price="{{ $v->price_per_day }}">
+                    data-price="{{ $v->price_per_day }}"
+                    data-transmisi="{{ strtolower($v->transmission) }}"
+                    data-seat="{{ $v->seats }}"
+                    data-domicile="{{ strtolower($v->domicile) }}">
                     
                     {{-- Image --}}
                     <div class="relative h-48 mb-6 overflow-hidden rounded-2xl bg-slate-50">
@@ -131,7 +145,11 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ $v->name }}</h3>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ $v->type }}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ $v->type }}</p>
+                                    <span class="text-slate-300">•</span>
+                                    <p class="text-[10px] font-bold text-red-500 uppercase tracking-widest"><i class="fas fa-map-marker-alt"></i> {{ $v->domicile ?? 'Jakarta' }}</p>
+                                </div>
                             </div>
                             <div class="flex items-center gap-1 text-orange-400 bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">
                                 <i class="fas fa-star text-[10px]"></i>
@@ -239,16 +257,88 @@
         document.getElementById('view-grid').classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
     });
 
+    // Client-side Sort redirect
+    const sortSelect = document.getElementById('sort-select');
+    if(sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const url = new URL(window.location.href);
+            url.searchParams.set('sort', this.value);
+            window.location.href = url.toString();
+        });
+    }
+
     // Reset filter
     document.getElementById('reset-filter').addEventListener('click', function() {
-        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = r.value === '' || r.name === 'transmisi' && r.value === 'semua');
-        document.querySelectorAll('input[name="jenis"]')[0].checked = true;
-        document.querySelectorAll('input[name="transmisi"]')[0].checked = true;
+        if(document.querySelector('select[name="jenis"]')) document.querySelector('select[name="jenis"]').value = '';
+        if(document.querySelector('select[name="wilayah"]')) document.querySelector('select[name="wilayah"]').value = '';
+        if(document.querySelector('select[name="transmisi"]')) document.querySelector('select[name="transmisi"]').value = '';
         if (priceRange) { priceRange.value = 2000000; priceDisplay.textContent = 'Rp 2.000.000'; }
         document.querySelectorAll('.seat-btn').forEach(b => {
             b.classList.remove('bg-blue-600','text-white','border-blue-600');
             b.classList.add('border-slate-200','text-slate-600');
         });
+        document.getElementById('apply-filter').click();
+    });
+
+    // Client-side Search listener
+    const searchInput = document.getElementById('search-input');
+    if(searchInput) {
+        searchInput.addEventListener('input', function() {
+            document.getElementById('apply-filter').click();
+        });
+    }
+
+    // Apply Filter Logic (Client Side)
+    document.getElementById('apply-filter').addEventListener('click', function() {
+        const searchFilter = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        const typeEl = document.querySelector('select[name="jenis"]');
+        const typeFilter = typeEl ? typeEl.value.toLowerCase() : '';
+
+        const wilayahEl = document.querySelector('select[name="wilayah"]');
+        const wilayahFilter = wilayahEl ? wilayahEl.value.toLowerCase() : '';
+        
+        const transEl = document.querySelector('select[name="transmisi"]');
+        const transFilter = transEl ? transEl.value.toLowerCase() : '';
+        
+        const priceFilter = parseInt(document.getElementById('price-range').value);
+        
+        const activeSeatBtn = document.querySelector('.seat-btn.bg-blue-600');
+        const seatFilter = activeSeatBtn ? activeSeatBtn.dataset.seat : '';
+
+        let count = 0;
+        document.querySelectorAll('.vehicle-card').forEach(card => {
+            const cName = card.dataset.name;
+            const cType = card.dataset.type;
+            const cDom = card.dataset.domicile;
+            const cTrans = card.dataset.transmisi;
+            const cPrice = parseInt(card.dataset.price);
+            const cSeat = parseInt(card.dataset.seat);
+
+            let show = true;
+            if(searchFilter && !cName.includes(searchFilter)) show = false;
+            if(typeFilter && typeFilter !== 'semua' && !cType.includes(typeFilter)) show = false;
+            if(wilayahFilter && !cDom.includes(wilayahFilter)) show = false;
+            if(transFilter && transFilter !== 'semua' && cTrans !== transFilter && !cTrans.includes(transFilter)) show = false;
+            if(cPrice > priceFilter) show = false;
+            
+            if(seatFilter) {
+                if(seatFilter === '1-2' && (cSeat < 1 || cSeat > 2)) show = false;
+                if(seatFilter === '4-5' && (cSeat < 3 || cSeat > 5)) show = false;
+                if(seatFilter === '6-7' && (cSeat < 6 || cSeat > 7)) show = false;
+                if(seatFilter === '8+' && cSeat < 8) show = false;
+            }
+
+            if(show) {
+                card.style.display = 'block';
+                count++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        const countText = document.getElementById('vehicle-count-text');
+        if(countText) countText.textContent = count + ' kendaraan';
     });
 </script>
 @endpush

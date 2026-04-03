@@ -63,9 +63,9 @@
                         ['icon' => 'fas fa-users', 'label' => 'Kapasitas', 'value' => $vehicle->seats . ' Penumpang'],
                         ['icon' => 'fas fa-cog', 'label' => 'Transmisi', 'value' => $vehicle->transmission],
                         ['icon' => 'fas fa-gas-pump', 'label' => 'Kategori', 'value' => $vehicle->type],
+                        ['icon' => 'fas fa-map-marker-alt', 'label' => 'Domisili', 'value' => $vehicle->domicile ?? 'Jakarta'],
                         ['icon' => 'fas fa-star', 'label' => 'Rating', 'value' => $vehicle->rating . ' / 5.0'],
                         ['icon' => 'fas fa-shield-alt', 'label' => 'Asuransi', 'value' => 'Terlindungi'],
-                        ['icon' => 'fas fa-calendar-check', 'label' => 'Tahun', 'value' => '2023 - 2024'],
                     ];
                     @endphp
                     @foreach($specs as $spec)
@@ -94,16 +94,73 @@
 
             {{-- Tab Content: Ulasan --}}
             <div id="tab-ulasan" class="tab-content py-8 hidden">
-                <div class="bg-blue-600 rounded-3xl p-8 text-white flex flex-col md:flex-row items-center gap-10 shadow-xl shadow-blue-100">
-                    <div class="text-center md:text-left">
-                        <p class="text-6xl font-black mb-2">{{ $vehicle->rating }}</p>
+                @php
+                    $reviews = \App\Models\Booking::where('vehicle_id', $vehicle->id)
+                        ->whereNotNull('rating')
+                        ->where('review', '!=', '')
+                        ->with('user')
+                        ->latest()
+                        ->take(10)
+                        ->get();
+                @endphp
+
+                <div class="bg-blue-600 rounded-3xl p-8 text-white flex flex-col md:flex-row items-center gap-10 shadow-lg shadow-blue-200 mb-8 overflow-hidden">
+                    <div class="text-center md:text-left flex-shrink-0">
+                        <p class="text-6xl font-black mb-2">{{ number_format((float) $vehicle->rating, 1, '.', '') }}</p>
                         <div class="flex gap-1 text-yellow-400 mb-2 justify-center md:justify-start">
-                            @for($i=0; $i<5; $i++) <i class="fas fa-star text-sm"></i> @endfor
+                            @for($i=1; $i<=5; $i++) <i class="fas fa-star text-sm {{ $i <= round((float)$vehicle->rating) ? '' : 'opacity-40 text-white' }}"></i> @endfor
                         </div>
                         <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Skor Kepuasan</p>
                     </div>
-                    <div class="h-px md:h-16 w-full md:w-px bg-white/20"></div>
-                    <p class="text-sm leading-relaxed opacity-90 max-w-md italic font-medium">"Kendaraan ini sangat diminati oleh pelanggan kami karena kondisinya yang selalu prima dan performa yang tangguh untuk perjalanan jauh."</p>
+                    <div class="h-px md:h-32 w-full md:w-px bg-white/20 flex-shrink-0"></div>
+                    
+                    <div class="flex-1 w-full min-w-0 relative group" id="review-carousel-container">
+                        @if($reviews->count() > 0)
+                            <div class="overflow-hidden w-full h-full relative">
+                                <div id="review-slider" class="flex transition-transform duration-500 ease-out w-full items-center h-full">
+                                    @foreach($reviews as $r)
+                                    <div class="w-full flex-shrink-0 px-4 flex flex-col justify-center">
+                                        <div class="flex items-center gap-4 mb-4">
+                                            <div class="w-12 h-12 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-lg flex-shrink-0 shadow-inner">
+                                                {{ substr($r->user->name, 0, 1) }}
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center gap-2">
+                                                    <h5 class="font-bold text-white">{{ $r->user->name }}</h5>
+                                                    <span class="text-[10px] text-white/60">• {{ $r->updated_at->diffForHumans() }}</span>
+                                                </div>
+                                                <div class="flex gap-1 text-yellow-400 mt-1 text-[10px]">
+                                                    @for($i=1; $i<=5; $i++)
+                                                        <i class="fas fa-star {{ $i <= $r->rating ? '' : 'opacity-30 text-white' }}"></i>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="text-base leading-relaxed opacity-95 italic font-medium">"{{ $r->review }}"</p>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            @if($reviews->count() > 1)
+                                {{-- Carousel Controls --}}
+                                <button id="prev-review" class="absolute left-0 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 -ml-2 focus:outline-none backdrop-blur-sm"><i class="fas fa-chevron-left text-xs"></i></button>
+                                <button id="next-review" class="absolute right-0 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 -mr-2 focus:outline-none backdrop-blur-sm"><i class="fas fa-chevron-right text-xs"></i></button>
+                                
+                                {{-- Dots --}}
+                                <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity" id="review-dots">
+                                    @foreach($reviews as $k => $r)
+                                        <button class="w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white transition-colors dot-btn" data-index="{{ $k }}"></button>
+                                    @endforeach
+                                </div>
+                            @endif
+                        @else
+                            <div class="flex flex-col justify-center h-full px-4">
+                                <p class="text-base leading-relaxed opacity-95 italic font-medium">"Rating ini didapatkan dari akumulasi penilaian kondisi armada dan kepuasan pelanggan."</p>
+                                <p class="text-xs opacity-75 mt-3"><i class="fas fa-info-circle"></i> Belum ada ulasan tertulis terbaru.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
 
@@ -111,7 +168,7 @@
 
         {{-- ===== RIGHT: BOOKING CARD ===== --}}
         <div class="lg:col-span-1">
-            <div class="bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl p-8 sticky top-24">
+            <div class="bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl p-8 top-24">
 
                 {{-- Price --}}
                 <div class="mb-8">
@@ -124,8 +181,7 @@
 
                 {{-- Booking Form --}}
                 @auth
-                <form action="{{ route('booking.store') }}" method="POST">
-                    @csrf
+                <form action="{{ route('checkout', $vehicle->id) }}" method="GET">
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
 
                     {{-- Date Picker --}}
@@ -133,15 +189,17 @@
                         <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-4">
                             <div>
                                 <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Tanggal Mulai</label>
-                                <input type="date" name="start_date" id="book-start" class="w-full bg-transparent text-slate-900 font-bold focus:outline-none text-sm p-0">
+                                <input type="date" name="start_date" id="book-start" required class="w-full bg-transparent text-slate-900 font-bold focus:outline-none text-sm p-0">
                             </div>
                             <hr class="border-slate-200">
                             <div>
                                 <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Tanggal Selesai</label>
-                                <input type="date" name="end_date" id="book-end" class="w-full bg-transparent text-slate-900 font-bold focus:outline-none text-sm p-0">
+                                <input type="date" name="end_date" id="book-end" required class="w-full bg-transparent text-slate-900 font-bold focus:outline-none text-sm p-0">
                             </div>
                         </div>
                     </div>
+
+
 
                     {{-- Price Breakdown --}}
                     <div id="price-breakdown" class="bg-blue-50/50 rounded-2xl p-6 mb-8 space-y-3 text-sm hidden border border-blue-100/50 transition-all duration-500">
@@ -161,8 +219,8 @@
 
                     {{-- CTA --}}
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl transition-all active:scale-95 shadow-xl shadow-blue-200 text-sm flex items-center justify-center gap-3">
-                        <i class="fas fa-calendar-check lg:text-lg"></i>
-                        PESAN SEKARANG
+                        <i class="fas fa-arrow-right lg:text-lg"></i>
+                        LANJUTKAN PESANAN
                     </button>
                 </form>
                 @else
@@ -225,7 +283,11 @@
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <p class="text-slate-900 font-bold text-lg leading-none mb-1">{{ $r->name }}</p>
-                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">{{ $r->type }}</p>
+                            <div class="flex items-center gap-2">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ $r->type }}</p>
+                                <span class="text-slate-300 text-xs">•</span>
+                                <p class="text-[10px] font-bold text-red-500 uppercase tracking-widest"><i class="fas fa-map-marker-alt"></i> {{ $r->domicile ?? 'Jakarta' }}</p>
+                            </div>
                         </div>
                         <a href="{{ route('vehicle.detail', $r->id) }}" class="w-10 h-10 bg-slate-50 text-slate-400 hover:bg-blue-600 hover:text-white rounded-xl flex items-center justify-center transition-all">
                             <i class="fas fa-arrow-right text-xs"></i>
@@ -299,5 +361,60 @@
         updatePrice();
     });
     endInput.addEventListener('change', updatePrice);
+
+    // Review Carousel Script
+    const slider = document.getElementById('review-slider');
+    if (slider) {
+        const prevBtn = document.getElementById('prev-review');
+        const nextBtn = document.getElementById('next-review');
+        const dots = document.querySelectorAll('.dot-btn');
+        const slideCount = slider.children.length;
+        let currentIndex = 0;
+        let slideInterval;
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+            dots.forEach((dot, i) => {
+                if(i === currentIndex) {
+                    dot.classList.add('bg-white');
+                    dot.classList.remove('bg-white/40');
+                } else {
+                    dot.classList.remove('bg-white');
+                    dot.classList.add('bg-white/40');
+                }
+            });
+        }
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % slideCount;
+            updateSlider();
+        }
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+            updateSlider();
+        }
+
+        if (slideCount > 1) {
+            updateSlider(); // init
+            nextBtn?.addEventListener('click', () => { nextSlide(); resetInterval(); });
+            prevBtn?.addEventListener('click', () => { prevSlide(); resetInterval(); });
+            dots.forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    currentIndex = parseInt(e.target.dataset.index);
+                    updateSlider();
+                    resetInterval();
+                });
+            });
+            
+            function startInterval() {
+                slideInterval = setInterval(nextSlide, 7000); // 7s auto slide
+            }
+            function resetInterval() {
+                clearInterval(slideInterval);
+                startInterval();
+            }
+            startInterval();
+        }
+    }
+
 </script>
 @endpush

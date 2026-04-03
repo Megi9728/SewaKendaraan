@@ -51,6 +51,7 @@
             <thead class="bg-slate-50 border-b border-slate-100">
                 <tr>
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Kendaraan</th>
+                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Domisili</th>
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Jenis</th>
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Transmisi</th>
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Harga/Hari</th>
@@ -75,6 +76,7 @@
                             </div>
                         </div>
                     </td>
+                    <td class="px-6 py-4 font-bold text-slate-600"><i class="fas fa-map-marker-alt text-red-500 mr-1"></i> {{ $v->domicile ?? 'Jakarta' }}</td>
                     <td class="px-6 py-4 text-slate-500 font-medium">{{ $v->type }}</td>
                     <td class="px-6 py-4 text-slate-500">{{ $v->transmission }}</td>
                     <td class="px-6 py-4 font-bold text-blue-600">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</td>
@@ -132,6 +134,16 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Kendaraan</label>
                     <input type="text" name="name" id="f-name" required placeholder="cth: Toyota Innova Zenix" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Domisili Cabang</label>
+                    <select name="domicile" id="f-domicile" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                        <option value="Jakarta">Jakarta</option>
+                        <option value="Bogor">Bogor</option>
+                        <option value="Depok">Depok</option>
+                        <option value="Tangerang">Tangerang</option>
+                        <option value="Bekasi">Bekasi</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Jenis</label>
@@ -241,6 +253,7 @@
         
         // Fill fields
         document.getElementById('f-name').value = vehicle.name;
+        document.getElementById('f-domicile').value = vehicle.domicile || 'Jakarta';
         document.getElementById('f-type').value = vehicle.type;
         document.getElementById('f-transmission').value = vehicle.transmission;
         document.getElementById('f-seats').value = vehicle.seats;
