@@ -132,6 +132,17 @@
                      @endauth
                      <a href="{{ route('how.it.works') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('how.it.works') ? 'underline underline-offset-8' : '' }}">Tentang</a>
                      <a href="{{ route('help') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('help') ? 'underline underline-offset-8' : '' }}">Bantuan</a>
+
+                     {{-- Admin Contextual Links --}}
+                     @auth
+                         @if(Auth::user()->role === 'admin')
+                             <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col gap-8">
+                                 <p class="text-sm font-bold text-uber-muted uppercase tracking-[0.2em] italic">Admin Panel</p>
+                                 <a href="{{ route('admin.kendaraan') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('admin.kendaraan') ? 'underline underline-offset-8' : '' }}">Kelola Unit</a>
+                                 <a href="{{ route('admin.pemesanan') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('admin.pemesanan') ? 'underline underline-offset-8' : '' }}">Daftar Pesanan</a>
+                             </div>
+                         @endif
+                     @endauth
                 </div>
 
                 {{-- Action / Profile --}}
