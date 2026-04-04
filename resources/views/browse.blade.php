@@ -101,10 +101,10 @@
                         
                         {{-- Status Badge (Minimalist) --}}
                         <div class="absolute top-3 left-3">
-                            @if($v->status === 'Tersedia')
+                            @if($v->available_units_count >= 1)
                                 <span class="bg-uber-white text-uber-black text-[10px] font-bold px-2.5 py-1 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
                             @else
-                                <span class="bg-uber-black text-uber-white text-[10px] font-bold px-2.5 py-1 rounded shadow-sm uppercase tracking-widest">Disewa</span>
+                                <span class="bg-uber-black text-uber-white text-[10px] font-bold px-2.5 py-1 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
                             @endif
                         </div>
                     </div>
@@ -113,13 +113,16 @@
                     <div class="flex flex-col flex-1 px-1">
                         <div class="flex justify-between items-start mb-1">
                             <h3 class="text-xl font-bold text-uber-black leading-tight">{{ $v->name }}</h3>
-                            <div class="flex items-center gap-1 text-uber-black">
+                            <div class="flex items-center gap-1.5 text-uber-black">
                                 <i class="fas fa-star text-xs"></i>
                                 <span class="text-sm font-bold">{{ $v->rating }}</span>
+                                <span class="text-[10px] font-bold text-uber-muted">({{ $v->reviews_count }})</span>
                             </div>
                         </div>
 
-                        <p class="text-uber-text font-medium text-sm mb-4">{{ $v->seats }} Kursi • {{ $v->transmission }}</p>
+                        <p class="text-uber-text font-medium text-xs mb-4">
+                            {{ $v->seats }} Kursi • {{ $v->transmission }} • {{ $v->fuel_type ?? 'Bensin' }} • {{ $v->engine_capacity ?? '1500' }} CC
+                        </p>
 
                         <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                             <div class="flex flex-col">
@@ -171,35 +174,31 @@
     const emptyState = document.getElementById('empty-state');
     const vehicleGrid = document.getElementById('vehicle-grid');
     const countText = document.getElementById('vehicle-count-text');
-
     let currentRegion = '';
 
-    // Region Chip listener
+    // Region Chip listener (Update UI only, don't filter yet)
     regionButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            regionButtons.forEach(b => b.className = 'region-chip border border-gray-200 text-xs font-bold py-2.5 rounded-full hover:bg-uber-chip transition-all text-uber-black bg-uber-white text-uber-black bg-uber-white');
+            regionButtons.forEach(b => {
+                b.className = 'region-chip border border-gray-200 text-xs font-bold py-2.5 rounded-full hover:bg-uber-chip transition-all text-uber-black bg-uber-white';
+            });
             this.className = 'region-chip border border-uber-black text-xs font-bold py-2.5 rounded-full hover:bg-uber-chip transition-all bg-uber-black text-uber-white';
             currentRegion = this.dataset.value;
-            filterVehicles();
+            // Removed immediate filterVehicles()
         });
     });
-
-    // Price range listener
+ 
+    // Price range listener (Update display only)
     if (priceRange) {
         priceRange.addEventListener('input', function() {
             priceDisplay.textContent = 'Rp ' + parseInt(this.value).toLocaleString('id-ID');
-            filterVehicles();
+            // Removed immediate filterVehicles()
         });
     }
 
-    // Search input listener
-    if (searchInput) {
-        searchInput.addEventListener('input', filterVehicles);
-    }
-
-    // Type select listener
-    if (typeSelect) {
-        typeSelect.addEventListener('change', filterVehicles);
+    // Apply button - Only filter here
+    if (applyBtn) {
+        applyBtn.addEventListener('click', filterVehicles);
     }
 
     function filterVehicles() {

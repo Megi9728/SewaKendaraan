@@ -144,12 +144,15 @@ class BookingController extends Controller
             'review' => $request->review
         ]);
 
-        // (Opsional) Update rata-rata rating kendaraan
+        // Update rata-rata rating dan jumlah ulasan kendaraan
         $vehicle = $booking->vehicle;
         $allRatings = Booking::where('vehicle_id', $vehicle->id)->whereNotNull('rating')->pluck('rating');
         if($allRatings->count() > 0) {
             $avg = $allRatings->average();
-            $vehicle->update(['rating' => number_format($avg, 1, '.', '')]);
+            $vehicle->update([
+                'rating' => number_format($avg, 1, '.', ''),
+                'reviews_count' => $allRatings->count()
+            ]);
         }
 
         return back()->with('success', 'Terima kasih atas ulasan Anda!');
@@ -163,7 +166,7 @@ class BookingController extends Controller
         if ($booking->user_id !== Auth::id()) abort(403);
 
         $request->validate([
-            'status' => 'required|string|in:Active,Waiting_Pickup'
+            'status' => 'required|string|in:Active,Waiting_Pickup,Returning'
         ]);
 
         $booking->update([

@@ -23,7 +23,7 @@ class BookingController extends Controller
     public function update(Request $request, Booking $booking)
     {
         $request->validate([
-            'status' => 'required|string|in:Pending,Confirmed,Active,Completed,Cancelled,Rejected,On_Delivery,Picked_Up,Waiting_Pickup',
+            'status' => 'required|string|in:Pending,Confirmed,Active,Completed,Cancelled,Rejected,On_Delivery,Picked_Up,Waiting_Pickup,Returning',
             'rejection_reason' => 'required_if:status,Rejected|nullable|string'
         ]);
 
@@ -38,7 +38,7 @@ class BookingController extends Controller
         // SINKRONISASI LOGIKA STATUS MOBIL
         $vehicle = $booking->vehicle;
 
-        if (in_array($newStatus, ['Confirmed', 'Active', 'On_Delivery', 'Picked_Up', 'Waiting_Pickup'])) {
+        if (in_array($newStatus, ['Confirmed', 'Active', 'On_Delivery', 'Picked_Up', 'Waiting_Pickup', 'Returning'])) {
             $vehicle->update(['status' => 'Disewa']);
         } 
         elseif (in_array($newStatus, ['Completed', 'Rejected', 'Cancelled'])) {

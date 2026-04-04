@@ -64,7 +64,7 @@
                     {{-- Desktop Nav --}}
                     <div class="hidden md:flex items-center gap-1">
                         <a href="{{ route('home') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('home') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Beranda</a>
-                        <a href="{{ route('browse') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Pesan</a>
+                        <a href="{{ route('browse') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Cari Kendaraan</a>
                         @auth
                             @if(Auth::user()->role !== 'admin')
                                 <a href="{{ route('booking.history') }}" class="px-4 py-2 text-sm font-medium {{ request()->routeIs('booking.history') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Riwayat Sewa</a>

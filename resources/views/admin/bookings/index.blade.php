@@ -104,11 +104,13 @@
                                     'Picked_Up' => 'bg-indigo-100 text-indigo-600',
                                     'Active' => 'bg-indigo-100 text-indigo-600',
                                     'Waiting_Pickup' => 'bg-yellow-100 text-yellow-600',
+                                    'Returning' => 'bg-indigo-100 text-indigo-600',
                                 ];
                                 $statusLabels = [
                                     'On_Delivery' => 'Sedang Diantar',
                                     'Picked_Up' => 'Sudah Diambil',
                                     'Waiting_Pickup' => 'Menunggu Penjemputan',
+                                    'Returning' => 'Menunggu Pengembalian',
                                 ];
                                 $payColors = [
                                     'unpaid' => 'bg-red-50 text-red-600',
@@ -166,7 +168,7 @@
                                     @endif
                                 @endif
 
-                                @if($booking->status === 'Waiting_Pickup')
+                                @if($booking->status === 'Waiting_Pickup' || $booking->status === 'Returning')
                                     <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
                                         @csrf @method('PUT')
                                         <input type="hidden" name="status" value="Completed">

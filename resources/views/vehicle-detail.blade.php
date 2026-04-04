@@ -36,9 +36,11 @@
 
                 {{-- Badges --}}
                 <div class="absolute top-5 left-5 flex gap-2">
-                    <span class="bg-uber-white text-uber-black text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest border border-gray-100">
-                        {{ $vehicle->status }}
-                    </span>
+                    @if($vehicle->available_units_count >= 1)
+                        <span class="bg-uber-white text-uber-black text-[10px] font-bold px-3 py-1.5 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
+                    @else
+                        <span class="bg-uber-black text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
+                    @endif
                     @if($vehicle->rating >= 4.8)
                     <span class="bg-uber-black text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">
                         ⭐ Unggulan
@@ -47,17 +49,47 @@
                 </div>
             </div>
 
+            {{-- Gallery Thumbnails --}}
+            @if($vehicle->images->count() > 0)
+            <div class="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+                <div class="thumbnail-item flex-shrink-0 w-24 aspect-video rounded-lg overflow-hidden border-2 border-uber-black cursor-pointer bg-slate-100" 
+                     onclick="changeMainImg('{{ $vehicle->image ? (strpos($vehicle->image, 'http') === 0 ? $vehicle->image : asset('storage/' . $vehicle->image)) : 'https://placehold.co/1200x800?text=No+Image' }}', this)">
+                    <img src="{{ $vehicle->image ? (strpos($vehicle->image, 'http') === 0 ? $vehicle->image : asset('storage/' . $vehicle->image)) : 'https://placehold.co/1200x800?text=No+Image' }}" class="w-full h-full object-cover">
+                </div>
+                @foreach($vehicle->images as $img)
+                <div class="thumbnail-item flex-shrink-0 w-24 aspect-video rounded-lg overflow-hidden border-2 border-transparent hover:border-gray-300 cursor-pointer bg-slate-100 transition-all" 
+                     onclick="changeMainImg('{{ asset('storage/' . $img->image_path) }}', this)">
+                    <img src="{{ asset('storage/' . $img->image_path) }}" class="w-full h-full object-cover">
+                </div>
+                @endforeach
+            </div>
+            @endif
+
             {{-- Titles --}}
             <div class="mt-10 mb-8">
                 <div class="flex justify-between items-start">
                     <div>
                         <h1 class="text-4xl md:text-5xl font-bold text-uber-black tracking-tighter">{{ $vehicle->name }}</h1>
-                        <p class="text-uber-text font-medium mt-2 text-lg uppercase tracking-wide">{{ $vehicle->type }} • {{ $vehicle->transmission }}</p>
+                        <p class="text-uber-text font-medium mt-2 text-lg uppercase tracking-wide">
+                            {{ $vehicle->type }} • {{ $vehicle->transmission }} • {{ $vehicle->fuel_type ?? 'Bensin' }} • {{ $vehicle->engine_capacity ?? '1500' }} CC
+                        </p>
+                        <div class="mt-4">
+                            @if($vehicle->available_units_count >= 1)
+                                <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-3 py-1.5 rounded-full border border-emerald-100 uppercase tracking-widest">
+                                    <i class="fas fa-check-circle mr-1.5"></i> Tersedia
+                                </span>
+                            @else
+                                <span class="bg-red-50 text-red-700 text-[10px] font-bold px-3 py-1.5 rounded-full border border-red-100 uppercase tracking-widest">
+                                    <i class="fas fa-times-circle mr-1.5"></i> Tidak Tersedia
+                                </span>
+                            @endif
+                        </div>
                     </div>
                     <div class="flex flex-col items-end">
                         <div class="flex items-center gap-1.5 text-uber-black mb-1">
                             <i class="fas fa-star text-lg"></i>
                             <span class="text-xl font-bold">{{ $vehicle->rating }}</span>
+                            <span class="text-sm font-medium text-uber-muted ml-0.5">({{ $vehicle->reviews_count }} Ulasan)</span>
                         </div>
                         <span class="text-xs font-bold text-uber-muted uppercase tracking-widest">Skor User</span>
                     </div>
@@ -80,10 +112,12 @@
                     $specs = [
                         ['icon' => 'fas fa-users', 'label' => 'Kapasitas', 'value' => $vehicle->seats . ' Penumpang'],
                         ['icon' => 'fas fa-cog', 'label' => 'Sistem Transmisi', 'value' => $vehicle->transmission],
-                        ['icon' => 'fas fa-gas-pump', 'label' => 'Kategori Kendaraan', 'value' => $vehicle->type],
+                        ['icon' => 'fas fa-gas-pump', 'label' => 'Bahan Bakar', 'value' => $vehicle->fuel_type ?? 'Bensin'],
+                        ['icon' => 'fas fa-tachometer-alt', 'label' => 'Kapasitas Mesin', 'value' => ($vehicle->engine_capacity ?? '1500') . ' CC'],
+                        ['icon' => 'fas fa-car-side', 'label' => 'Unit Tersedia', 'value' => ($vehicle->available_units_count ?? '1') . ' Unit'],
                         ['icon' => 'fas fa-map-marker-alt', 'label' => 'Lokasi Penempatan', 'value' => $vehicle->domicile ?? 'Jakarta'],
-                        ['icon' => 'fas fa-tag', 'label' => 'Harga Kontrak', 'value' => 'Tarif kompetitif'],
                         ['icon' => 'fas fa-shield-alt', 'label' => 'Status Keamanan', 'value' => 'Armada Terverifikasi'],
+                        ['icon' => 'fas fa-check-circle', 'label' => 'Kondisi Unit', 'value' => 'Terawat & Bersih'],
                     ];
                     @endphp
                     @foreach($specs as $spec)
@@ -114,17 +148,65 @@
 
             {{-- Tab Content: Ulasan --}}
             <div id="tab-ulasan" class="tab-content py-10 hidden">
-                <div class="bg-uber-black text-uber-white rounded-xl p-10 flex flex-col md:flex-row items-center gap-12 mb-10 overflow-hidden relative">
-                    <div class="text-center md:text-left flex-shrink-0 z-10">
-                        <p class="text-6xl font-bold mb-2">{{ $vehicle->rating }}</p>
-                        <p class="text-xs font-bold text-uber-muted uppercase tracking-[0.2em]">Peringkat Bintang</p>
+                <div class="bg-uber-black text-uber-white rounded-xl p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 mb-10 overflow-hidden relative group/slider">
+                    
+                    {{-- Left: Score --}}
+                    <div class="text-center md:text-left flex-shrink-0 z-10 border-b md:border-b-0 md:border-r border-white/10 pb-8 md:pb-0 md:pr-12 w-full md:w-auto">
+                        <p class="text-7xl font-bold mb-2 tracking-tighter">{{ $vehicle->rating }}</p>
+                        <p class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.3em]">Peringkat Bintang</p>
                     </div>
-                    <div class="flex-1 w-full text-center md:text-left z-10">
-                         <p class="text-xl font-medium leading-relaxed italic opacity-90">
-                            "Kualitas kenyamanan dan keamanan armada dijamin oleh platform kami melalui pemeliharaan berkala setiap bulannya."
-                         </p>
+
+                    {{-- Right: Reviews Slider --}}
+                    <div class="flex-1 w-full relative z-10 overflow-hidden min-h-[140px] flex items-center">
+                        <div id="review-slider" class="flex transition-transform duration-700 ease-in-out w-full">
+                            @forelse($vehicle->bookings as $b)
+                            <div class="flex-shrink-0 w-full">
+                                 <p class="text-xl md:text-2xl font-medium leading-relaxed italic opacity-90 mb-6 line-clamp-3">
+                                    "{{ $b->review }}"
+                                 </p>
+                                 <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-full flex items-center justify-center text-sm font-bold border border-white/5 shadow-inner">
+                                        {{ substr($b->user->name, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold uppercase tracking-widest text-white">{{ $b->user->name }}</p>
+                                        <p class="text-[10px] font-bold text-uber-muted uppercase tracking-widest mt-0.5">{{ $b->created_at->format('d M Y') }}</p>
+                                    </div>
+                                 </div>
+                            </div>
+                            @empty
+                            <div class="flex-shrink-0 w-full">
+                                 <p class="text-xl md:text-2xl font-medium leading-relaxed italic opacity-90">
+                                    "Kualitas kenyamanan dan keamanan armada dijamin oleh platform kami melalui pemeliharaan berkala setiap bulannya."
+                                 </p>
+                                 <p class="text-xs font-bold text-uber-muted uppercase tracking-widest mt-4">Pesan Layanan Kami</p>
+                            </div>
+                            @endforelse
+                        </div>
+
+                        {{-- Navigation Dots / Progress (Minimalist) --}}
+                        @if($vehicle->bookings->count() > 1)
+                        <div class="absolute bottom-0 right-0 flex gap-1.5">
+                            @foreach($vehicle->bookings as $index => $b)
+                            <div class="review-dot w-1.5 h-1.5 rounded-full transition-all duration-300 {{ $index === 0 ? 'bg-white w-4' : 'bg-white/20' }}"></div>
+                            @endforeach
+                        </div>
+                        @endif
+
+                        {{-- Simple Controls (Floating) --}}
+                        @if($vehicle->bookings->count() > 1)
+                        <div class="absolute inset-y-0 -left-2 -right-2 flex justify-between items-center opacity-0 group-hover/slider:opacity-100 transition-opacity pointer-events-none">
+                            <button onclick="prevReview()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center pointer-events-auto transition-all backdrop-blur-sm border border-white/5">
+                                <i class="fas fa-arrow-left text-[10px]"></i>
+                            </button>
+                            <button onclick="nextReview()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center pointer-events-auto transition-all backdrop-blur-sm border border-white/5">
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+                        @endif
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -182,9 +264,15 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full btn-primary py-5 text-base font-bold shadow-uber flex items-center justify-center gap-3">
-                         Mulai Pesan Sekarang
-                    </button>
+                    @if($vehicle->available_units_count >= 1)
+                        <button type="submit" class="w-full btn-primary py-5 text-base font-bold shadow-uber flex items-center justify-center gap-3">
+                             Mulai Pesan Sekarang
+                        </button>
+                    @else
+                        <button type="button" disabled class="w-full bg-uber-chip border border-gray-100 text-uber-muted py-5 text-base font-bold cursor-not-allowed flex items-center justify-center gap-3">
+                             <i class="fas fa-times-circle"></i> Armada Sedang Tidak Tersedia
+                        </button>
+                    @endif
                     <p class="text-center text-[10px] font-bold text-uber-muted uppercase tracking-widest">Aman • Terpercaya • Cepat</p>
                 </form>
                 @else
@@ -261,6 +349,43 @@
             target.classList.add('active');
         });
     });
+    
+    // Review Slider Logic
+    let currentReview = 0;
+    const sliderContainer = document.getElementById('review-slider');
+    const dots = document.querySelectorAll('.review-dot');
+    const totalReviews = {{ $vehicle->bookings->count() }};
+    
+    window.updateReviewSlider = function() {
+        if(!sliderContainer) return;
+        sliderContainer.style.transform = `translateX(-${currentReview * 100}%)`;
+        
+        dots.forEach((dot, idx) => {
+            if(idx === currentReview) {
+                dot.classList.add('bg-white', 'w-4');
+                dot.classList.remove('bg-white/20');
+            } else {
+                dot.classList.remove('bg-white', 'w-4');
+                dot.classList.add('bg-white/20', 'w-1.5');
+            }
+        });
+    }
+
+    window.nextReview = function() {
+        if(totalReviews <= 1) return;
+        currentReview = (currentReview + 1) % totalReviews;
+        updateReviewSlider();
+    }
+
+    window.prevReview = function() {
+        if(totalReviews <= 1) return;
+        currentReview = (currentReview - 1 + totalReviews) % totalReviews;
+        updateReviewSlider();
+    }
+
+    if(totalReviews > 1) {
+        setInterval(nextReview, 6000);
+    }
 
     // Price calculator
     const startInput = document.getElementById('book-start');
@@ -303,6 +428,17 @@
             updatePrice();
         });
         endInput.addEventListener('change', updatePrice);
+    }
+
+    // Gallery Switcher
+    function changeMainImg(src, el) {
+        document.getElementById('main-image').src = src;
+        document.querySelectorAll('.thumbnail-item').forEach(item => {
+            item.classList.remove('border-uber-black');
+            item.classList.add('border-transparent');
+        });
+        el.classList.add('border-uber-black');
+        el.classList.remove('border-transparent');
     }
 </script>
 @endpush

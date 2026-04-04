@@ -24,18 +24,22 @@ Route::get('/jelajah', function (\Illuminate\Http\Request $request) {
     }
 
     if ($request->filled('start_date') && $request->filled('end_date')) {
-        $conflictingBookings = \App\Models\Booking::whereNotIn('status', ['Cancelled', 'Rejected', 'Completed'])
-            ->where(function ($q) use ($request) {
-                $q->whereBetween('start_date', [$request->start_date, $request->end_date])
-                  ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
-                  ->orWhere(function ($q2) use ($request) {
-                      $q2->where('start_date', '<=', $request->start_date)
-                         ->where('end_date', '>=', $request->end_date);
-                  });
-            })
-            ->pluck('vehicle_id');
-
-        $query->whereNotIn('id', $conflictingBookings);
+        $query->where(function($q) use ($request) {
+            $q->whereRaw('COALESCE(units_count, 1) > (
+                SELECT COUNT(*) FROM bookings 
+                WHERE bookings.vehicle_id = vehicles.id 
+                AND status NOT IN ("Cancelled", "Rejected", "Completed")
+                AND (
+                    (start_date BETWEEN ? AND ?) OR 
+                    (end_date BETWEEN ? AND ?) OR 
+                    (start_date <= ? AND end_date >= ?)
+                )
+            )', [
+                $request->start_date, $request->end_date, 
+                $request->start_date, $request->end_date, 
+                $request->start_date, $request->end_date
+            ]);
+        });
     }
 
     // Sort Logic
@@ -55,6 +59,9 @@ Route::get('/jelajah', function (\Illuminate\Http\Request $request) {
 })->name('browse');
 
 Route::get('/mobil/{vehicle}', function (\App\Models\Vehicle $vehicle) {
+    $vehicle->load(['images', 'bookings' => function($q) {
+        $q->whereNotNull('review')->where('review', '!=', '')->with('user')->latest();
+    }]);
     return view('vehicle-detail', compact('vehicle'));
 })->name('vehicle.detail');
 
@@ -121,6 +128,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/kendaraan', [\App\Http\Controllers\Admin\VehicleController::class, 'store'])->name('kendaraan.store');
     Route::put('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'update'])->name('kendaraan.update');
     Route::delete('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroy'])->name('kendaraan.destroy');
+    Route::delete('/kendaraan/image/{image}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroyImage'])->name('kendaraan.image.destroy');
 
     // Profil Admin (Dashboard view)
     Route::get('/profil', [AuthController::class, 'profile'])->name('profile');

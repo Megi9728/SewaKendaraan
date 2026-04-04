@@ -50,6 +50,7 @@
                             'Picked_Up' => 'bg-indigo-100 text-indigo-600 border-indigo-200',
                             'Active' => 'bg-indigo-100 text-indigo-600 border-indigo-200',
                             'Waiting_Pickup' => 'bg-yellow-100 text-yellow-600 border-yellow-200',
+                            'Returning' => 'bg-indigo-100 text-indigo-600 border-indigo-200',
                             'Completed' => 'bg-green-100 text-green-600 border-green-200',
                             'Cancelled' => 'bg-red-100 text-red-600 border-red-200',
                             'Rejected' => 'bg-slate-100 text-slate-600 border-slate-200',
@@ -57,7 +58,8 @@
                         $statusLabels = [
                             'On_Delivery' => 'Sedang Diantar',
                             'Picked_Up' => 'Sudah Diambil',
-                            'Waiting_Pickup' => 'Menunggu Penjemputan/Penyelesaian',
+                            'Waiting_Pickup' => 'Menunggu Penjemputan',
+                            'Returning' => 'Menunggu Pengembalian',
                         ];
                     @endphp
                     <span class="text-[10px] font-black px-3 py-1.5 rounded-lg border {{ $statusColors[$booking->status] }} uppercase tracking-widest">
@@ -147,15 +149,20 @@
                         @else
                             <form action="{{ route('booking.status.update', $booking->id) }}" method="POST">
                                 @csrf @method('PUT')
-                                <input type="hidden" name="status" value="Waiting_Pickup">
+                                <input type="hidden" name="status" value="Returning">
                                 <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Konfirmasi Mobil Dikembalikan</button>
                             </form>
                         @endif
                     </div>
                 @elseif($booking->status === 'Waiting_Pickup')
                     <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-2 text-center text-sm">
-                        <p class="font-bold text-yellow-800">Proses Akhir</p>
-                        <p class="text-yellow-600 text-xs">Menunggu konfirmasi admin untuk menyelesaikan sewa</p>
+                        <p class="font-bold text-yellow-800">Proses Penjemputan</p>
+                        <p class="text-yellow-600 text-xs">Sopir kami sedang menuju lokasi Anda untuk menjemput mobil</p>
+                    </div>
+                @elseif($booking->status === 'Returning')
+                    <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl mb-2 text-center text-sm">
+                        <p class="font-bold text-indigo-800">Proses Pengembalian</p>
+                        <p class="text-indigo-600 text-xs">Silakan kembalikan mobil ke garasi kami. Admin akan segera memverifikasi.</p>
                     </div>
                 @elseif($booking->status === 'Completed')
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl mb-2 text-center text-sm">

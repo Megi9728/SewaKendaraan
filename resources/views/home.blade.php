@@ -162,22 +162,25 @@
                      alt="{{ $v->name }}" 
                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 
-                @if($v->status === 'Tersedia')
+                @if($v->available_units_count >= 1)
                     <span class="absolute top-4 left-4 bg-uber-white text-uber-black text-[10px] font-bold px-3 py-1.5 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
                 @else
-                    <span class="absolute top-4 left-4 bg-uber-black text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">Disewa</span>
+                    <span class="absolute top-4 left-4 bg-uber-black text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
                 @endif
             </div>
 
             <div class="flex justify-between items-start mb-1">
                 <h3 class="font-bold text-2xl text-uber-black truncate group-hover:underline underline-offset-4">{{ $v->name }}</h3>
-                <div class="flex items-center gap-1 text-uber-black">
+                <div class="flex items-center gap-1.5 text-uber-black">
                      <i class="fas fa-star text-xs"></i>
                      <span class="text-sm font-bold">{{ $v->rating }}</span>
+                     <span class="text-[10px] font-bold text-uber-muted">({{ $v->reviews_count }})</span>
                 </div>
             </div>
             
-            <p class="text-uber-text font-medium text-sm mb-4">{{ $v->seats }} Kursi • {{ $v->transmission }}</p>
+            <p class="text-uber-text font-medium text-xs mb-4">
+                {{ $v->seats }} Kursi • {{ $v->transmission }} • {{ $v->fuel_type ?? 'Bensin' }} • {{ $v->engine_capacity ?? '1500' }} CC
+            </p>
             <div class="flex items-center gap-2">
                 <span class="font-bold text-lg text-uber-black">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</span>
                 <span class="text-xs text-uber-muted font-bold uppercase tracking-widest">/ hari</span>
