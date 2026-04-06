@@ -101,7 +101,7 @@
     <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16 border-b border-gray-100 pb-10">
         <div class="max-w-2xl">
             <h2 class="text-4xl md:text-5xl font-bold text-uber-black tracking-tighter">Cara pesannya gampang.</h2>
-            <p class="text-xl text-uber-text font-medium mt-4">Cukup tiga langkah dari layar HP sampai unit di garasi Anda.</p>
+            <p class="text-xl text-uber-text font-medium mt-4">Cukup three langkah dari layar HP sampai unit di garasi Anda.</p>
         </div>
         <a href="{{ route('how.it.works') }}" class="text-xs font-bold text-uber-black uppercase border-b-2 border-uber-black pb-1 hover:opacity-70 transition">Pelajari Selengkapnya</a>
     </div>

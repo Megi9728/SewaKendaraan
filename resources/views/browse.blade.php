@@ -186,7 +186,7 @@
             currentRegion = this.dataset.value;
             // Removed immediate filterVehicles()
         });
-    });
+Region Buttons (Reverting)    });
  
     // Price range listener (Update display only)
     if (priceRange) {

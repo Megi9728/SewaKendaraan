@@ -217,10 +217,11 @@
 
                 {{-- Price Banner --}}
                 <div class="mb-10 text-center">
-                    <p class="text-xs font-bold text-uber-muted uppercase tracking-[0.3em] mb-3">Tarif Harian</p>
-                    <div class="flex items-baseline justify-center gap-2">
-                        <span class="text-5xl font-bold text-uber-black tracking-tighter">Rp {{ number_format($vehicle->price_per_day, 0, ',', '.') }}</span>
-                        <span class="text-uber-muted font-bold">/ hari</span>
+                    <p class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.4em] mb-4">Tarif Sewa</p>
+                    <div class="flex items-baseline justify-center gap-1.5">
+                        <span class="text-sm font-bold text-uber-muted mb-0.5">Rp</span>
+                        <span class="text-4xl font-bold text-uber-black tracking-tighter">{{ number_format($vehicle->price_per_day, 0, ',', '.') }}</span>
+                        <span class="text-xs font-bold text-uber-muted ml-0.5">/ hari</span>
                     </div>
                 </div>
 
