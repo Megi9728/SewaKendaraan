@@ -116,6 +116,7 @@
                         ['icon' => 'fas fa-tachometer-alt', 'label' => 'Kapasitas Mesin', 'value' => ($vehicle->engine_capacity ?? '1500') . ' CC'],
                         ['icon' => 'fas fa-car-side', 'label' => 'Unit Tersedia', 'value' => ($vehicle->available_units_count ?? '1') . ' Unit'],
                         ['icon' => 'fas fa-map-marker-alt', 'label' => 'Lokasi Penempatan', 'value' => $vehicle->domicile ?? 'Jakarta'],
+                        ['icon' => 'fas fa-user-tie', 'label' => 'Layanan Sopir', 'value' => 'Tersedia (+Rp ' . number_format($vehicle->driver_price, 0, ',', '.') . '/hari)'],
                         ['icon' => 'fas fa-shield-alt', 'label' => 'Status Keamanan', 'value' => 'Armada Terverifikasi'],
                         ['icon' => 'fas fa-check-circle', 'label' => 'Kondisi Unit', 'value' => 'Terawat & Bersih'],
                     ];

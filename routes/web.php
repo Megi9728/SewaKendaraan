@@ -130,6 +130,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroy'])->name('kendaraan.destroy');
     Route::delete('/kendaraan/image/{image}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroyImage'])->name('kendaraan.image.destroy');
 
+    // CRUD Driver
+    Route::get('/drivers', [\App\Http\Controllers\Admin\DriverController::class, 'index'])->name('drivers.index');
+    Route::post('/drivers', [\App\Http\Controllers\Admin\DriverController::class, 'store'])->name('drivers.store');
+    Route::put('/drivers/{driver}', [\App\Http\Controllers\Admin\DriverController::class, 'update'])->name('drivers.update');
+    Route::delete('/drivers/{driver}', [\App\Http\Controllers\Admin\DriverController::class, 'destroy'])->name('drivers.destroy');
+
     // Profil Admin (Dashboard view)
     Route::get('/profil', [AuthController::class, 'profile'])->name('profile');
     Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');

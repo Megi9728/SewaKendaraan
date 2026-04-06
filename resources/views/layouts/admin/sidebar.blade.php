@@ -28,6 +28,10 @@
                     <i class="icon fas fa-car"></i>
                     <span>Kelola Armada</span>
                 </a>
+                <a href="{{ route('admin.drivers.index') }}" class="sidebar-link {{ Request::routeIs('admin.drivers.index') ? 'active' : '' }}">
+                    <i class="icon fas fa-user-tie"></i>
+                    <span>Kelola Driver</span>
+                </a>
                 <a href="{{ route('admin.pemesanan') }}" class="sidebar-link {{ Request::routeIs('admin.pemesanan') ? 'active' : '' }}">
                     <i class="icon fas fa-calendar-check"></i>
                     <span class="flex-1">Pemesanan</span>

@@ -73,15 +73,20 @@
                             <p class="font-bold text-slate-700 text-sm mb-2">{{ $booking->vehicle->name }}</p>
                             <div class="flex gap-2 mb-2">
                                 @if($booking->ktp_photo)
-                                <a href="{{ asset('storage/' . $booking->ktp_photo) }}" target="_blank" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">KTP</a>
+                                <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP - {{ $booking->user->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">KTP</button>
                                 @endif
                                 @if($booking->sim_photo)
-                                <a href="{{ asset('storage/' . $booking->sim_photo) }}" target="_blank" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">SIM</a>
+                                <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM - {{ $booking->user->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">SIM</button>
                                 @endif
                             </div>
                             <p class="text-[10px] font-bold text-slate-500">Opsi: <span class="capitalize text-slate-800">{{ str_replace('-', ' ', $booking->delivery_type) }}</span></p>
                             @if($booking->delivery_type === 'delivery')
                             <p class="text-[10px] text-slate-500 italic max-w-[150px] truncate" title="{{ $booking->delivery_location }}">{{ $booking->delivery_location }}</p>
+                            @endif
+                            @if($booking->with_driver)
+                            <span class="text-[10px] font-bold bg-teal-50 text-teal-600 px-2 py-1 rounded border border-teal-100 mt-1 inline-block">
+                                <i class="fas fa-user-tie mr-1"></i> {{ $booking->driver->name ?? 'Pakai Sopir' }}
+                            </span>
                             @endif
                         </td>
                         <td class="px-6 py-5">
@@ -105,12 +110,14 @@
                                     'Active' => 'bg-indigo-100 text-indigo-600',
                                     'Waiting_Pickup' => 'bg-yellow-100 text-yellow-600',
                                     'Returning' => 'bg-indigo-100 text-indigo-600',
+                                    'On_Pickup' => 'bg-blue-900 text-white',
                                 ];
                                 $statusLabels = [
                                     'On_Delivery' => 'Sedang Diantar',
                                     'Picked_Up' => 'Sudah Diambil',
                                     'Waiting_Pickup' => 'Menunggu Penjemputan',
                                     'Returning' => 'Menunggu Pengembalian',
+                                    'On_Pickup' => 'Sopir Menuju Lokasi',
                                 ];
                                 $payColors = [
                                     'unpaid' => 'bg-red-50 text-red-600',
@@ -148,8 +155,16 @@
                                     </button>
                                 @endif
 
-                                @if($booking->status === 'Confirmed' && $booking->payment_status === 'fully_paid')
-                                    @if($booking->delivery_type === 'delivery')
+                                @if($booking->status === 'Confirmed' && ($booking->payment_status === 'fully_paid' || $booking->with_driver))
+                                    @if($booking->with_driver)
+                                        <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                            @csrf @method('PUT')
+                                            <input type="hidden" name="status" value="On_Pickup">
+                                            <button type="submit" class="bg-blue-900 hover:bg-slate-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+                                                <i class="fas fa-user-tie"></i> KIRIM SOPIR
+                                            </button>
+                                        </form>
+                                    @elseif($booking->delivery_type === 'delivery')
                                         <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
                                             @csrf @method('PUT')
                                             <input type="hidden" name="status" value="On_Delivery">
@@ -166,6 +181,20 @@
                                             </button>
                                         </form>
                                     @endif
+                                @endif
+
+                                @if($booking->status === 'On_Pickup')
+                                    <span class="text-[10px] font-bold text-slate-400 italic">Menunggu User Konfirmasi Sampai...</span>
+                                @endif
+
+                                @if($booking->status === 'Picked_Up' && $booking->with_driver)
+                                     <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                        @csrf @method('PUT')
+                                        <input type="hidden" name="status" value="Completed">
+                                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+                                            <i class="fas fa-flag-checkered"></i> SELESAI (DRIVER KEMBALI)
+                                        </button>
+                                    </form>
                                 @endif
 
                                 @if($booking->status === 'Waiting_Pickup' || $booking->status === 'Returning')
@@ -220,6 +249,30 @@
     </div>
 </div>
 
+{{-- Modal Preview Dokumen --}}
+<div id="modal-preview" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden animate-fade-in">
+    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onclick="closePreviewModal()"></div>
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl z-10 overflow-hidden relative border border-white/20">
+        <button onclick="closePreviewModal()" class="absolute top-6 right-6 w-12 h-12 bg-slate-900/10 hover:bg-slate-900/20 text-slate-900 rounded-full flex items-center justify-center backdrop-blur-md transition-all z-20">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+        <div class="p-3 bg-slate-100">
+            <div class="bg-white rounded-2xl overflow-hidden shadow-inner flex items-center justify-center min-h-[300px]">
+                <img id="preview-img" src="" class="w-full h-auto max-h-[75vh] object-contain">
+            </div>
+        </div>
+        <div class="px-10 py-6 flex justify-between items-center bg-white">
+            <div>
+                <h3 id="preview-title" class="font-black text-slate-900 text-lg">Preview Dokumen</h3>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Verifikasi Identitas Pelanggan</p>
+            </div>
+            <a id="preview-download" href="" download class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black py-4 px-8 rounded-2xl transition-all shadow-xl shadow-slate-200 flex items-center gap-3">
+                <i class="fas fa-download"></i> UNDUH BERKAS
+            </a>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -231,5 +284,35 @@
     function closeRejectModal() {
         document.getElementById('modal-reject').classList.add('hidden');
     }
+
+    function openPreviewModal(url, title) {
+        document.getElementById('preview-img').src = url;
+        document.getElementById('preview-title').textContent = title;
+        document.getElementById('preview-download').href = url;
+        document.getElementById('modal-preview').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePreviewModal() {
+        document.getElementById('modal-preview').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    // Escape to close
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closePreviewModal();
+            closeRejectModal();
+        }
+    });
 </script>
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.2s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+</style>
 @endpush
