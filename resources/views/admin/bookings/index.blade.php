@@ -157,13 +157,19 @@
 
                                 @if($booking->status === 'Confirmed' && ($booking->payment_status === 'fully_paid' || $booking->with_driver))
                                     @if($booking->with_driver)
-                                        <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
-                                            @csrf @method('PUT')
-                                            <input type="hidden" name="status" value="On_Pickup">
-                                            <button type="submit" class="bg-blue-900 hover:bg-slate-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
-                                                <i class="fas fa-user-tie"></i> KIRIM SOPIR
+                                        @if(!$booking->driver_id)
+                                            <button type="button" onclick="openDriverModal({{ $booking->id }})" class="bg-blue-900 hover:bg-slate-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+                                                <i class="fas fa-user-plus"></i> PILIH SOPIR
                                             </button>
-                                        </form>
+                                        @else
+                                            <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                                @csrf @method('PUT')
+                                                <input type="hidden" name="status" value="On_Pickup">
+                                                <button type="submit" class="bg-blue-900 hover:bg-slate-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+                                                    <i class="fas fa-user-tie"></i> KIRIM SOPIR
+                                                </button>
+                                            </form>
+                                        @endif
                                     @elseif($booking->delivery_type === 'delivery')
                                         <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
                                             @csrf @method('PUT')
@@ -249,7 +255,40 @@
     </div>
 </div>
 
-{{-- Modal Preview Dokumen --}}
+{{-- Modal Assign Driver --}}
+<div id="modal-driver" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDriverModal()"></div>
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md z-10 overflow-hidden p-8">
+        <h3 class="text-xl font-black text-slate-900 mb-2 text-center">Tugaskan Sopir</h3>
+        <p class="text-slate-500 text-sm mb-6 text-center">Silakan pilih sopir yang tersedia untuk pesanan ini.</p>
+        
+        <form id="form-driver" action="" method="POST">
+            @csrf @method('PUT')
+            <input type="hidden" name="status" value="Confirmed">
+            <div class="space-y-3 mb-6 max-h-60 overflow-y-auto custom-scrollbar pr-2">
+                @forelse($drivers as $driver)
+                <label class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 cursor-pointer transition-all group">
+                    <input type="radio" name="driver_id" value="{{ $driver->id }}" required class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                    <div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+                        <img src="{{ $driver->photo ? asset('storage/' . $driver->photo) : 'https://ui-avatars.com/api/?name=' . urlencode($driver->name) }}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-900 truncate">{{ $driver->name }}</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest truncate">Rating: {{ $driver->rating }} <i class="fas fa-star text-yellow-500 ml-0.5"></i></p>
+                    </div>
+                </label>
+                @empty
+                <div class="text-center py-6 text-slate-400 font-bold">Tidak ada sopir tersedia saat ini.</div>
+                @endforelse
+            </div>
+            
+            <div class="flex gap-3">
+                <button type="button" onclick="closeDriverModal()" class="flex-1 font-semibold py-3 rounded-xl transition-all text-sm border border-slate-200 text-slate-600 hover:bg-slate-50 uppercase tracking-widest text-[10px]">Batal</button>
+                <button type="submit" class="flex-1 bg-blue-600 border border-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-sm uppercase tracking-widest text-[10px] {{ $drivers->isEmpty() ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $drivers->isEmpty() ? 'disabled' : '' }}>Konfirmasi</button>
+            </div>
+        </form>
+    </div>
+</div>
 <div id="modal-preview" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden animate-fade-in">
     <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onclick="closePreviewModal()"></div>
     <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl z-10 overflow-hidden relative border border-white/20">
@@ -277,6 +316,14 @@
 
 @push('scripts')
 <script>
+    function openDriverModal(id) {
+        document.getElementById('form-driver').action = `/admin/pemesanan/${id}`;
+        document.getElementById('modal-driver').classList.remove('hidden');
+    }
+    function closeDriverModal() {
+        document.getElementById('modal-driver').classList.add('hidden');
+    }
+
     function openRejectModal(id) {
         document.getElementById('form-reject').action = `/admin/pemesanan/${id}`;
         document.getElementById('modal-reject').classList.remove('hidden');

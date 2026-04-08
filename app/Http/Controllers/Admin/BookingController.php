@@ -13,8 +13,9 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $bookings = Booking::with(['user', 'vehicle'])->latest()->get();
-        return view('admin.bookings.index', compact('bookings'));
+        $bookings = Booking::with(['user', 'vehicle', 'driver'])->latest()->get();
+        $drivers = \App\Models\Driver::where('status', 'Available')->get();
+        return view('admin.bookings.index', compact('bookings', 'drivers'));
     }
 
     /**
@@ -24,7 +25,8 @@ class BookingController extends Controller
     {
         $request->validate([
             'status' => 'required|string|in:Pending,Confirmed,Active,Completed,Cancelled,Rejected,On_Delivery,Picked_Up,Waiting_Pickup,Returning,On_Pickup',
-            'rejection_reason' => 'required_if:status,Rejected|nullable|string'
+            'rejection_reason' => 'required_if:status,Rejected|nullable|string',
+            'driver_id' => 'nullable|exists:drivers,id'
         ]);
 
         $newStatus = $request->status;
@@ -32,7 +34,8 @@ class BookingController extends Controller
         // Update status booking
         $booking->update([
             'status' => $newStatus,
-            'rejection_reason' => $request->rejection_reason ?? $booking->rejection_reason
+            'rejection_reason' => $request->rejection_reason ?? $booking->rejection_reason,
+            'driver_id' => $request->driver_id ?? $booking->driver_id
         ]);
 
         // SINKRONISASI LOGIKA STATUS MOBIL
