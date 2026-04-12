@@ -13,8 +13,9 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $bookings = Booking::with(['user', 'vehicle'])->latest()->get();
-        return view('admin.bookings.index', compact('bookings'));
+        $bookings = Booking::with(['user', 'vehicle', 'driver'])->latest()->get();
+        $drivers = \App\Models\Driver::where('status', 'Available')->get();
+        return view('admin.bookings.index', compact('bookings', 'drivers'));
     }
 
     /**
@@ -25,7 +26,8 @@ class BookingController extends Controller
         $request->validate([
             'status' => 'required|string|in:Pending,Confirmed,Active,Completed,Cancelled,Rejected,On_Delivery,Picked_Up,Waiting_Pickup,Returning,On_Pickup',
             'payment_status' => 'nullable|string|in:unpaid,dp_paid,fully_paid',
-            'rejection_reason' => 'required_if:status,Rejected|nullable|string'
+            'rejection_reason' => 'required_if:status,Rejected|nullable|string',
+            'driver_id' => 'nullable|exists:drivers,id'
         ]);
 
 
@@ -35,7 +37,8 @@ class BookingController extends Controller
         $booking->update([
             'status' => $newStatus,
             'payment_status' => $request->payment_status ?? $booking->payment_status,
-            'rejection_reason' => $request->rejection_reason ?? $booking->rejection_reason
+            'rejection_reason' => $request->rejection_reason ?? $booking->rejection_reason,
+            'driver_id' => $request->driver_id ?? $booking->driver_id
         ]);
 
 
