@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tentang RentDrive')
+@section('title', 'Tentang Jatara')
 
 @section('content')
 
@@ -8,7 +8,7 @@
 <section class="bg-uber-white py-20 border-b border-gray-100">
     <div class="max-w-4xl mx-auto px-6 text-center">
         <h1 class="text-5xl md:text-7xl font-bold text-uber-black tracking-tighter mb-6">
-            Cara Sewa di RentDrive.
+            Cara Sewa di Jatara.
         </h1>
         <p class="text-xl text-uber-text font-medium leading-relaxed max-w-2xl mx-auto">
             Proses simpel yang didesain untuk kenyamanan perjalanan Anda. Mulai dari layar ponsel hingga unit di depan pintu.

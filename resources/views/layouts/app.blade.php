@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="RentDrive - Platform sewa kendaraan terpercaya di Indonesia. Pilih dari ratusan armada mobil dan motor berkualitas.">
-    <title>@yield('title', 'RentDrive') - Sewa Kendaraan Terpercaya</title>
+    <meta name="description" content="Jatara - Platform sewa kendaraan terpercaya di Indonesia. Pilih dari ratusan armada mobil dan motor berkualitas.">
+    <title>@yield('title', 'Jatara') - Sewa Kendaraan Terpercaya</title>
     <link rel="icon" href="data:,">
 
     {{-- Tailwind CSS CDN --}}
@@ -57,8 +57,8 @@
 
                 {{-- Kiri: Logo & Menu --}}
                 <div class="flex items-center gap-8">
-                    <a href="{{ route('home') }}" class="text-2xl font-bold tracking-tight text-white hover:opacity-80 transition">
-                        RentDrive
+                    <a href="{{ route('home') }}" class="flex items-center gap-2 hover:opacity-80 transition">
+                        <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-10 md:h-14 w-auto">
                     </a>
 
                     {{-- Desktop Nav --}}
@@ -124,7 +124,7 @@
                 {{-- Nav Links --}}
                 <div class="flex flex-col gap-8 mb-12">
                      <a href="{{ route('home') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('home') ? 'underline underline-offset-8' : '' }}">Beranda</a>
-                     <a href="{{ route('browse') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'underline underline-offset-8' : '' }}">Pesan</a>
+                     <a href="{{ route('browse') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'underline underline-offset-8' : '' }}">Cari Kendaraan</a>
                      @auth
                          @if(Auth::user()->role !== 'admin')
                              <a href="{{ route('booking.history') }}" class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('booking.history') ? 'underline underline-offset-8' : '' }}">Riwayat</a>
@@ -188,7 +188,7 @@
     {{-- ===== FOOTER ===== --}}
     <footer class="bg-uber-black text-uber-white pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-2xl font-bold mb-10">RentDrive</h2>
+            <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-12 md:h-14 w-auto brightness-0 invert mb-10">
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-16">
                 <div>
@@ -229,7 +229,7 @@
             </div>
 
             <div class="border-t border-gray-800 pt-8 flex flex-col items-center gap-4 text-uber-muted text-xs md:flex-row md:justify-between">
-                <p>&copy; {{ date('Y') }} RentDrive Technologies Inc.</p>
+                <p>&copy; {{ date('Y') }} Jatara Technologies Inc.</p>
                 <div class="flex gap-6">
                     <a href="#" class="hover:text-uber-white">Privasi</a>
                     <a href="#" class="hover:text-uber-white">Ketentuan</a>

@@ -22,4 +22,9 @@ class Booking extends Model
     {
         return $this->belongsTo(Driver::class);
     }
+
+    public function vehicleUnit()
+    {
+        return $this->belongsTo(VehicleUnit::class);
+    }
 }

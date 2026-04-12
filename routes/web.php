@@ -99,6 +99,7 @@ Route::middleware('auth')->group(function () {
     // Sistem Booking
     Route::get('/pesan/{vehicle}/checkout', [\App\Http\Controllers\BookingController::class, 'checkout'])->name('checkout');
     Route::post('/pesan', [\App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
+    Route::post('/pesan/{booking}/snap-token', [\App\Http\Controllers\BookingController::class, 'getSnapToken'])->name('booking.snap');
     Route::post('/pesan/{booking}/pay', [\App\Http\Controllers\BookingController::class, 'pay'])->name('booking.pay');
     Route::post('/pesan/{booking}/review', [\App\Http\Controllers\BookingController::class, 'review'])->name('booking.review');
     Route::put('/pesan/{booking}/status', [\App\Http\Controllers\BookingController::class, 'updateStatus'])->name('booking.status.update');
@@ -129,6 +130,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'update'])->name('kendaraan.update');
     Route::delete('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroy'])->name('kendaraan.destroy');
     Route::delete('/kendaraan/image/{image}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroyImage'])->name('kendaraan.image.destroy');
+
+    // Manajemen Unit Kendaraan (List & Update Plat Nomor)
+    Route::get('/kendaraan/{vehicle}/units', [\App\Http\Controllers\Admin\VehicleController::class, 'units'])->name('kendaraan.units');
+    Route::put('/kendaraan/units/{unit}', [\App\Http\Controllers\Admin\VehicleController::class, 'updateUnit'])->name('kendaraan.unit.update');
 
     // CRUD Driver
     Route::get('/drivers', [\App\Http\Controllers\Admin\DriverController::class, 'index'])->name('drivers.index');

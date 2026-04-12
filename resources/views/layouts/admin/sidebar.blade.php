@@ -3,14 +3,9 @@
     
     {{-- Logo Section --}}
     <div class="p-8 mb-4">
-        <a href="{{ route('home') }}" class="flex items-center gap-3" target="_blank">
-            <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-600/30">
-                <i class="fas fa-car-rear"></i>
-            </div>
-            <div>
-                <span class="block font-black text-xl text-white leading-none">Rent<span class="text-blue-500">Drive</span></span>
-                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1 block">Administrative Hub</span>
-            </div>
+        <a href="{{ route('home') }}" class="flex flex-col gap-3" target="_blank">
+            <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class=" w-auto">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] block">Administrative Hub</span>
         </a>
     </div>
 

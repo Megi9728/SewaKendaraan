@@ -9,7 +9,17 @@
     input[type="date"]::-webkit-calendar-picker-indicator {
         filter: invert(0);
     }
+    /* Swiper custom styles */
+    .vehicle-swiper { --swiper-navigation-color: rgba(255, 255, 255, 0.5); }
+    .swiper-button-next, .swiper-button-prev { background: transparent; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); transition: all 0.3s; }
+    .swiper-button-next:hover, .swiper-button-prev:hover { --swiper-navigation-color: rgba(255, 255, 255, 1); }
+    .swiper-button-next:after, .swiper-button-prev:after { font-size: 32px; font-weight: 900; }
+    .swiper-button-next { right: 20px; }
+    .swiper-button-prev { left: 20px; }
+    .swiper-pagination-bullet-active { background: #000 !important; }
+    .thumbnail-item.active { border-color: #000 !important; }
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpush
 
 @section('content')
@@ -29,41 +39,47 @@
         {{-- ===== LEFT: CONTENT ===== --}}
         <div class="lg:col-span-2">
 
-            {{-- Main Image (No heavy shadow, clean border-radius) --}}
-            <div class="bg-uber-chip rounded-xl overflow-hidden aspect-[16/9] relative border border-gray-100">
-                <img id="main-image" src="{{ $vehicle->image ? (strpos($vehicle->image, 'http') === 0 ? $vehicle->image : asset('storage/' . $vehicle->image)) : 'https://placehold.co/1200x800?text=No+Image' }}"
-                    class="w-full h-full object-cover" alt="{{ $vehicle->name }}">
-
+            {{-- Main Image Slider --}}
+            <div class="swiper vehicle-swiper rounded-xl overflow-hidden aspect-[16/9] relative border border-gray-100 bg-uber-chip">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="{{ $vehicle->image ? (strpos($vehicle->image, 'http') === 0 ? $vehicle->image : asset('storage/' . $vehicle->image)) : 'https://placehold.co/1200x800?text=No+Image' }}"
+                            class="w-full h-full object-cover" alt="{{ $vehicle->name }}">
+                    </div>
+                    @foreach($vehicle->images as $img)
+                    <div class="swiper-slide">
+                        <img src="{{ asset('storage/' . $img->image_path) }}" class="w-full h-full object-cover" alt="{{ $vehicle->name }}">
+                    </div>
+                    @endforeach
+                </div>
+                
+                {{-- Navigation Buttons --}}
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                
                 {{-- Badges --}}
-                <div class="absolute top-5 left-5 flex gap-2">
+                <div class="absolute top-5 left-5 flex gap-2 z-10 pointer-events-none">
                     @if($vehicle->available_units_count >= 1)
                         <span class="bg-uber-white text-uber-black text-[10px] font-bold px-3 py-1.5 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
                     @else
                         <span class="bg-uber-black text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
                     @endif
-                    @if($vehicle->rating >= 4.8)
-                    <span class="bg-uber-black text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">
-                        ⭐ Unggulan
-                    </span>
-                    @endif
                 </div>
             </div>
-
+ 
             {{-- Gallery Thumbnails --}}
-            @if($vehicle->images->count() > 0)
             <div class="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-                <div class="thumbnail-item flex-shrink-0 w-24 aspect-video rounded-lg overflow-hidden border-2 border-uber-black cursor-pointer bg-slate-100" 
-                     onclick="changeMainImg('{{ $vehicle->image ? (strpos($vehicle->image, 'http') === 0 ? $vehicle->image : asset('storage/' . $vehicle->image)) : 'https://placehold.co/1200x800?text=No+Image' }}', this)">
+                <div class="thumbnail-item flex-shrink-0 w-24 aspect-video rounded-lg overflow-hidden border-2 active cursor-pointer bg-slate-100 transition-all" 
+                     onclick="goToSlide(0)">
                     <img src="{{ $vehicle->image ? (strpos($vehicle->image, 'http') === 0 ? $vehicle->image : asset('storage/' . $vehicle->image)) : 'https://placehold.co/1200x800?text=No+Image' }}" class="w-full h-full object-cover">
                 </div>
-                @foreach($vehicle->images as $img)
-                <div class="thumbnail-item flex-shrink-0 w-24 aspect-video rounded-lg overflow-hidden border-2 border-transparent hover:border-gray-300 cursor-pointer bg-slate-100 transition-all" 
-                     onclick="changeMainImg('{{ asset('storage/' . $img->image_path) }}', this)">
+                @foreach($vehicle->images as $index => $img)
+                <div class="thumbnail-item flex-shrink-0 w-24 aspect-video rounded-lg overflow-hidden border-2 border-transparent hover:border-gray-300 cursor-pointer bg-slate-100 transition-all font-bold" 
+                     onclick="goToSlide({{ $index + 1 }})">
                     <img src="{{ asset('storage/' . $img->image_path) }}" class="w-full h-full object-cover">
                 </div>
                 @endforeach
             </div>
-            @endif
 
             {{-- Titles --}}
             <div class="mt-10 mb-8">
@@ -116,7 +132,7 @@
                         ['icon' => 'fas fa-tachometer-alt', 'label' => 'Kapasitas Mesin', 'value' => ($vehicle->engine_capacity ?? '1500') . ' CC'],
                         ['icon' => 'fas fa-car-side', 'label' => 'Unit Tersedia', 'value' => ($vehicle->available_units_count ?? '1') . ' Unit'],
                         ['icon' => 'fas fa-map-marker-alt', 'label' => 'Lokasi Penempatan', 'value' => $vehicle->domicile ?? 'Jakarta'],
-                        ['icon' => 'fas fa-user-tie', 'label' => 'Layanan Sopir', 'value' => 'Tersedia (+Rp ' . number_format($vehicle->driver_price, 0, ',', '.') . '/hari)'],
+                        ['icon' => 'fas fa-user-tie', 'label' => 'Layanan Sopir', 'value' => 'Tersedia (+Rp ' . number_format($vehicle->driver_price, 0, ',', '.') . '/hari)', 'note' => '*Layanan tidak termasuk pembelian BBM dan biaya tol'],
                         ['icon' => 'fas fa-shield-alt', 'label' => 'Status Keamanan', 'value' => 'Armada Terverifikasi'],
                         ['icon' => 'fas fa-check-circle', 'label' => 'Kondisi Unit', 'value' => 'Terawat & Bersih'],
                     ];
@@ -129,6 +145,9 @@
                         <div>
                             <p class="text-[10px] text-uber-muted font-bold uppercase tracking-widest mb-1">{{ $spec['label'] }}</p>
                             <p class="font-bold text-uber-black text-sm">{{ $spec['value'] }}</p>
+                            @if(isset($spec['note']))
+                                <p class="text-[10px] text-uber-muted mt-0.5 italic font-medium opacity-80">{{ $spec['note'] }}</p>
+                            @endif
                         </div>
                     </div>
                     @endforeach
@@ -214,7 +233,7 @@
 
         {{-- ===== RIGHT: BOOKING DRAWER (Uber Style) ===== --}}
         <div class="lg:col-span-1">
-            <div class="bg-uber-white border border-gray-100 rounded-xl shadow-uber p-8 sticky top-24">
+            <div class="bg-uber-white border border-gray-100 rounded-xl shadow-uber p-8 top-24">
 
                 {{-- Price Banner --}}
                 <div class="mb-10 text-center">
@@ -235,16 +254,16 @@
                     <div class="space-y-1">
                         <label class="text-[10px] font-bold text-uber-muted uppercase tracking-widest block pl-1">Penjemputan</label>
                         <div class="relative">
-                            <i class="fas fa-calendar-alt absolute right-4 top-1/2 -translate-y-1/2 text-uber-muted"></i>
-                            <input type="date" name="start_date" id="book-start" required class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all">
+                            <i class="fas fa-calendar-alt absolute right-4 top-1/2 -translate-y-1/2 text-uber-muted z-10 pointer-events-none"></i>
+                            <input type="text" name="start_date" id="book-start" required placeholder="YYYY-MM-DD" class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
                         </div>
                     </div>
 
                     <div class="space-y-1">
                         <label class="text-[10px] font-bold text-uber-muted uppercase tracking-widest block pl-1">Pengembalian</label>
                         <div class="relative">
-                            <i class="fas fa-calendar-check absolute right-4 top-1/2 -translate-y-1/2 text-uber-muted"></i>
-                            <input type="date" name="end_date" id="book-end" required class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all">
+                            <i class="fas fa-calendar-check absolute right-4 top-1/2 -translate-y-1/2 text-uber-muted z-10 pointer-events-none"></i>
+                            <input type="text" name="end_date" id="book-end" required placeholder="YYYY-MM-DD" class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
                         </div>
                     </div>
 
@@ -335,6 +354,8 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     // Tab system
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -395,17 +416,17 @@
     const pricePerDay = {{ $vehicle->price_per_day }};
     const serviceFee  = 50000;
 
+    // Flatpickr advanced date configuration
+    const disabledDates = {!! json_encode($vehicle->getFullyBookedDates()) !!};
+    let startPicker = null;
+    let endPicker = null;
+
     if(startInput && endInput) {
-        const fmt = d => d.toISOString().split('T')[0];
         const today = new Date();
         const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-        startInput.value = fmt(today);
-        startInput.min = fmt(today);
-        endInput.value   = fmt(tomorrow);
-        endInput.min = fmt(tomorrow);
-        updatePrice();
 
         function updatePrice() {
+            if(!startInput.value || !endInput.value) return;
             const s = new Date(startInput.value);
             const e = new Date(endInput.value);
             if (isNaN(s) || isNaN(e) || e <= s) { priceBreakdown.classList.add('hidden'); return; }
@@ -420,26 +441,61 @@
             priceBreakdown.classList.remove('hidden');
         }
 
-        startInput.addEventListener('change', function() {
-            endInput.min = this.value;
-            if (endInput.value && endInput.value <= this.value) {
-                const next = new Date(this.value); next.setDate(next.getDate()+1);
-                endInput.value = fmt(next);
+        startPicker = flatpickr(startInput, {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            disable: disabledDates,
+            defaultDate: today,
+            onChange: function(selectedDates, dateStr, instance) {
+                if(selectedDates[0]) {
+                    const nextDate = new Date(selectedDates[0]);
+                    nextDate.setDate(nextDate.getDate() + 1);
+                    endPicker.set('minDate', nextDate);
+                    
+                    if(endPicker.selectedDates[0] <= selectedDates[0]) {
+                        endPicker.setDate(nextDate);
+                    }
+                }
+                updatePrice();
             }
-            updatePrice();
         });
-        endInput.addEventListener('change', updatePrice);
+
+        endPicker = flatpickr(endInput, {
+            dateFormat: "Y-m-d",
+            minDate: tomorrow,
+            disable: disabledDates,
+            defaultDate: tomorrow,
+            onChange: function() {
+                updatePrice();
+            }
+        });
+
+        updatePrice();
     }
 
-    // Gallery Switcher
-    function changeMainImg(src, el) {
-        document.getElementById('main-image').src = src;
-        document.querySelectorAll('.thumbnail-item').forEach(item => {
-            item.classList.remove('border-uber-black');
-            item.classList.add('border-transparent');
-        });
-        el.classList.add('border-uber-black');
-        el.classList.remove('border-transparent');
+    // Swiper Initialization
+    const vehicleSwiper = new Swiper('.vehicle-swiper', {
+        loop: true,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        on: {
+            slideChange: function () {
+                const thumbnails = document.querySelectorAll('.thumbnail-item');
+                thumbnails.forEach((thumb, index) => {
+                    if (index === this.realIndex) {
+                        thumb.classList.add('active');
+                    } else {
+                        thumb.classList.remove('active');
+                    }
+                });
+            }
+        }
+    });
+ 
+    function goToSlide(index) {
+        vehicleSwiper.slideToLoop(index);
     }
 </script>
 @endpush

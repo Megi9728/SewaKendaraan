@@ -48,6 +48,16 @@ class VehicleController extends Controller
                 $vehicle->images()->create(['image_path' => $path]);
             }
         }
+        $pool = \App\Models\Pool::firstOrCreate(
+            ['name' => 'Pool ' . $validated['domicile']], 
+            ['address' => $validated['domicile']]
+        );
+        for ($i = 0; $i < $validated['units_count']; $i++) {
+            $vehicle->units()->create([
+                'pool_id' => $pool->id,
+                'status' => 'tersedia'
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Kendaraan berhasil ditambahkan!');
     }
@@ -94,6 +104,27 @@ class VehicleController extends Controller
             }
         }
 
+        $currentUnits = $vehicle->units()->count();
+        $newUnits = $validated['units_count'];
+        
+        $pool = \App\Models\Pool::firstOrCreate(
+            ['name' => 'Pool ' . $validated['domicile']], 
+            ['address' => $validated['domicile']]
+        );
+
+        if ($newUnits > $currentUnits) {
+            $diff = $newUnits - $currentUnits;
+            for ($i = 0; $i < $diff; $i++) {
+                $vehicle->units()->create([
+                    'pool_id' => $pool->id,
+                    'status' => 'tersedia'
+                ]);
+            }
+        } elseif ($newUnits < $currentUnits) {
+            $diff = $currentUnits - $newUnits;
+            $vehicle->units()->where('status', 'tersedia')->limit($diff)->delete();
+        }
+
         return redirect()->back()->with('success', 'Kendaraan berhasil diperbarui!');
     }
 
@@ -111,5 +142,22 @@ class VehicleController extends Controller
         Storage::disk('public')->delete($image->image_path);
         $image->delete();
         return redirect()->back()->with('success', 'Gambar galeri berhasil dihapus!');
+    }
+
+    public function units(Vehicle $vehicle)
+    {
+        $units = $vehicle->units()->with('pool')->get();
+        return view('admin.vehicles.units', compact('vehicle', 'units'));
+    }
+
+    public function updateUnit(Request $request, \App\Models\VehicleUnit $unit)
+    {
+        $validated = $request->validate([
+            'plate_number' => 'nullable|string|max:50',
+            'status' => 'required|in:tersedia,disewa,maintenance',
+        ]);
+
+        $unit->update($validated);
+        return redirect()->back()->with('success', 'Data unit berhasil diperbarui!');
     }
 }

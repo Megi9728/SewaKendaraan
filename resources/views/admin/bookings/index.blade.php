@@ -11,7 +11,8 @@
             $stats = [
                 ['label' => 'Total Pesanan', 'value' => $bookings->count(), 'icon' => 'fas fa-list', 'color' => 'blue'],
                 ['label' => 'Pending', 'value' => $bookings->where('status', 'Pending')->count(), 'icon' => 'fas fa-clock', 'color' => 'orange'],
-                ['label' => 'Aktif/Sewa', 'value' => $bookings->where('status', 'Confirmed')->count(), 'icon' => 'fas fa-car', 'color' => 'green'],
+                ['label' => 'Terjadwal', 'value' => $bookings->where('status', 'Confirmed')->count(), 'icon' => 'fas fa-calendar-check', 'color' => 'blue'],
+                ['label' => 'Disewa', 'value' => $bookings->where('status', 'Active')->count(), 'icon' => 'fas fa-car', 'color' => 'green'],
                 ['label' => 'Selesai', 'value' => $bookings->where('status', 'Completed')->count(), 'icon' => 'fas fa-check-double', 'color' => 'slate'],
             ];
         @endphp
@@ -155,7 +156,17 @@
                                     </button>
                                 @endif
 
+                                @if($booking->status === 'Confirmed')
+                                    @if($booking->payment_status === 'unpaid')
+                                        <span class="text-[10px] font-bold text-blue-400 italic">Menunggu Bayar DP...</span>
+                                    @elseif($booking->payment_status === 'dp_paid' && !$booking->with_driver)
+                                        <span class="text-[10px] font-bold text-orange-500 italic">Menunggu Pelunasan Pelanggan...</span>
+                                    @endif
+                                @endif
+
+                                
                                 @if($booking->status === 'Confirmed' && ($booking->payment_status === 'fully_paid' || $booking->with_driver))
+
                                     @if($booking->with_driver)
                                         <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
                                             @csrf @method('PUT')

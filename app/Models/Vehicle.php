@@ -18,18 +18,47 @@ class Vehicle extends Model
         return $this->hasMany(VehicleImage::class);
     }
 
+    public function units()
+    {
+        return $this->hasMany(VehicleUnit::class);
+    }
+
     /**
-     * Menghitung jumlah unit yang benar-benar ada di garasi saat ini.
-     * (Total unit - unit yang sedang disewa atau akan disewa hari ini).
+     * Menghitung jumlah unit yang "tersedia" secara real
      */
     public function getAvailableUnitsCountAttribute()
     {
-        $taken = $this->bookings()
-            ->whereNotIn('status', ['Cancelled', 'Rejected', 'Completed'])
-            ->whereDate('start_date', '<=', now())
-            ->whereDate('end_date', '>=', now())
-            ->count();
+        // Karena ada relasi unit_mobil, kita bisa hitung berapa unit yang statusnya 'tersedia'
+        return $this->units()->where('status', 'tersedia')->count();
+    }
+    public function getFullyBookedDates()
+    {
+        $totalUnits = $this->units()->where('status', '!=', 'maintenance')->count();
+        if ($totalUnits === 0) return [];
 
-        return max(0, ($this->units_count ?? 1) - $taken);
+        $bookings = $this->bookings()->whereNotIn('status', ['Cancelled', 'Rejected', 'Completed'])->get();
+        
+        $dateCounts = [];
+        foreach ($bookings as $booking) {
+            $start = \Carbon\Carbon::parse($booking->start_date);
+            $end = \Carbon\Carbon::parse($booking->end_date);
+            
+            for ($date = clone $start; $date->lte($end); $date->addDay()) {
+                $dateString = $date->format('Y-m-d');
+                if (!isset($dateCounts[$dateString])) {
+                    $dateCounts[$dateString] = 0;
+                }
+                $dateCounts[$dateString]++;
+            }
+        }
+
+        $fullyBookedDates = [];
+        foreach ($dateCounts as $date => $count) {
+            if ($count >= $totalUnits) {
+                $fullyBookedDates[] = $date;
+            }
+        }
+        
+        return $fullyBookedDates;
     }
 }

@@ -102,40 +102,56 @@
                 {{-- 1. PEMBAYARAN (Pending/Confirmed but not paid) --}}
                 @if($booking->status === 'Pending' && $booking->with_driver && $booking->payment_status === 'unpaid')
                      <div class="mt-0 p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Instruksi Pembayaran DP (30%)</p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Sopir Disediakan - Lanjut Bayar DP (30%)</p>
                         <div class="flex justify-between items-center mb-4">
                             <span class="text-xs font-bold text-slate-600">Total DP:</span>
                             <span class="text-lg font-black text-blue-600">Rp {{ number_format($booking->total_price * 0.3, 0, ',', '.') }}</span>
                         </div>
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-100">
-                                <span class="text-[10px] font-bold text-slate-500">BCA: 1234567890</span>
-                                <button class="text-[10px] font-black text-blue-600" onclick="navigator.clipboard.writeText('1234567890')">SALIN</button>
-                            </div>
-                        </div>
-                        <form action="{{ route('booking.status.update', $booking->id) }}" method="POST">
-                            @csrf @method('PUT')
-                            <input type="hidden" name="payment_status" value="dp_paid">
-                            <button class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-2.5 rounded-xl text-xs transition">SAYA SUDAH BAYAR DP</button>
+                        <button type="button" onclick="payWithMidtrans('{{ $booking->id }}', 'dp')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-2.5 rounded-xl text-xs transition relative">
+                            BAYAR DP
+                            <div id="loader-{{ $booking->id }}-dp-alt" class="hidden absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </button>
+                        <form id="payment-form-{{ $booking->id }}-dp" action="{{ route('booking.pay', $booking->id) }}" method="POST" class="hidden">
+                            @csrf
+                            <input type="hidden" name="payment_type" value="dp">
                         </form>
                     </div>
                 @elseif($booking->payment_status === 'unpaid' && $booking->status === 'Confirmed')
                     <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-2 text-center text-sm">
                         <p class="font-bold text-blue-800 mb-2">Data Terverifikasi!</p>
                         <p class="text-blue-600 mb-3">Silakan bayar DP 30%: <strong>Rp {{ number_format($booking->total_price * 0.3, 0, ',', '.') }}</strong></p>
-                        <form action="{{ route('booking.pay', $booking->id) }}" method="POST">
+                        <button type="button" onclick="payWithMidtrans('{{ $booking->id }}', 'dp')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition relative">
+                            Bayar DP 30%
+                            <div id="loader-{{ $booking->id }}-dp" class="hidden absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </button>
+                        <form id="payment-form-{{ $booking->id }}-dp" action="{{ route('booking.pay', $booking->id) }}" method="POST" class="hidden">
                             @csrf
                             <input type="hidden" name="payment_type" value="dp">
-                            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Bayar DP 30%</button>
                         </form>
                     </div>
 
                 {{-- 2. STATUS TRANSITIONS --}}
                 @elseif($booking->status === 'Confirmed')
-                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-2 text-center text-sm">
-                        <p class="font-bold text-blue-800">Pesanan Dikonfirmasi</p>
-                        <p class="text-blue-600 text-[10px] uppercase font-black tracking-widest mt-1">Admin sedang menyiapkan armada & sopir</p>
-                    </div>
+                    @if($booking->payment_status === 'dp_paid')
+                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-2 text-center text-sm">
+                            <p class="font-bold text-blue-800 mb-2">DP Terverifikasi!</p>
+                            <p class="text-blue-600 mb-3">Silakan lunasi sisa pembayaran (70%): <strong>Rp {{ number_format($booking->total_price * 0.7, 0, ',', '.') }}</strong></p>
+                            <button type="button" onclick="payWithMidtrans('{{ $booking->id }}', 'full')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition relative">
+                                BAYAR PELUNASAN
+                                <div id="loader-{{ $booking->id }}-full" class="hidden absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </button>
+                            <form id="payment-form-{{ $booking->id }}-full" action="{{ route('booking.pay', $booking->id) }}" method="POST" class="hidden">
+                                @csrf
+                                <input type="hidden" name="payment_type" value="full">
+                            </form>
+                        </div>
+                    @else
+                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-2 text-center text-sm">
+                            <p class="font-bold text-blue-800">Pesanan Dikonfirmasi</p>
+                            <p class="text-blue-600 text-[10px] uppercase font-black tracking-widest mt-1">Admin sedang menyiapkan armada {{ $booking->with_driver ? '& sopir' : '' }}</p>
+                        </div>
+                    @endif
+
 
                 @elseif($booking->status === 'On_Pickup')
                     <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-2 text-center text-sm">
@@ -214,51 +230,8 @@
                     </div>
                 @endif
                 
-                @if($booking->status === 'Pending')
-                    @if($booking->with_driver)
-                        @if($booking->payment_status === 'unpaid')
-                            <div class="mt-4 p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Instruksi Pembayaran DP (30%)</p>
-                                <div class="flex justify-between items-center mb-4">
-                                    <span class="text-xs font-bold text-slate-600">Total DP:</span>
-                                    <span class="text-lg font-black text-blue-600">Rp {{ number_format($booking->total_price * 0.3, 0, ',', '.') }}</span>
-                                </div>
-                                <div class="space-y-3 mb-5">
-                                    <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-5 bg-blue-600 rounded flex items-center justify-center text-[8px] font-bold text-white">BCA</div>
-                                            <span class="text-xs font-bold text-slate-700 font-mono tracking-tighter">123-456-7890</span>
-                                        </div>
-                                        <button class="text-[10px] font-black text-blue-600 uppercase hover:underline" onclick="navigator.clipboard.writeText('1234567890')">Salin</button>
-                                    </div>
-                                    <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-5 bg-red-600 rounded flex items-center justify-center text-[8px] font-bold text-white">MANDIRI</div>
-                                            <span class="text-xs font-bold text-slate-700 font-mono tracking-tighter">098-765-4321</span>
-                                        </div>
-                                        <button class="text-[10px] font-black text-blue-600 uppercase hover:underline" onclick="navigator.clipboard.writeText('0987654321')">Salin</button>
-                                    </div>
-                                </div>
-
-                                <form action="{{ route('booking.status.update', $booking->id) }}" method="POST">
-                                    @csrf @method('PUT')
-                                    <input type="hidden" name="payment_status" value="dp_paid">
-                                    <button class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-xl text-xs transition">
-                                        SAYA SUDAH BAYAR DP
-                                    </button>
-                                </form>
-                            </div>
-                            <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Pesanan hanya akan diproses setelah DP diterima.</p>
-                        @elseif($booking->payment_status === 'dp_paid')
-                             <div class="mt-4 p-5 bg-green-50 border border-green-100 rounded-2xl text-center">
-                                <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
-                                <p class="text-xs font-bold text-green-800">DP Berhasil Diterima!</p>
-                                <p class="text-[10px] text-green-600 mt-1 uppercase tracking-widest font-black">Admin sedang menyiapkan armada & sopir</p>
-                             </div>
-                        @endif
-                    @else
-                        <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Menunggu Admin Verifikasi KTP & SIM & Pembayaran...</p>
-                    @endif
+                @if($booking->status === 'Pending' && !$booking->with_driver)
+                    <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Menunggu Admin Verifikasi KTP & SIM...</p>
                 @endif
             </div>
         </div>
@@ -356,5 +329,48 @@
             }
         });
     }
+
+    // Midtrans Payment Logic
+    function payWithMidtrans(bookingId, paymentType) {
+        const loader = document.getElementById(`loader-${bookingId}-${paymentType}`);
+        if(loader) loader.classList.remove('hidden');
+
+        fetch(`/pesan/${bookingId}/snap-token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ payment_type: paymentType })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(loader) loader.classList.add('hidden');
+            if(data.snap_token) {
+                snap.pay(data.snap_token, {
+                    onSuccess: function(result){
+                        // Payment success, submit the hidden form logic
+                        document.getElementById(`payment-form-${bookingId}-${paymentType}`).submit();
+                    },
+                    onPending: function(result){
+                        alert("Menunggu pembayaran Anda!");
+                    },
+                    onError: function(result){
+                        alert("Pembayaran gagal!");
+                    },
+                    onClose: function(){
+                        alert('Anda menutup popup pembayaran sebelum menyelesaikan transaksi.');
+                    }
+                });
+            } else {
+                alert(data.error || 'Terjadi kesalahan mengambil token transaksi.');
+            }
+        })
+        .catch(err => {
+            if(loader) loader.classList.add('hidden');
+            alert('Kesalahan jaringan: ' + err.message);
+        });
+    }
 </script>
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key', 'SB-Mid-client-0Ew4k_C4bI8NlCjV') }}"></script>
 @endpush

@@ -23,6 +23,21 @@
 </div>
 @endif
 
+@if($errors->any())
+<div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-700 rounded-2xl">
+    <div class="flex items-center gap-3 mb-2">
+        <i class="fas fa-exclamation-circle text-red-600"></i>
+        <p class="text-sm font-bold">Terjadi Kesalahan:</p>
+    </div>
+    <ul class="list-disc list-inside text-xs font-medium space-y-1 ml-6">
+        @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
+
 {{-- ===== TOOLBAR ===== --}}
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
     <div class="flex gap-3 flex-wrap">
@@ -107,6 +122,11 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
+                            <a href="{{ route('admin.kendaraan.units', $v->id) }}"
+                                class="w-8 h-8 flex items-center justify-center bg-teal-50 text-teal-600 hover:bg-teal-100 rounded-lg transition-colors"
+                                title="Manajemen Plat & Unit Fisik">
+                                <i class="fas fa-car-side text-xs"></i>
+                            </a>
                             <button onclick="openEditModal({{ $v }})"
                                 class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
                                 title="Edit">
