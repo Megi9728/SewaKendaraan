@@ -73,11 +73,15 @@
                         <td class="px-6 py-5">
                             <p class="font-bold text-slate-700 text-sm mb-2">{{ $booking->vehicle->name }}</p>
                             <div class="flex gap-2">
-                                @if($booking->ktp_photo)
-                                <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP - {{ $booking->user->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">KTP</button>
-                                @endif
-                                @if($booking->sim_photo)
-                                <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM - {{ $booking->user->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">SIM</button>
+                                @if($booking->status !== 'Completed')
+                                    @if($booking->ktp_photo)
+                                    <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP - {{ $booking->user->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">KTP</button>
+                                    @endif
+                                    @if($booking->sim_photo)
+                                    <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM - {{ $booking->user->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">SIM</button>
+                                    @endif
+                                @else
+                                    <span class="text-[9px] font-bold text-slate-400 italic"><i class="fas fa-lock mr-1"></i> Data Terkunci</span>
                                 @endif
                             </div>
                         </td>

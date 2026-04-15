@@ -33,6 +33,10 @@
                         <i class="icon fas fa-chart-line"></i>
                         <span>Dashboard Mitra</span>
                     </a>
+                    <a href="{{ route('mitra.monitoring') }}" class="sidebar-link {{ Request::get('monitoring') || Request::routeIs('mitra.monitoring') ? 'active' : '' }}">
+                        <i class="icon fas fa-location-dot"></i>
+                        <span>Monitoring GPS</span>
+                    </a>
                     <a href="{{ route('mitra.vehicles.index') }}" class="sidebar-link {{ Request::routeIs('mitra.vehicles.index') ? 'active' : '' }}">
                         <i class="icon fas fa-car"></i>
                         <span>Armada Saya</span>

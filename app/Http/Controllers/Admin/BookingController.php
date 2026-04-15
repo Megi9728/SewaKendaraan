@@ -33,6 +33,10 @@ class BookingController extends Controller
      */
     public function update(Request $request, Booking $booking)
     {
+        if (!auth()->user()->isMitra()) {
+            return redirect()->back()->withErrors('Akses Dibatalkan: Hanya pihak Mitra yang berhak melakukan verifikasi dan pembaruan status pada pesanan mereka sendiri.');
+        }
+
         $request->validate([
             'status'           => 'required|string|in:Pending,Confirmed,Active,Picked_Up,Returning,Completed,Cancelled,Rejected',
             'payment_status'   => 'nullable|string|in:unpaid,dp_paid,fully_paid',

@@ -151,8 +151,24 @@ Route::middleware(['auth', 'role:mitra'])->prefix('mitra')->name('mitra.')->grou
         $stats = [
             'total_mobil'   => \App\Models\Vehicle::where('mitra_id', $mitraId)->count(),
             'total_booking' => \App\Models\Booking::whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))->count(),
+            'pending'       => \App\Models\Booking::where('status', 'Pending')->whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))->count(),
+            'active'        => \App\Models\Booking::whereIn('status', ['Active', 'Picked_Up'])->whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))->count(),
+            'revenue'       => \App\Models\Booking::where('status', 'Completed')->whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))->sum('total_price'),
         ];
-        return view('mitra.dashboard', compact('stats'));
+
+        // Data Grafik: 6 Bulan Terakhir
+        $chartData = [];
+        $chartLabels = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $chartLabels[] = $month->translatedFormat('F');
+            $chartData[] = \App\Models\Booking::whereMonth('created_at', $month->month)
+                ->whereYear('created_at', $month->year)
+                ->whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))
+                ->count();
+        }
+
+        return view('mitra.dashboard', compact('stats', 'chartData', 'chartLabels'));
     })->name('dashboard');
 
     Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
@@ -163,6 +179,13 @@ Route::middleware(['auth', 'role:mitra'])->prefix('mitra')->name('mitra.')->grou
     // Profile Mitra
     Route::get('/profil', [\App\Http\Controllers\AuthController::class, 'profile'])->name('profile');
     Route::put('/profil', [\App\Http\Controllers\AuthController::class, 'updateProfile'])->name('profile.update');
+
+    // Monitoring GPS
+    Route::get('/monitoring', [\App\Http\Controllers\VehicleTrackingController::class, 'monitor'])->name('monitoring');
 });
+
+// GPS Tracker (Device side - accessible by phone in car - Public with Token)
+Route::get('/tracker/{token}', [\App\Http\Controllers\VehicleTrackingController::class, 'device'])->name('tracker.device');
+Route::post('/tracking/update/{token}', [\App\Http\Controllers\VehicleTrackingController::class, 'updateLocation'])->name('tracking.update');
 
 // Hapus route driver panel - fitur sopir dihapus

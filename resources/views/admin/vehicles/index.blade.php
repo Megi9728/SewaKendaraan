@@ -216,10 +216,7 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Harga / Hari (Rp)</label>
                     <input type="number" name="price_per_day" id="f-price" required placeholder="cth: 650000" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Biaya Sopir / Hari (Rp)</label>
-                    <input type="number" name="driver_price" id="f-driver-price" required placeholder="cth: 150000" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
-                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status</label>
                     <select name="status" id="f-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
@@ -432,7 +429,7 @@
         document.getElementById('f-cc').value = vehicle.engine_capacity || 1500;
         document.getElementById('f-plate').value = (vehicle.units && vehicle.units.length > 0) ? vehicle.units[0].plate_number : '';
         document.getElementById('f-price').value = vehicle.price_per_day;
-        document.getElementById('f-driver-price').value = vehicle.driver_price || 150000;
+
         document.getElementById('f-desc').value = vehicle.description || '';
         
         if (vehicle.image) {
