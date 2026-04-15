@@ -2,7 +2,7 @@
 
 @section('title', 'Kelola Driver')
 @section('page-title', 'Kelola Driver')
-@section('page-subtitle', 'Daftar pengemudi berpengalaman')
+@section('page-subtitle', 'Daftar pengemudi berpengalaman mitra')
 
 @section('content')
 
@@ -69,10 +69,10 @@
                     </td>
                     <td class="px-6 py-5 text-right">
                         <div class="flex justify-end gap-2">
-                            <button onclick='openEditModal(@json($d))' class="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all">
+                            <button onclick='openEditModal(@json($d->load("user")))' class="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all">
                                 <i class="fas fa-edit text-xs"></i>
                             </button>
-                            <form action="{{ route('admin.drivers.destroy', $d->id) }}" method="POST" onsubmit="return confirm('Hapus driver ini?')">
+                            <form action="{{ route('mitra.drivers.destroy', $d->id) }}" method="POST" onsubmit="return confirm('Hapus driver ini?')">
                                 @csrf @method('DELETE')
                                 <button class="w-9 h-9 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all">
                                     <i class="fas fa-trash text-xs"></i>
@@ -99,7 +99,7 @@
             <h3 id="modal-title" class="font-black text-slate-900 text-lg">Tambah Driver</h3>
             <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
         </div>
-        <form id="driver-form" action="{{ route('admin.drivers.store') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-5">
+        <form id="driver-form" action="{{ route('mitra.drivers.store') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-5">
             @csrf
             <div id="method-field"></div>
             
@@ -157,7 +157,7 @@
 <script>
     function openAddModal() {
         document.getElementById('modal-title').textContent = 'Tambah Driver Baru';
-        document.getElementById('driver-form').action = "{{ route('admin.drivers.store') }}";
+        document.getElementById('driver-form').action = "{{ route('mitra.drivers.store') }}";
         document.getElementById('method-field').innerHTML = '';
         document.getElementById('driver-form').reset();
         document.getElementById('modal-driver').classList.remove('hidden');
@@ -165,7 +165,7 @@
 
     function openEditModal(driver) {
         document.getElementById('modal-title').textContent = 'Edit Driver: ' + driver.name;
-        document.getElementById('driver-form').action = `/admin/drivers/${driver.id}`;
+        document.getElementById('driver-form').action = `/mitra/drivers/${driver.id}`;
         document.getElementById('method-field').innerHTML = '@method("PUT")';
         
         document.getElementById('f-name').value = driver.name;

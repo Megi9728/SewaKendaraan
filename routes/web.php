@@ -59,7 +59,7 @@ Route::get('/jelajah', function (\Illuminate\Http\Request $request) {
 })->name('browse');
 
 Route::get('/mobil/{vehicle}', function (\App\Models\Vehicle $vehicle) {
-    $vehicle->load(['images', 'bookings' => function($q) {
+    $vehicle->load(['images', 'mitra', 'units.pool', 'bookings' => function($q) {
         $q->whereNotNull('review')->where('review', '!=', '')->with('user')->latest();
     }]);
     return view('vehicle-detail', compact('vehicle'));
@@ -87,7 +87,12 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::get('/register/mitra', function () {
+    return view('auth.register-mitra');
+})->name('register.mitra');
+
+Route::post('/register', [AuthController::class, 'doRegister'])->name('register.post');
+Route::post('/register/mitra', [AuthController::class, 'doRegisterMitra'])->name('register.mitra.post');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -104,49 +109,60 @@ Route::middleware('auth')->group(function () {
     Route::post('/pesan/{booking}/review', [\App\Http\Controllers\BookingController::class, 'review'])->name('booking.review');
     Route::put('/pesan/{booking}/status', [\App\Http\Controllers\BookingController::class, 'updateStatus'])->name('booking.status.update');
     Route::get('/riwayat-sewa', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.history');
+    Route::get('/pesan/{booking}/bukti', [\App\Http\Controllers\BookingController::class, 'receipt'])->name('booking.receipt');
 });
 // ============================================================
-// HALAMAN ADMIN (protected with auth and admin middleware)
+// HALAMAN SUPER ADMIN
 // ============================================================
-
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         $stats = [
+            'total_mitra' => \App\Models\User::where('role', 'mitra')->count(),
             'total_vehicles' => \App\Models\Vehicle::count(),
+            'total_bookings' => \App\Models\Booking::count(),
+            'total_revenue' => \App\Models\Booking::where('status', 'Completed')->sum('total_price'),
             'pending_bookings' => \App\Models\Booking::where('status', 'Pending')->count(),
             'rented_vehicles' => \App\Models\Vehicle::where('status', 'Disewa')->count(),
-            'total_revenue' => \App\Models\Booking::where('status', 'Completed')->sum('total_price'),
         ];
-        
         $recentBookings = \App\Models\Booking::with(['user', 'vehicle'])->latest()->take(5)->get();
-
         return view('admin.dashboard', compact('stats', 'recentBookings'));
     })->name('dashboard');
 
-    // CRUD Kendaraan
-    Route::get('/kendaraan', [\App\Http\Controllers\Admin\VehicleController::class, 'index'])->name('kendaraan');
-    Route::post('/kendaraan', [\App\Http\Controllers\Admin\VehicleController::class, 'store'])->name('kendaraan.store');
-    Route::put('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'update'])->name('kendaraan.update');
-    Route::delete('/kendaraan/{vehicle}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroy'])->name('kendaraan.destroy');
-    Route::delete('/kendaraan/image/{image}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroyImage'])->name('kendaraan.image.destroy');
-
-    // Manajemen Unit Kendaraan (List & Update Plat Nomor)
-    Route::get('/kendaraan/{vehicle}/units', [\App\Http\Controllers\Admin\VehicleController::class, 'units'])->name('kendaraan.units');
-    Route::put('/kendaraan/units/{unit}', [\App\Http\Controllers\Admin\VehicleController::class, 'updateUnit'])->name('kendaraan.unit.update');
-
-    // CRUD Driver
-    Route::get('/drivers', [\App\Http\Controllers\Admin\DriverController::class, 'index'])->name('drivers.index');
-    Route::post('/drivers', [\App\Http\Controllers\Admin\DriverController::class, 'store'])->name('drivers.store');
-    Route::put('/drivers/{driver}', [\App\Http\Controllers\Admin\DriverController::class, 'update'])->name('drivers.update');
-    Route::delete('/drivers/{driver}', [\App\Http\Controllers\Admin\DriverController::class, 'destroy'])->name('drivers.destroy');
-
-    // Profil Admin (Dashboard view)
-    Route::get('/profil', [AuthController::class, 'profile'])->name('profile');
-    Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
-
-    // Manajemen Pemesanan
-    Route::get('/pemesanan', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('pemesanan');
+    Route::get('/pemesanan', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('booking.monitor');
     Route::put('/pemesanan/{booking}', [\App\Http\Controllers\Admin\BookingController::class, 'update'])->name('pemesanan.update');
+    Route::get('/mitra', [\App\Http\Controllers\Admin\MitraController::class, 'index'])->name('mitra.index');
+    Route::put('/mitra/{mitra}', [\App\Http\Controllers\Admin\MitraController::class, 'update'])->name('mitra.update');
+    Route::delete('/mitra/{mitra}', [\App\Http\Controllers\Admin\MitraController::class, 'destroy'])->name('mitra.destroy');
 
+    // Profil
+    Route::get('/profil', [\App\Http\Controllers\AuthController::class, 'profile'])->name('profile');
+    Route::put('/profil', [\App\Http\Controllers\AuthController::class, 'updateProfile'])->name('profile.update');
+
+    Route::resource('kendaraan', \App\Http\Controllers\Admin\VehicleController::class);
+    Route::delete('/kendaraan/image/{image}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroyImage'])->name('kendaraan.destroyImage');
 });
+
+// ============================================================
+// HALAMAN MITRA
+// ============================================================
+Route::middleware(['auth', 'role:mitra'])->prefix('mitra')->name('mitra.')->group(function () {
+    Route::get('/dashboard', function () {
+        $mitraId = auth()->id();
+        $stats = [
+            'total_mobil'   => \App\Models\Vehicle::where('mitra_id', $mitraId)->count(),
+            'total_booking' => \App\Models\Booking::whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))->count(),
+        ];
+        return view('mitra.dashboard', compact('stats'));
+    })->name('dashboard');
+
+    Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
+    Route::delete('/vehicles/image/{image}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroyImage'])->name('vehicles.destroyImage');
+    Route::get('/booking', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('booking.index');
+    Route::put('/booking/{booking}', [\App\Http\Controllers\Admin\BookingController::class, 'update'])->name('booking.update');
+
+    // Profile Mitra
+    Route::get('/profil', [\App\Http\Controllers\AuthController::class, 'profile'])->name('profile');
+    Route::put('/profil', [\App\Http\Controllers\AuthController::class, 'updateProfile'])->name('profile.update');
+});
+
+// Hapus route driver panel - fitur sopir dihapus

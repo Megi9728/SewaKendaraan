@@ -86,7 +86,10 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <h1 class="text-4xl md:text-5xl font-bold text-uber-black tracking-tighter">{{ $vehicle->name }}</h1>
-                        <p class="text-uber-text font-medium mt-2 text-lg uppercase tracking-wide">
+                        <div class="flex items-center gap-2 mt-2 font-bold text-xs uppercase tracking-widest text-uber-muted">
+                            <i class="fas fa-store"></i> Disediakan oleh: <span class="text-blue-600">{{ $vehicle->mitra->name ?? 'Jatara Official' }}</span>
+                        </div>
+                        <p class="text-uber-text font-medium mt-3 text-lg uppercase tracking-wide">
                             {{ $vehicle->type }} • {{ $vehicle->transmission }} • {{ $vehicle->fuel_type ?? 'Bensin' }} • {{ $vehicle->engine_capacity ?? '1500' }} CC
                         </p>
                         <div class="mt-4">
@@ -116,6 +119,7 @@
             <div class="mt-8 border-b border-gray-200">
                 <div class="flex gap-10">
                     <button class="tab-btn pb-4 text-sm font-bold text-uber-muted hover:text-uber-black transition-all relative active" data-tab="tab-spek">Spesifikasi</button>
+                    <button class="tab-btn pb-4 text-sm font-bold text-uber-muted hover:text-uber-black transition-all relative" data-tab="tab-lokasi">Lokasi Pool</button>
                     <button class="tab-btn pb-4 text-sm font-bold text-uber-muted hover:text-uber-black transition-all relative" data-tab="tab-ulasan">Ulasan Pengguna</button>
                     <button class="tab-btn pb-4 text-sm font-bold text-uber-muted hover:text-uber-black transition-all relative" data-tab="tab-syarat">Ketentuan</button>
                 </div>
@@ -130,9 +134,8 @@
                         ['icon' => 'fas fa-cog', 'label' => 'Sistem Transmisi', 'value' => $vehicle->transmission],
                         ['icon' => 'fas fa-gas-pump', 'label' => 'Bahan Bakar', 'value' => $vehicle->fuel_type ?? 'Bensin'],
                         ['icon' => 'fas fa-tachometer-alt', 'label' => 'Kapasitas Mesin', 'value' => ($vehicle->engine_capacity ?? '1500') . ' CC'],
-                        ['icon' => 'fas fa-car-side', 'label' => 'Unit Tersedia', 'value' => ($vehicle->available_units_count ?? '1') . ' Unit'],
-                        ['icon' => 'fas fa-map-marker-alt', 'label' => 'Lokasi Penempatan', 'value' => $vehicle->domicile ?? 'Jakarta'],
-                        ['icon' => 'fas fa-user-tie', 'label' => 'Layanan Sopir', 'value' => 'Tersedia (+Rp ' . number_format($vehicle->driver_price, 0, ',', '.') . '/hari)', 'note' => '*Layanan tidak termasuk pembelian BBM dan biaya tol'],
+                        ['icon' => 'fas fa-map-marker-alt', 'label' => 'Lokasi Pool', 'value' => $vehicle->domicile ?? 'Jakarta'],
+                        ['icon' => 'fas fa-store', 'label' => 'Penyedia (Mitra)', 'value' => $vehicle->mitra->name ?? 'Jatara Official'],
                         ['icon' => 'fas fa-shield-alt', 'label' => 'Status Keamanan', 'value' => 'Armada Terverifikasi'],
                         ['icon' => 'fas fa-check-circle', 'label' => 'Kondisi Unit', 'value' => 'Terawat & Bersih'],
                     ];
@@ -153,6 +156,51 @@
                     @endforeach
                 </div>
             </div>
+
+            @php
+                // Get pool directly from the Mitra who owns the vehicle
+                $pool = $vehicle->mitra->pool ?? null;
+            @endphp
+            {{-- Tab Content: Lokasi Pool (Map) --}}
+            <div id="tab-lokasi" class="tab-content py-10 hidden">
+                <div class="space-y-6">
+                    @if($pool && $pool->latitude && $pool->longitude)
+            <div class="bg-gray-100/50 border border-gray-100 rounded-3xl p-8 mb-6 text-center md:text-left">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] mb-1">Titik Penjemputan</p>
+                            <p class="font-bold text-uber-black text-lg leading-tight">{{ $pool->address ?? 'Alamat tidak tersedia' }}</p>
+                        </div>
+                    </div>
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ $pool->latitude }},{{ $pool->longitude }}" target="_blank" class="bg-white border border-gray-200 text-uber-black font-bold px-6 py-3 rounded-xl text-xs hover:bg-gray-50 transition-all flex items-center gap-2 shadow-sm">
+                        <i class="fas fa-directions"></i> PETUNJUK ARAH
+                    </a>
+                </div>
+                <div id="pool-detail-map" class="w-full h-[450px] rounded-[2rem] border border-gray-200 overflow-hidden shadow-inner bg-gray-100"></div>
+            </div>
+            @elseif($pool)
+            <div class="bg-gray-50 border border-dashed border-gray-200 rounded-3xl p-12 text-center">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <i class="fas fa-map-pin text-gray-300 text-2xl"></i>
+                </div>
+                <p class="text-sm font-bold text-uber-black mb-2">Koordinat Pool Belum Diatur</p>
+                <p class="text-xs text-uber-muted max-w-xs mx-auto leading-relaxed">
+                    Alamat terdaftar: <span class="text-uber-black">{{ $pool->address }}</span>. 
+                    Titik peta belum disetel oleh Mitra.
+                </p>
+            </div>
+            @else
+            <div class="py-20 text-center text-uber-muted bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                <i class="fas fa-map-marked-alt text-5xl mb-6 opacity-20"></i>
+                <p class="font-bold uppercase tracking-widest text-xs">Lokasi Pool Belum Tersedia</p>
+            </div>
+            @endif
+        </div>
+    </div>
 
             {{-- Tab Content: Syarat --}}
             <div id="tab-syarat" class="tab-content py-10 hidden">
@@ -272,10 +320,6 @@
                         <div class="flex justify-between items-center text-sm font-bold">
                             <span class="text-uber-muted">Sewa <span id="days-count">0</span> hari</span>
                             <span id="subtotal" class="text-uber-black">Rp 0</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm font-bold">
-                            <span class="text-uber-muted">Biaya Operasional</span>
-                            <span class="text-uber-black">Rp 50.000</span>
                         </div>
                         <hr class="border-gray-200">
                         <div class="flex justify-between items-center pt-2">
@@ -414,7 +458,6 @@
     const endInput   = document.getElementById('book-end');
     const priceBreakdown = document.getElementById('price-breakdown');
     const pricePerDay = {{ $vehicle->price_per_day }};
-    const serviceFee  = 50000;
 
     // Flatpickr advanced date configuration
     const disabledDates = {!! json_encode($vehicle->getFullyBookedDates()) !!};
@@ -433,11 +476,10 @@
 
             const days = Math.ceil((e - s) / (1000*60*60*24));
             const subtotal = days * pricePerDay;
-            const total = subtotal + serviceFee;
 
             document.getElementById('days-count').textContent = days;
             document.getElementById('subtotal').textContent   = 'Rp ' + subtotal.toLocaleString('id-ID');
-            document.getElementById('grand-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+            document.getElementById('grand-total').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
             priceBreakdown.classList.remove('hidden');
         }
 
@@ -499,3 +541,99 @@
     }
 </script>
 @endpush
+
+@php
+    $pool = $vehicle->mitra->pool ?? null;
+@endphp
+
+@if($pool && $pool->latitude && $pool->longitude)
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    #pool-detail-map { 
+        height: 450px !important; 
+        width: 100% !important;
+        display: block !important;
+        z-index: 1;
+        background: #f1f5f9;
+        border-radius: 2rem;
+    }
+    .leaflet-container { height: 100% !important; width: 100% !important; border-radius: 2rem; }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let detailMapTracker = null;
+
+    // Fix Leaflet marker icon issue from CDN
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    });
+
+    function renderMapNow() {
+        if (detailMapTracker) {
+            detailMapTracker.invalidateSize();
+            return;
+        }
+
+        const lat = parseFloat("{{ number_format($pool->latitude, 8, '.', '') }}");
+        const lng = parseFloat("{{ number_format($pool->longitude, 8, '.', '') }}");
+        
+        const container = document.getElementById('pool-detail-map');
+        if (!container) return;
+
+        try {
+            detailMapTracker = L.map('pool-detail-map', {
+                scrollWheelZoom: false,
+                zoomControl: true
+            }).setView([lat, lng], 16);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(detailMapTracker);
+
+            const marker = L.marker([lat, lng]).addTo(detailMapTracker);
+            
+            marker.bindPopup(`
+                <div style="font-family: 'Inter', sans-serif; min-width: 150px;">
+                    <p style="font-weight: 800; color: #121212; margin-bottom: 4px; font-size: 14px;">{{ $pool->name }}</p>
+                    <p style="font-size: 11px; color: #5e5e5e; line-height: 1.4; margin: 0;">{{ $pool->address }}</p>
+                </div>
+            `).openPopup();
+            
+            // Re-render size after init to catch visibility changes
+            setTimeout(() => detailMapTracker.invalidateSize(), 500);
+        } catch (e) {
+            console.error("Map initialization failed:", e);
+        }
+    }
+
+    // Listener Tab - use delegation for robustness
+    document.addEventListener('click', function(e) {
+        let target = e.target;
+        while (target && target !== document) {
+            if (target.dataset && target.dataset.tab === 'tab-lokasi') {
+                setTimeout(renderMapNow, 400);
+                break;
+            }
+            target = target.parentNode;
+        }
+    });
+
+    // Auto-fix if direct link or refresh
+    document.addEventListener('DOMContentLoaded', function() {
+        const activeTab = document.querySelector('.tab-btn.active');
+        if (activeTab && activeTab.dataset.tab === 'tab-lokasi') {
+            setTimeout(renderMapNow, 600);
+        }
+    });
+</script>
+@endpush
+@endif

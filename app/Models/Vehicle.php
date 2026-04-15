@@ -13,6 +13,11 @@ class Vehicle extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function mitra()
+    {
+        return $this->belongsTo(User::class, 'mitra_id');
+    }
+
     public function images()
     {
         return $this->hasMany(VehicleImage::class);

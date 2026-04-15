@@ -13,28 +13,36 @@
     <nav class="flex-1 overflow-y-auto px-6 custom-scrollbar space-y-8">
         {{-- Group 1 --}}
         <div>
-            <p class="px-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Utama</p>
+            <p class="px-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Navigasi</p>
             <div class="space-y-1">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ Request::routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <i class="icon fas fa-chart-line"></i>
-                    <span>Statistik</span>
-                </a>
-                <a href="{{ route('admin.kendaraan') }}" class="sidebar-link {{ Request::routeIs('admin.kendaraan') ? 'active' : '' }}">
-                    <i class="icon fas fa-car"></i>
-                    <span>Kelola Armada</span>
-                </a>
-                <a href="{{ route('admin.drivers.index') }}" class="sidebar-link {{ Request::routeIs('admin.drivers.index') ? 'active' : '' }}">
-                    <i class="icon fas fa-user-tie"></i>
-                    <span>Kelola Driver</span>
-                </a>
-                <a href="{{ route('admin.pemesanan') }}" class="sidebar-link {{ Request::routeIs('admin.pemesanan') ? 'active' : '' }}">
-                    <i class="icon fas fa-calendar-check"></i>
-                    <span class="flex-1">Pemesanan</span>
-                    @php $pendingCount = \App\Models\Booking::where('status', 'Pending')->count(); @endphp
-                    @if($pendingCount > 0)
-                        <span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full ring-4 ring-slate-900">{{ $pendingCount }}</span>
-                    @endif
-                </a>
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin')
+                    <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ Request::routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <i class="icon fas fa-chart-line"></i>
+                        <span>Dashboard Admin</span>
+                    </a>
+                    <a href="{{ route('admin.mitra.index') }}" class="sidebar-link {{ Request::routeIs('admin.mitra.index') ? 'active' : '' }}">
+                        <i class="icon fas fa-store"></i>
+                        <span>Kelola Mitra</span>
+                    </a>
+                    <a href="{{ route('admin.booking.monitor') }}" class="sidebar-link {{ Request::routeIs('admin.booking.monitor') ? 'active' : '' }}">
+                        <i class="icon fas fa-calendar-check"></i>
+                        <span>Monitor Booking</span>
+                    </a>
+                @elseif(Auth::user()->role === 'mitra')
+                    <a href="{{ route('mitra.dashboard') }}" class="sidebar-link {{ Request::routeIs('mitra.dashboard') ? 'active' : '' }}">
+                        <i class="icon fas fa-chart-line"></i>
+                        <span>Dashboard Mitra</span>
+                    </a>
+                    <a href="{{ route('mitra.vehicles.index') }}" class="sidebar-link {{ Request::routeIs('mitra.vehicles.index') ? 'active' : '' }}">
+                        <i class="icon fas fa-car"></i>
+                        <span>Armada Saya</span>
+                    </a>
+
+                    <a href="{{ route('mitra.booking.index') }}" class="sidebar-link {{ Request::routeIs('mitra.booking.index') ? 'active' : '' }}">
+                        <i class="icon fas fa-calendar-check"></i>
+                        <span>Kelola Booking</span>
+                    </a>
+                @endif
             </div>
         </div>
 
@@ -42,7 +50,10 @@
         <div>
             <p class="px-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Konfigurasi</p>
             <div class="space-y-1">
-                <a href="{{ route('admin.profile') }}" class="sidebar-link {{ Request::routeIs('admin.profile') ? 'active' : '' }}">
+                @php
+                    $profileRoute = Auth::user()->role === 'admin' ? 'admin.profile' : 'mitra.profile';
+                @endphp
+                <a href="{{ route($profileRoute) }}" class="sidebar-link {{ Request::routeIs($profileRoute) ? 'active' : '' }}">
                     <i class="icon fas fa-user-gear"></i>
                     <span>Profil Saya</span>
                 </a>

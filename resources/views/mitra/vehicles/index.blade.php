@@ -2,7 +2,7 @@
 
 @section('title', 'Kelola Armada Kendaraan')
 @section('page-title', 'Kelola Armada')
-@section('page-subtitle', 'Tambah, edit, dan hapus unit kendaraan')
+@section('page-subtitle', 'Tambah, edit, dan hapus unit kendaraan mitra')
 
 @push('styles')
 <style>
@@ -121,13 +121,13 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                            <button onclick="openEditModal({{ $v }})"
+                            <button onclick="openEditModal({{ json_encode($v->load(['images', 'units'])) }})"
                                 class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
                                 title="Edit">
                                 <i class="fas fa-edit text-xs"></i>
                             </button>
                             <button onclick="openDeleteModal({{ $v->id }}, '{{ $v->name }}')"
-                                class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
+                                class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-50 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
                                 title="Hapus">
                                 <i class="fas fa-trash text-xs"></i>
                             </button>
@@ -156,7 +156,7 @@
             </button>
         </div>
 
-        <form id="vehicle-form" class="p-7 space-y-5 max-h-[75vh] overflow-y-auto" action="{{ route('admin.kendaraan.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="vehicle-form" class="p-7 space-y-5 max-h-[75vh] overflow-y-auto" action="{{ route('mitra.vehicles.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div id="method-field"></div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -167,12 +167,26 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Domisili Cabang</label>
                     <select name="domicile" id="f-domicile" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
-                        <option value="Jakarta">Jakarta</option>
-                        <option value="Bogor">Bogor</option>
-                        <option value="Depok">Depok</option>
-                        <option value="Tangerang">Tangerang</option>
-                        <option value="Bekasi">Bekasi</option>
+                        @foreach(['Jakarta', 'Bogor', 'Depok', 'Tangerang', 'Bekasi', 'Bandung', 'Bali'] as $city)
+                            <option value="{{ $city }}">{{ $city }}</option>
+                        @endforeach
                     </select>
+                </div>
+                <div class="sm:col-span-2">
+                    @if(!Auth::user()->pool_id)
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
+                        <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                        <p class="text-xs text-amber-700 font-medium">Anda belum menyetel lokasi pool. <a href="{{ route('mitra.profile') }}" class="font-bold underline">Set lokasi sekarang</a> agar armada dapat dipesan.</p>
+                    </div>
+                    @else
+                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center gap-3">
+                        <i class="fas fa-map-marker-alt text-blue-500"></i>
+                        <div>
+                            <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Lokasi Pool Aktif</p>
+                            <p class="text-xs text-blue-700 font-medium truncate max-w-[400px]">{{ Auth::user()->pool->address ?? 'Lokasi Terdaftar' }}</p>
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Jenis</label>
@@ -319,10 +333,9 @@
     }
 
     // Tambah Kendaraan
-    // Tambah Kendaraan
     document.getElementById('btn-tambah').addEventListener('click', function() {
         document.getElementById('modal-title').textContent = 'Tambah Kendaraan Baru';
-        document.getElementById('vehicle-form').action = "{{ route('admin.kendaraan.store') }}";
+        document.getElementById('vehicle-form').action = "{{ route('mitra.vehicles.store') }}";
         document.getElementById('method-field').innerHTML = '';
         document.getElementById('vehicle-form').reset();
         resetImagePreviews();
@@ -418,7 +431,7 @@
     // Edit Kendaraan
     function openEditModal(vehicle) {
         document.getElementById('modal-title').textContent = 'Edit Kendaraan: ' + vehicle.name;
-        document.getElementById('vehicle-form').action = `/admin/kendaraan/${vehicle.id}`;
+        document.getElementById('vehicle-form').action = `/mitra/vehicles/${vehicle.id}`;
         document.getElementById('method-field').innerHTML = '@method("PUT")';
         document.getElementById('vehicle-form').reset();
         resetImagePreviews();
@@ -463,7 +476,7 @@
     window.deleteGalleryImage = function(id) {
         if (confirm('Hapus gambar ini dari galeri?')) {
             const form = document.createElement('form');
-            form.method = 'POST'; form.action = `/admin/kendaraan/image/${id}`;
+            form.method = 'POST'; form.action = `/mitra/vehicles/image/${id}`;
             form.innerHTML = `@csrf @method("DELETE")`;
             document.body.appendChild(form); form.submit();
         }
@@ -472,7 +485,7 @@
     // Delete Kendaraan
     function openDeleteModal(id, name) {
         document.getElementById('delete-name').textContent = name;
-        document.getElementById('delete-form').action = `/admin/kendaraan/${id}`;
+        document.getElementById('delete-form').action = `/mitra/vehicles/${id}`;
         openModal('modal-delete');
     }
 

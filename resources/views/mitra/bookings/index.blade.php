@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('page-title', 'Manajemen Pemesanan')
-@section('page-subtitle', 'Daftar semua transaksi penyewaan kendaraan')
+@section('page-subtitle', 'Daftar semua transaksi penyewaan kendaraan mitra')
 
 @section('content')
 <div class="px-4 py-6">
@@ -91,14 +91,14 @@
                         <td class="px-6 py-5">
                             @php
                                 $colors = [
-                                    'Pending'    => 'bg-orange-100 text-orange-600',
-                                    'Confirmed'  => 'bg-blue-100 text-blue-600',
-                                    'Active'     => 'bg-indigo-100 text-indigo-600',
-                                    'Picked_Up'  => 'bg-indigo-100 text-indigo-600',
-                                    'Returning'  => 'bg-indigo-100 text-indigo-600',
-                                    'Completed'  => 'bg-green-100 text-green-600',
-                                    'Cancelled'  => 'bg-red-100 text-red-600',
-                                    'Rejected'   => 'bg-slate-100 text-slate-600',
+                                    'Pending'   => 'bg-orange-100 text-orange-600',
+                                    'Confirmed' => 'bg-blue-100 text-blue-600',
+                                    'Active'    => 'bg-indigo-100 text-indigo-600',
+                                    'Picked_Up' => 'bg-indigo-100 text-indigo-600',
+                                    'Returning' => 'bg-indigo-100 text-indigo-600',
+                                    'Completed' => 'bg-green-100 text-green-600',
+                                    'Cancelled' => 'bg-red-100 text-red-600',
+                                    'Rejected'  => 'bg-slate-100 text-slate-600',
                                 ];
                                 $payColors = [
                                     'unpaid'     => 'bg-red-50 text-red-600',
@@ -123,7 +123,7 @@
                         <td class="px-6 py-5">
                             <div class="flex items-center gap-2">
                                 @if($booking->status === 'Pending')
-                                    <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                    <form action="{{ route('mitra.booking.update', $booking->id) }}" method="POST">
                                         @csrf @method('PUT')
                                         <input type="hidden" name="status" value="Confirmed">
                                         <button type="submit" class="text-[10px] font-bold px-3 py-1.5 rounded bg-green-50 text-green-600 hover:bg-green-100 transition shadow-sm border border-green-200">
@@ -141,7 +141,7 @@
                                     @elseif($booking->payment_status === 'dp_paid')
                                         <span class="text-[10px] font-bold text-orange-500 italic">Menunggu Pelunasan...</span>
                                     @elseif($booking->payment_status === 'fully_paid')
-                                        <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                        <form action="{{ route('mitra.booking.update', $booking->id) }}" method="POST">
                                             @csrf @method('PUT')
                                             <input type="hidden" name="status" value="Picked_Up">
                                             <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
@@ -151,8 +151,8 @@
                                     @endif
                                 @endif
 
-                                @if($booking->status === 'Active' || $booking->status === 'Picked_Up' || $booking->status === 'Returning')
-                                    <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                @if(in_array($booking->status, ['Active', 'Picked_Up', 'Returning']))
+                                    <form action="{{ route('mitra.booking.update', $booking->id) }}" method="POST">
                                         @csrf @method('PUT')
                                         <input type="hidden" name="status" value="Completed">
                                         <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
@@ -226,7 +226,7 @@
 @push('scripts')
 <script>
     function openRejectModal(id) {
-        document.getElementById('form-reject').action = `/admin/pemesanan/${id}`;
+        document.getElementById('form-reject').action = `/mitra/booking/${id}`;
         document.getElementById('modal-reject').classList.remove('hidden');
     }
     function closeRejectModal() {

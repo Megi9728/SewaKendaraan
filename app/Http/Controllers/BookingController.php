@@ -38,23 +38,18 @@ class BookingController extends Controller
         $days = $start->diffInDays($end);
         if($days <= 0) $days = 1;
 
-        $serviceFee = 0;
         $subtotal = $vehicle->price_per_day * $days;
         $totalPrice = $subtotal;
 
         $bookingData = [
             'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'days' => $days,
-            'subtotal' => $subtotal,
-            'service_fee' => $serviceFee,
-            'total_price' => $totalPrice,
-            'delivery_fee_amount' => 50000,
-            'driver_price' => $vehicle->driver_price,
+            'end_date'   => $request->end_date,
+            'days'       => $days,
+            'subtotal'   => $subtotal,
+            'total_price'=> $totalPrice,
         ];
 
-        $drivers = \App\Models\Driver::where('status', 'Available')->get();
-        return view('checkout', compact('vehicle', 'bookingData', 'drivers'));
+        return view('checkout', compact('vehicle', 'bookingData'));
     }
 
     /**
@@ -66,14 +61,8 @@ class BookingController extends Controller
             'vehicle_id' => 'required|exists:vehicles,id',
             'start_date' => 'required|date|after_or_equal:today',
             'end_date'   => 'required|date|after:start_date',
-            'ktp_photo'  => 'required_without:with_driver|nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'sim_photo'  => 'required_without:with_driver|nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'delivery_type' => 'required_without:with_driver|nullable|in:self-pickup,delivery',
-            'delivery_location' => [\Illuminate\Validation\Rule::requiredIf(function () use ($request) {
-                return $request->has('with_driver') || $request->delivery_type === 'delivery';
-            }), 'nullable', 'string'],
-            'with_driver' => 'nullable',
-            'driver_id' => 'required_if:with_driver,1|nullable|exists:drivers,id',
+            'ktp_photo'  => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'sim_photo'  => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $vehicle = Vehicle::findOrFail($request->vehicle_id);
@@ -86,9 +75,7 @@ class BookingController extends Controller
         if($days <= 0) $days = 1;
 
         // Hitung total harga
-        $deliveryFee = $request->delivery_type === 'delivery' ? 50000 : 0;
-        $driverFee = $request->has('with_driver') ? ($vehicle->driver_price * $days) : 0;
-        $totalPrice = ($vehicle->price_per_day * $days) + $deliveryFee + $driverFee;
+        $totalPrice = $vehicle->price_per_day * $days;
 
         // Upload KTP & SIM (Keduanya opsional jika pakai driver)
         $ktpPath = $request->hasFile('ktp_photo') ? $request->file('ktp_photo')->store('verifikasi', 'public') : null;
@@ -118,23 +105,18 @@ class BookingController extends Controller
 
         // Simpan booking
         Booking::create([
-            'user_id'     => Auth::id(),
-            'vehicle_id'  => $vehicle->id,
+            'user_id'         => Auth::id(),
+            'vehicle_id'      => $vehicle->id,
             'vehicle_unit_id' => $unit->id,
-            'start_date'  => $request->start_date,
-            'end_date'    => $request->end_date,
-            'days'        => $days,
-            'total_price' => $totalPrice,
-            'status'      => 'Pending',
-            'note'        => $request->note ?? null,
-            'ktp_photo'   => $ktpPath,
-            'sim_photo'   => $simPath,
-            'delivery_type' => $request->delivery_type ?? 'driver-service',
-            'delivery_location' => $request->delivery_location,
-            'payment_status' => 'unpaid',
-            'with_driver' => $request->has('with_driver'),
-            'driver_id' => $request->has('with_driver') ? $request->driver_id : null,
-            'driver_price_snapshot' => $request->has('with_driver') ? $vehicle->driver_price : null,
+            'start_date'      => $request->start_date,
+            'end_date'        => $request->end_date,
+            'days'            => $days,
+            'total_price'     => $totalPrice,
+            'status'          => 'Pending',
+            'note'            => $request->note ?? null,
+            'ktp_photo'       => $ktpPath,
+            'sim_photo'       => $simPath,
+            'payment_status'  => 'unpaid',
         ]);
 
         return redirect()->route('booking.history')->with('success', 'Pesanan berhasil dibuat. KTP dan SIM Anda sedang diverifikasi admin sebelum Anda dapat membayar DP.');
@@ -256,6 +238,17 @@ class BookingController extends Controller
         }
 
         return back()->with('success', 'Terima kasih atas ulasan Anda!');
+    }
+
+    /**
+     * Tampilkan bukti pesanan
+     */
+    public function receipt(Booking $booking)
+    {
+        if ($booking->user_id !== Auth::id()) abort(403);
+        
+        $booking->load(['vehicle', 'user', 'vehicleUnit.pool']);
+        return view('user.receipt', compact('booking'));
     }
 
     /**

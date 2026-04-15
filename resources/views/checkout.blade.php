@@ -2,11 +2,15 @@
 
 @section('title', 'Selesaikan Pesanan Anda')
 
+@php
+    $checkoutPool = $vehicle->mitra->pool ?? null;
+@endphp
+
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <div class="mb-8 text-center md:text-left">
         <h1 class="text-3xl font-black text-slate-900 mb-2">Selesaikan <span class="text-blue-600">Pesanan</span></h1>
-        <p class="text-slate-500">Lengkapi data verifikasi dan opsi pengambilan untuk melanjutkan</p>
+        <p class="text-slate-500">Lengkapi data verifikasi untuk melanjutkan pemesanan</p>
     </div>
 
     @if ($errors->any())
@@ -31,6 +35,7 @@
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
                     <input type="hidden" name="start_date" value="{{ $bookingData['start_date'] }}">
                     <input type="hidden" name="end_date" value="{{ $bookingData['end_date'] }}">
+                    <input type="hidden" name="delivery_type" value="self-pickup">
 
                     {{-- Section 1: Identitas --}}
                     <div id="identity_section" class="relative transition-all duration-300">
@@ -66,104 +71,19 @@
                         </div>
                     </div>
 
-                    {{-- Section 2: Layanan Tambahan --}}
+                    {{-- Section 2: Lokasi Pool --}}
                     <div class="relative">
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="w-12 h-12 bg-teal-500 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-teal-500/20">
-                                <i class="fas fa-user-plus text-lg"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-2xl font-black text-slate-900 leading-tight">Layanan Ekstra</h2>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Personalisasi Kenyamanan Anda</p>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-50/50 rounded-[2rem] p-8 border border-slate-100/80 mb-10">
-                            <label class="flex items-center gap-5 cursor-pointer p-6 bg-white rounded-3xl border-2 border-slate-100 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/5 transition-all group active:scale-[0.99] has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/20">
-                                <div class="relative flex items-center h-5">
-                                    <input type="checkbox" name="with_driver" id="with_driver" value="1" class="w-7 h-7 rounded-lg text-blue-600 border-slate-300 focus:ring-blue-500 transition-all cursor-pointer accent-blue-600" onchange="toggleOptionDetails()">
-                                </div>
-                                <div class="ml-1 flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <span class="block font-black text-slate-900 text-lg leading-none">Pesan Jasa Sopir</span>
-                                        <span class="bg-blue-100 text-blue-700 text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter">Paling Direkomendasi</span>
-                                    </div>
-                                    <span class="text-slate-500 font-bold text-sm mt-1 block">Nikmati perjalanan tanpa lelah. <span class="text-blue-600">+Rp {{ number_format($bookingData['driver_price'], 0, ',', '.') }}/Hari</span></span>
-                                </div>
-                            </label>
-
-                            <div id="driver_selection_wrapper" class="mt-8 hidden animate-fade-in space-y-5">
-                                <div class="flex items-center justify-between px-2">
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Pilih Pengemudi Berpengalaman</p>
-                                    <span class="text-[10px] font-black text-green-600 bg-green-50 px-2.5 py-1 rounded-lg">TERSEDIA</span>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    @forelse($drivers as $driver)
-                                    <label class="driver-card relative flex items-center gap-5 p-5 bg-white border border-slate-200 rounded-[1.5rem] cursor-pointer hover:border-blue-400 hover:shadow-lg transition-all group has-[:checked]:border-blue-600 has-[:checked]:bg-blue-600 has-[:checked]:text-white">
-                                        <input type="radio" name="driver_id" value="{{ $driver->id }}" class="absolute opacity-0" id="driver-{{ $driver->id }}" disabled>
-                                        <div class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border-2 border-white shadow-md">
-                                            <img src="{{ $driver->photo ? asset('storage/' . $driver->photo) : 'https://ui-avatars.com/api/?name=' . urlencode($driver->name) . '&background=random' }}" class="w-full h-full object-cover">
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="font-black text-slate-900 text-sm group-has-[:checked]:text-white transition-colors truncate">{{ $driver->name }}</p>
-                                            <div class="flex items-center gap-2 mt-1.5">
-                                                <div class="flex text-yellow-400 text-[9px]">
-                                                    @for($i=1; $i<=5; $i++)
-                                                        <i class="fas fa-star {{ $i <= $driver->rating ? '' : 'text-slate-200 group-has-[:checked]:text-blue-400' }}"></i>
-                                                    @endfor
-                                                </div>
-                                                <span class="text-[9px] font-black text-slate-400 uppercase group-has-[:checked]:text-blue-100">{{ number_format($driver->rating, 1) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="w-7 h-7 border-2 border-slate-200 rounded-full flex items-center justify-center transition-all bg-white group-hover:border-blue-300 group-has-[:checked]:border-white group-has-[:checked]:bg-white">
-                                            <i class="fas fa-check text-[10px] text-blue-600 scale-0 group-has-[:checked]:scale-100 transition-transform"></i>
-                                        </div>
-                                    </label>
-                                    @empty
-                                    <div class="col-span-2 p-6 bg-orange-50 border border-orange-100 rounded-3xl text-center">
-                                        <p class="text-sm font-bold text-orange-600">Mohon maaf, saat ini sedang tidak ada driver yang tersedia untuk dipilih.</p>
-                                    </div>
-                                    @endforelse
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Section 3: Destination Section (Merged) --}}
-                    <div id="destination_section" class="relative">
                         <div class="flex items-center gap-4 mb-8">
                             <div class="w-12 h-12 bg-blue-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-900/20">
                                 <i class="fas fa-map-marked-alt text-lg"></i>
                             </div>
                             <div>
-                                <h2 id="destination_main_title" class="text-2xl font-black text-slate-900 leading-tight">Titik Penjemputan</h2>
-                                <p id="destination_main_subtitle" class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Tentukan Lokasi Serah Terima Armada</p>
+                                <h2 class="text-2xl font-black text-slate-900 leading-tight">Lokasi Pool</h2>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Titik Pengambilan Armada</p>
                             </div>
                         </div>
 
-                        {{-- Radio Choices - Hidden when with driver --}}
-                        <div id="delivery_options_section" class="bg-slate-50/50 rounded-[2rem] p-8 border border-slate-100/80 mb-10 transition-all duration-300">
-                            <div class="flex flex-col sm:flex-row gap-5">
-                                <label class="flex-1 border-2 border-slate-100 bg-white rounded-3xl p-6 cursor-pointer hover:border-blue-400 hover:shadow-lg transition-all flex items-start gap-4 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/20 active:scale-[0.98]">
-                                    <input type="radio" name="delivery_type" id="delivery_type_self" value="self-pickup" checked class="mt-1.5 w-5 h-5 accent-blue-600" onchange="toggleOptionDetails()">
-                                    <div class="flex-1">
-                                        <span class="block font-black text-slate-900 text-lg">Ambil Mandiri</span>
-                                        <span class="text-xs font-bold text-slate-500 leading-relaxed block mt-1">Pool Armada di {{ $vehicle->domicile ?? 'Jakarta' }}.</span>
-                                    </div>
-                                </label>
-
-                                <label class="flex-1 border-2 border-slate-100 bg-white rounded-3xl p-6 cursor-pointer hover:border-blue-400 hover:shadow-lg transition-all flex items-start gap-4 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/20 active:scale-[0.98]">
-                                    <input type="radio" name="delivery_type" id="delivery_type_delivery" value="delivery" class="mt-1.5 w-5 h-5 accent-blue-600" onchange="toggleOptionDetails()">
-                                    <div class="flex-1">
-                                        <span class="block font-black text-slate-900 text-lg">Antar Jemput</span>
-                                        <span class="text-xs font-bold text-slate-500 leading-relaxed block mt-1">Mobil diantar ke alamat Anda (+Biaya Operasional).</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        {{-- Section 3.1: Pool Map (Shown when self-pickup and no driver) --}}
-                        <div id="pool_map_section" class="hidden mt-0 mb-10 animate-fade-in">
+                        <div id="pool_map_section" class="mt-0 mb-10">
                             <div class="bg-white rounded-[2.5rem] p-8 border-2 border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden relative group">
                                 <div class="flex items-center gap-4 mb-6">
                                     <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-500/20">
@@ -174,45 +94,34 @@
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Titik Pengambilan Armada Mandiri</p>
                                     </div>
                                 </div>
-                                <div class="aspect-video w-full rounded-2xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 shadow-inner border border-slate-100 relative">
-                                    <iframe 
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126935.5347225134!2d106.759478!3d-6.175392!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e3fa73%3A0x761c32ffc907f10!2sJakarta!5e0!3m2!1sen!2sid!4v1712123456789!5m2!1sen!2sid" 
-                                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                                @if($checkoutPool && $checkoutPool->latitude && $checkoutPool->longitude)
+                                <div class="mb-4 flex items-start gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <i class="fas fa-map-pin text-slate-500 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-xs font-black text-slate-700">{{ $checkoutPool->name }}</p>
+                                        <p class="text-[10px] text-slate-400 font-medium mt-0.5">{{ $checkoutPool->address }}</p>
+                                    </div>
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $checkoutPool->latitude }},{{ $checkoutPool->longitude }}" target="_blank" class="ml-auto flex-shrink-0 text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1">
+                                        <i class="fas fa-directions"></i> Rute
+                                    </a>
                                 </div>
+                                <div id="checkout-pool-map" class="w-full rounded-2xl overflow-hidden shadow-inner border border-slate-100 relative" style="height: 300px;"></div>
+                                @else
+                                <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-slate-400">
+                                    <i class="fas fa-map-marked-alt text-4xl mb-3 opacity-30"></i>
+                                    <p class="text-xs font-bold uppercase tracking-widest">{{ $vehicle->domicile ?? 'Lokasi Pool' }}</p>
+                                    <p class="text-[10px] mt-1 opacity-70">Koordinat belum diatur oleh mitra</p>
+                                </div>
+                                @endif
+
                                 <div class="mt-4 flex items-start gap-3 bg-red-50 p-4 rounded-xl border border-red-100">
                                     <i class="fas fa-info-circle text-red-500 mt-0.5"></i>
                                     <p class="text-[10px] font-bold text-red-700 leading-relaxed uppercase tracking-tighter">
-                                        Harap tunjukkan kode booking ini saat pengambilan di pool {{ $vehicle->domicile ?? 'Jakarta' }}. Jam operasional Pool: 08.00 - 20.00 WIB.
+                                        Harap tunjukkan kode booking ini saat pengambilan di pool {{ $checkoutPool->name ?? $vehicle->domicile ?? 'Jakarta' }}. Jam operasional Pool: 08.00 - 20.00 WIB.
                                     </p>
                                 </div>
                             </div>
-                        </div>
-
-                        {{-- Address Card --}}
-                        <div id="address_card_container" class="bg-slate-900 rounded-[2.5rem] p-8 md:p-10 border border-slate-800 shadow-2xl relative overflow-hidden mb-10 group transition-all duration-500">
-                             {{-- Background Pattern --}}
-                             <div class="absolute inset-0 opacity-10 pointer-events-none">
-                                 <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 10px 10px;"></div>
-                             </div>
-
-                             <div class="relative">
-                                 <div class="flex items-center gap-4 mb-6">
-                                     <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white backdrop-blur-md">
-                                         <i class="fas fa-search-location"></i>
-                                     </div>
-                                     <h3 id="location_title" class="font-black text-white text-lg uppercase tracking-tight">Lokasi Pengantaran</h3>
-                                 </div>
-                                 
-                                 <div id="delivery_location_wrapper" class="hidden animate-fade-in">
-                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1">Detail Lokasi Lengkap</p>
-                                     <textarea name="delivery_location" id="delivery_location" rows="3" class="w-full bg-white/10 border border-white/10 rounded-2xl p-6 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:bg-white/20 transition-all resize-none shadow-inner" placeholder="Contoh: Jl. Sudirman No. 123..."></textarea>
-                                 </div>
-
-                                 <div id="no_location_selected" class="py-10 text-center border-2 border-dashed border-white/10 rounded-3xl group-hover:border-white/20 transition-colors">
-                                     <i class="fas fa-location-arrow text-3xl text-white/20 mb-4 block"></i>
-                                     <p class="text-xs font-black text-white/50 uppercase tracking-widest">Silakan pilih opsi Antar Jemput untuk mengisi alamat</p>
-                                 </div>
-                             </div>
                         </div>
                     </div>
 
@@ -276,23 +185,11 @@
                         <span>Biaya Sewa × {{ $bookingData['days'] }} Hari</span>
                         <span class="font-bold text-slate-800">Rp {{ number_format($bookingData['subtotal'], 0, ',', '.') }}</span>
                     </div>
-                    <div class="flex justify-between text-sm text-slate-600" id="service-fee-row" style="display: none;">
-                        <span>Biaya Antar Jemput</span>
-                        <span class="font-bold text-slate-800">Rp {{ number_format($bookingData['delivery_fee_amount'], 0, ',', '.') }}</span>
-                    </div>
-                    <div class="flex justify-between text-sm text-slate-600" id="driver-fee-row" style="display: none;">
-                        <span>Biaya Sopir ({{ $bookingData['days'] }} Hari)</span>
-                        <span class="font-bold text-slate-800" id="driver-fee-display">Rp 0</span>
-                    </div>
                 </div>
 
                 <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
                     <span class="font-bold text-slate-800">Total Bayar</span>
-                    <span class="text-2xl font-black text-blue-600" id="total-price-display" 
-                        data-subtotal="{{ $bookingData['subtotal'] }}" 
-                        data-delivery-fee="{{ $bookingData['delivery_fee_amount'] }}"
-                        data-driver-price="{{ $bookingData['driver_price'] }}"
-                        data-days="{{ $bookingData['days'] }}">Rp {{ number_format($bookingData['subtotal'], 0, ',', '.') }}</span>
+                    <span class="text-2xl font-black text-blue-600">Rp {{ number_format($bookingData['subtotal'], 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>
@@ -302,119 +199,7 @@
 
 @push('scripts')
 <script>
-    function toggleOptionDetails() {
-        const wrapper = document.getElementById('delivery_location_wrapper');
-        const input = document.getElementById('delivery_location');
-        const deliveryTypeSection = document.getElementById('delivery_options_section');
-        const withDriver = document.getElementById('with_driver').checked;
-        const deliveryRadios = document.getElementsByName('delivery_type');
-        let selectedDelivery = 'self-pickup';
-        deliveryRadios.forEach(r => { if(r.checked) selectedDelivery = r.value; });
-
-        const simSection = document.getElementById('sim_upload_wrapper');
-        const simInput = document.getElementById('sim_photo');
-
-        const poolMapSection = document.getElementById('pool_map_section');
-
-        const driverWrapper = document.getElementById('driver_selection_wrapper');
-        const driverRadios = document.querySelectorAll('input[name="driver_id"]');
-        
-        const totalDisplay = document.getElementById('total-price-display');
-        const subtotal = parseInt(totalDisplay.dataset.subtotal);
-        const deliveryFee = parseInt(totalDisplay.dataset.deliveryFee);
-        const driverPrice = parseInt(totalDisplay.dataset.driverPrice);
-        const days = parseInt(totalDisplay.dataset.days);
-        
-        const addressCard = document.getElementById('address_card_container');
-        
-        let total = subtotal;
-
-        // Logic SIM & Opsi Pengambilan
-        const identitySection = document.getElementById('identity_section');
-        const ktpInput = document.getElementById('ktp_photo');
-
-        if (withDriver) {
-            // Sembunyikan SIM & Radio Opsi & KTP
-            identitySection.classList.add('hidden');
-            ktpInput.required = false;
-            simSection.classList.add('hidden');
-            simInput.required = false;
-            deliveryTypeSection.classList.add('hidden');
-
-            // Update Header
-            document.getElementById('destination_main_title').innerText = "Titik Pertemuan";
-            document.getElementById('destination_main_subtitle').innerText = "Lokasi Penjemputan Driver & Armada";
-
-            // Paksa lokasi tampil (driver butuh tujuan)
-            wrapper.classList.remove('hidden');
-            input.required = true;
-            document.getElementById('location_title').innerText = "Alamat Lengkap Penjemputan";
-            
-            // Driver Fee
-            const totalDriverFee = driverPrice * days;
-            document.getElementById('driver-fee-row').style.display = 'flex';
-            document.getElementById('driver-fee-display').innerText = 'Rp ' + totalDriverFee.toLocaleString('id-ID');
-            total += totalDriverFee;
-            
-            driverWrapper.classList.remove('hidden');
-            driverRadios.forEach(radio => {
-                radio.disabled = false;
-                radio.required = true;
-            });
-
-            // Biaya antar jemput 0 jika pakai driver (asumsi sudah include)
-            document.getElementById('service-fee-row').style.display = 'none';
-
-            // Show Address Card for driver destination
-            addressCard.classList.remove('hidden');
-            poolMapSection.classList.add('hidden');
-
-        } else {
-            identitySection.classList.remove('hidden');
-            ktpInput.required = true;
-            simSection.classList.remove('hidden');
-            simInput.required = true;
-            deliveryTypeSection.classList.remove('hidden');
-            document.getElementById('location_title').innerText = "Alamat Pengantaran";
-
-            // Normal Delivery Logic
-            if (selectedDelivery === 'delivery') {
-                wrapper.classList.remove('hidden');
-                addressCard.classList.remove('hidden');
-                input.required = true;
-                document.getElementById('service-fee-row').style.display = 'flex';
-                total += deliveryFee;
-                poolMapSection.classList.add('hidden');
-            } else {
-                wrapper.classList.add('hidden');
-                addressCard.classList.add('hidden');
-                input.required = false;
-                document.getElementById('service-fee-row').style.display = 'none';
-                poolMapSection.classList.remove('hidden'); // Show fleet pool map
-            }
-
-            document.getElementById('driver-fee-row').style.display = 'none';
-            driverWrapper.classList.add('hidden');
-            driverRadios.forEach(radio => {
-                radio.disabled = true;
-                radio.required = false;
-                radio.checked = false;
-            });
-        }
-
-        totalDisplay.innerText = 'Rp ' + total.toLocaleString('id-ID');
-
-        // Handle placeholder
-        const noLocationPlaceholder = document.getElementById('no_location_selected');
-        if (wrapper.classList.contains('hidden')) {
-            noLocationPlaceholder.classList.remove('hidden');
-        } else {
-            noLocationPlaceholder.classList.add('hidden');
-        }
-    }
-    
-    // Inisialisasi awal saat render
-    toggleOptionDetails();
+    // No extra scripts needed
 </script>
 <style>
     .animate-fade-in {
@@ -424,5 +209,75 @@
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+    #checkout-pool-map {
+        height: 300px !important;
+        width: 100% !important;
+        display: block !important;
+        z-index: 1;
+        border-radius: 1rem;
+    }
+    #checkout-pool-map .leaflet-container {
+        border-radius: 1rem;
+    }
 </style>
 @endpush
+
+@if($checkoutPool && $checkoutPool->latitude && $checkoutPool->longitude)
+@push('scripts')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let checkoutMapInstance = null;
+
+    function initCheckoutMap() {
+        const poolSection = document.getElementById('pool_map_section');
+        if (!poolSection || poolSection.classList.contains('hidden')) return;
+
+        if (checkoutMapInstance) {
+            checkoutMapInstance.invalidateSize();
+            return;
+        }
+
+        const container = document.getElementById('checkout-pool-map');
+        if (!container) return;
+
+        // Fix Leaflet default marker icons
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+            iconUrl:       'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl:     'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        });
+
+        const lat = {{ number_format($checkoutPool->latitude, 8, '.', '') }};
+        const lng = {{ number_format($checkoutPool->longitude, 8, '.', '') }};
+
+        checkoutMapInstance = L.map('checkout-pool-map', {
+            scrollWheelZoom: false,
+            zoomControl: true,
+        }).setView([lat, lng], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19
+        }).addTo(checkoutMapInstance);
+
+        const marker = L.marker([lat, lng]).addTo(checkoutMapInstance);
+        marker.bindPopup(`
+            <div style="font-family:'Inter',sans-serif; min-width:150px; padding:2px 0;">
+                <p style="font-weight:800;color:#121212;margin-bottom:4px;font-size:13px;">{{ $checkoutPool->name }}</p>
+                <p style="font-size:11px;color:#5e5e5e;line-height:1.4;margin:0;">{{ $checkoutPool->address }}</p>
+            </div>
+        `).openPopup();
+
+        setTimeout(() => { checkoutMapInstance.invalidateSize(); }, 400);
+    }
+
+    // Override toggleOptionDetails tidak diperlukan lagi
+    // Render saat halaman sepenuhnya dimuat (termasuk Leaflet JS)
+    window.addEventListener('load', function() {
+        setTimeout(initCheckoutMap, 200);
+    });
+</script>
+@endpush
+@endif
