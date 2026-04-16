@@ -64,12 +64,18 @@
                 <div class="p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
                     <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Jadwal Pengambilan</p>
                     <p class="text-lg font-black text-slate-900 italic">{{ \Carbon\Carbon::parse($booking->start_date)->format('d F Y') }}</p>
-                    <p class="text-slate-500 text-xs mt-1 font-bold">Pukul 08:00 WIB @ {{ $booking->vehicleUnit->pool->name ?? 'Pool Utama' }}</p>
+                    <p class="text-slate-500 text-xs mt-1 font-bold">Pukul 08:00 WIB @ {{ $booking->vehicle->mitra->pool->name ?? $booking->vehicleUnit->pool->name ?? 'Pool Utama' }}</p>
+                    <p class="text-slate-400 text-[10px] font-medium leading-relaxed mt-1">
+                        {{ $booking->vehicle->mitra->pool->address ?? $booking->vehicleUnit->pool->address ?? $booking->vehicle->mitra->address ?? '-' }}
+                    </p>
                 </div>
                 <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Jadwal Pengembalian</p>
                     <p class="text-lg font-black text-slate-900 italic">{{ \Carbon\Carbon::parse($booking->end_date)->format('d F Y') }}</p>
-                    <p class="text-slate-500 text-xs mt-1 font-bold">Pukul 20:00 WIB @ {{ $booking->vehicleUnit->pool->name ?? 'Pool Utama' }}</p>
+                    <p class="text-slate-500 text-xs mt-1 font-bold">Pukul 20:00 WIB @ {{ $booking->vehicle->mitra->pool->name ?? $booking->vehicleUnit->pool->name ?? 'Pool Utama' }}</p>
+                    <p class="text-slate-400 text-[10px] font-medium leading-relaxed mt-1">
+                        {{ $booking->vehicle->mitra->pool->address ?? $booking->vehicleUnit->pool->address ?? $booking->vehicle->mitra->address ?? '-' }}
+                    </p>
                 </div>
             </div>
 
@@ -92,10 +98,7 @@
             {{-- QR Code Placeholder & Signature --}}
             <div class="mt-16 flex flex-col md:flex-row justify-between items-end gap-12">
                 <div class="text-center md:text-left">
-                    <div class="w-32 h-32 bg-slate-100 rounded-2xl flex items-center justify-center mb-4 border border-slate-200">
-                        <i class="fas fa-qrcode text-5xl text-slate-300"></i>
-                    </div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Valid Digital Receipt</p>
+                    {{-- QR Code placeholder removed --}}
                 </div>
                 <div class="text-right">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-12">Authorized by {{ $booking->vehicle->mitra->partner_name ?? $booking->vehicle->mitra->name }}</p>
