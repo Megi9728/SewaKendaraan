@@ -1,108 +1,193 @@
 @php($isHome = request()->routeIs('home'))
 
-<header id="navbar" class="{{ $isHome ? 'absolute inset-x-0 top-0 z-50 pt-5 md:pt-8 px-4 md:px-8' : 'bg-white border-b border-gray-100 sticky top-0 z-50' }}">
-    <nav class="max-w-[1240px] mx-auto {{ $isHome ? 'bg-white/95 backdrop-blur-xl rounded-full shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] border border-white/60 px-4 md:px-6' : 'px-4 md:px-8' }}">
-        <div class="flex items-center justify-between h-[72px] md:h-[80px]">
-            
-            <!-- 1. IDENTITAS (LOGO) -->
-            <div class="flex-shrink-0 flex items-center z-50">
-                <a href="{{ route('home') }}" class="flex items-center hover:opacity-80 transition-opacity">
-                    <!-- Logo dipastikan tampil 100% natural tanpa filter, karena background sudah putih/terang -->
-                    <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-8 md:h-10 w-auto object-contain">
+<header id="navbar" class="fixed top-0 inset-x-0 z-[100] transition-all duration-300 pointer-events-none">
+    <nav class="max-w-[1240px] mx-auto bg-white flex items-center justify-between px-6 md:px-8 h-[80px] relative z-[60] rounded-b-[24px] pointer-events-auto shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+
+        <!-- 1. LEFT: LINKS (Desktop) -->
+        <div class="hidden lg:flex items-center pl-6 gap-8 flex-1">
+            <a href="{{ route('home') }}"
+                class="text-[15px] font-medium transition-colors flex items-center gap-1 {{ request()->routeIs('home') ? 'text-[#0A174E]' : 'text-[#0A174E]/70 hover:text-[#0A174E]' }}">
+                Beranda
+            </a>
+            <a href="{{ route('browse') }}"
+                class="text-[15px] font-medium transition-colors flex items-center gap-1 {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'text-[#0A174E]' : 'text-[#0A174E]/70 hover:text-[#0A174E]' }}">
+                Kendaraan
+            </a>
+            <a href="{{ route('how.it.works') }}"
+                class="text-[15px] font-medium transition-colors {{ request()->routeIs('how.it.works') ? 'text-[#0A174E]' : 'text-[#0A174E]/70 hover:text-[#0A174E]' }}">
+                Layanan
+            </a>
+            <a href="{{ route('help') }}"
+                class="text-[15px] font-medium transition-colors {{ request()->routeIs('help') ? 'text-[#0A174E]' : 'text-[#0A174E]/70 hover:text-[#0A174E]' }}">
+                Bantuan
+            </a>
+            @auth
+                <a href="{{ route('booking.history') }}"
+                    class="text-[15px] font-medium transition-colors {{ request()->routeIs('booking.history') ? 'text-[#0A174E]' : 'text-[#0A174E]/70 hover:text-[#0A174E]' }}">
+                    Riwayat
+                </a>
+            @endauth
+        </div>
+
+        <!-- 2. CENTER: LOGO (Desktop & Mobile) -->
+        <div
+            class="flex-shrink-0 flex items-center lg:justify-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 pl-2 lg:pl-0">
+            <a href="{{ route('home') }}" class="flex items-center hover:opacity-80 transition-opacity gap-2">
+                <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-6 md:h-7 w-auto object-contain">
+                <span class="font-bold text-[18px] text-[#0A174E] tracking-tight">Jatara</span>
+            </a>
+        </div>
+
+        <!-- 3. RIGHT: AUTH & CTA (Desktop) -->
+        <div class="hidden lg:flex items-center justify-end pr-2 gap-4 flex-1">
+            @auth
+                <div class="relative">
+                    <button id="auth-dropdown-toggle"
+                        class="text-[15px] font-medium text-[#0A174E]/70 hover:text-[#0A174E] px-3 py-2 flex items-center gap-2 transition-colors">
+                        <span class="truncate max-w-[120px]">{{ Auth::user()->name }}</span>
+                        <i class="fas fa-chevron-down text-[10px] text-[#8F8F7E]"></i>
+                    </button>
+
+                    <!-- Dropdown Akun -->
+                    <div id="auth-dropdown"
+                        class="hidden absolute top-[calc(100%+1rem)] right-0 w-56 bg-white border border-[#EBEBDF] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.1)] rounded-2xl py-2 z-[60]">
+                        <div class="px-5 py-3 border-b border-[#EBEBDF]/50 flex items-center gap-3">
+                            <div
+                                class="h-8 w-8 bg-[#EBEBDF] rounded-full flex items-center justify-center text-[#0A174E] font-bold text-xs">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-sm font-bold text-[#0A174E] truncate">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-[#8F8F7E] truncate">{{ Auth::user()->role }}</p>
+                            </div>
+                        </div>
+                        <div class="p-2 flex flex-col gap-1">
+                            @if (Auth::user()->role === 'admin')
+                                <a href="{{ route('admin.dashboard') }}"
+                                    class="flex items-center px-4 py-2.5 text-sm font-medium text-[#0A174E]/80 hover:bg-[#EBEBDF]/30 rounded-xl transition-all">Dashboard
+                                    Admin</a>
+                            @else
+                                <a href="{{ route('booking.history') }}"
+                                    class="flex items-center px-4 py-2.5 text-sm font-medium text-[#0A174E]/80 hover:bg-[#EBEBDF]/30 rounded-xl transition-all">Riwayat
+                                    Sewa</a>
+                                <a href="{{ route('profile') }}"
+                                    class="flex items-center px-4 py-2.5 text-sm font-medium text-[#0A174E]/80 hover:bg-[#EBEBDF]/30 rounded-xl transition-all">Pengaturan
+                                    Profil</a>
+                            @endif
+                            <button onclick="event.preventDefault(); document.getElementById('base-logout-form').submit();"
+                                class="flex items-center w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-all">Keluar
+                                Sistem</button>
+                            <form id="base-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <a href="{{ route('login') }}"
+                    class="text-[15px] font-medium text-[#0A174E]/70 hover:text-[#0A174E] px-4 transition-colors">Masuk</a>
+            @endauth
+
+            @auth
+                <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('booking.history') }}"
+                    class="bg-[#F5D042] hover:opacity-90 text-[#0A174E] rounded-full px-6 py-2.5 text-[14px] font-bold transition-all flex items-center gap-2 shadow-[0_4px_14px_rgba(245,208,66,0.4)] hover:shadow-[0_6px_20px_rgba(245,208,66,0.6)] hover:-translate-y-0.5 duration-300">
+                    Beranda <i class="fas fa-arrow-right text-xs ml-1"></i>
+                </a>
+            @else
+                <a href="{{ route('register') }}"
+                    class="bg-[#F5D042] hover:opacity-90 text-[#0A174E] rounded-full px-6 py-2.5 text-[14px] font-bold transition-all flex items-center gap-2 shadow-[0_4px_14px_rgba(245,208,66,0.4)] hover:shadow-[0_6px_20px_rgba(245,208,66,0.6)] hover:-translate-y-0.5 duration-300">
+                    Daftar Akun <i class="fas fa-arrow-right text-xs ml-1"></i>
+                </a>
+            @endauth
+        </div>
+
+        <!-- Togle Menu Mobile -->
+        <button id="menu-toggle" type="button" onclick="openMobileMenu()"
+            class="lg:hidden bg-transparent text-[#0A174E]/80 hover:bg-[#EBEBDF]/30 p-3 rounded-full transition focus:outline-none ml-auto">
+            <i id="menu-icon" class="fas fa-bars text-lg"></i>
+        </button>
+
+    </nav>
+
+
+    <!-- MENU MOBILE OVERLAY (SolidRoad Style - Smooth Slide Down) -->
+    <div id="mobile-menu-overlay" onclick="closeMobileMenu()"
+        class="fixed inset-0 bg-[#0A174E]/40 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity duration-500">
+    </div>
+
+    <div id="mobile-menu"
+        class="fixed top-0 inset-x-0 bg-white z-[110] transform -translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-b-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+        <!-- Header Mobile Menu -->
+        <div class="flex items-center justify-between px-6 py-5 pb-2">
+            <a href="{{ route('home') }}" class="flex items-center gap-2">
+                <img src="{{ asset('logo.png') }}" alt="Jatara" class="h-6 w-auto">
+                <span class="font-bold text-[18px] text-[#0A174E] tracking-tight">Jatara</span>
+            </a>
+            <button id="close-menu-toggle" type="button" onclick="closeMobileMenu()"
+                class="bg-[#F9F9F5] text-[#0A174E]/60 hover:bg-[#D4D4C3] p-2 rounded-full transition transform hover:rotate-90 duration-300">
+                <i class="fas fa-times text-xl w-6 h-6 flex items-center justify-center"></i>
+            </button>
+        </div>
+
+        <!-- Content Mobile Menu -->
+        <div class="px-6 py-4 flex flex-col">
+            <div class="flex flex-col text-lg space-y-1 mb-8">
+                <a href="{{ route('home') }}"
+                    class="py-4 border-b border-[#EBEBDF] text-[#0A174E] font-medium hover:text-[#F5D042] transition-colors flex items-center justify-between group">
+                    Beranda <i
+                        class="fas fa-arrow-right opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-sm text-[#F5D042]"></i>
+                </a>
+                <a href="{{ route('browse') }}"
+                    class="py-4 border-b border-[#EBEBDF] text-[#0A174E] font-medium flex justify-between items-center hover:text-[#F5D042] transition-colors group">
+                    Kendaraan Rental
+                    <i
+                        class="fas fa-chevron-down text-xs text-[#8F8F7E] group-hover:text-[#F5D042] transition-colors"></i>
+                </a>
+                <a href="{{ route('how.it.works') }}"
+                    class="py-4 border-b border-[#EBEBDF] text-[#0A174E] font-medium hover:text-[#F5D042] transition-colors flex items-center justify-between group">
+                    Layanan & Area <i
+                        class="fas fa-arrow-right opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-sm text-[#F5D042]"></i>
+                </a>
+                <a href="{{ route('help') }}"
+                    class="py-4 border-b border-[#EBEBDF] text-[#0A174E] font-medium hover:text-[#F5D042] transition-colors flex items-center justify-between group">
+                    Bantuan Pelanggan <i
+                        class="fas fa-arrow-right opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-sm text-[#F5D042]"></i>
                 </a>
             </div>
 
-            <!-- 2. NAVIGASI UTAMA TATA LETAK TENGAH -->
-            <div class="hidden md:flex items-center justify-center flex-1 ml-8">
-                <div class="flex items-center gap-1.5">
-                    <a href="{{ route('home') }}" class="px-5 py-2.5 text-[14px] font-bold rounded-full transition-all duration-300 {{ request()->routeIs('home') ? 'bg-[#EBEBDF] text-[#0A174E]' : 'text-gray-600 hover:text-[#0A174E] hover:bg-[#EBEBDF]/40' }}">Beranda</a>
-                    
-                    <a href="{{ route('browse') }}" class="px-5 py-2.5 text-[14px] font-bold rounded-full transition-all duration-300 {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'bg-[#EBEBDF] text-[#0A174E]' : 'text-gray-600 hover:text-[#0A174E] hover:bg-[#EBEBDF]/40' }}">Cari Kendaraan</a>
-                    
-                    @auth
-                        <a href="{{ route('booking.history') }}" class="px-5 py-2.5 text-[14px] font-bold rounded-full transition-all duration-300 {{ request()->routeIs('booking.history') ? 'bg-[#EBEBDF] text-[#0A174E]' : 'text-gray-600 hover:text-[#0A174E] hover:bg-[#EBEBDF]/40' }}">Riwayat</a>
-                    @endauth
-                    
-                    <a href="{{ route('how.it.works') }}" class="px-5 py-2.5 text-[14px] font-bold rounded-full transition-all duration-300 {{ request()->routeIs('how.it.works') ? 'bg-[#EBEBDF] text-[#0A174E]' : 'text-gray-600 hover:text-[#0A174E] hover:bg-[#EBEBDF]/40' }}">Tentang</a>
-                    
-                    <a href="{{ route('help') }}" class="px-5 py-2.5 text-[14px] font-bold rounded-full transition-all duration-300 {{ request()->routeIs('help') ? 'bg-[#EBEBDF] text-[#0A174E]' : 'text-gray-600 hover:text-[#0A174E] hover:bg-[#EBEBDF]/40' }}">Bantuan</a>
-                </div>
-            </div>
-
-            <!-- 3. AKSI & AKUN TATA LETAK KANAN -->
-            <div class="hidden md:flex items-center justify-end flex-shrink-0 relative">
-                <button id="auth-dropdown-toggle" class="flex items-center gap-2 bg-[#0A174E] text-[#F5D042] hover:bg-[#0A174E]/90 transition-all duration-300 rounded-full px-7 py-3 font-bold text-sm shadow-[0_4px_14px_rgba(10,23,78,0.25)] hover:shadow-[0_6px_20px_rgba(10,23,78,0.4)] hover:-translate-y-0.5">
-                    <span>{{ Auth::check() ? Auth::user()->name : 'Masuk / Daftar' }}</span>
-                </button>
-
-                <!-- Dropdown Akun -->
-                <div id="auth-dropdown" class="hidden absolute top-[calc(100%+0.5rem)] right-0 w-64 bg-white border border-[#EBEBDF] shadow-[0_20px_40px_-15px_rgba(10,23,78,0.2)] rounded-2xl py-2 z-[60] text-[#0A174E]">
-                    @auth
-                        <div class="px-6 py-4 border-b border-gray-100">
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Masuk Sebagai</p>
-                            <p class="text-base font-extrabold text-[#0A174E] truncate">{{ Auth::user()->name }}</p>
-                        </div>
-                        <div class="p-3 flex flex-col gap-1">
-                            @if (Auth::user()->role === 'admin')
-                                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2.5 text-sm font-bold text-[#0A174E] hover:bg-[#EBEBDF] rounded-xl transition-all">Dashboard Admin</a>
-                            @else
-                                <a href="{{ route('booking.history') }}" class="flex items-center px-4 py-2.5 text-sm font-bold text-[#0A174E] hover:bg-[#EBEBDF] rounded-xl transition-all">Riwayat Sewa</a>
-                                <a href="{{ route('profile') }}" class="flex items-center px-4 py-2.5 text-sm font-bold text-[#0A174E] hover:bg-[#EBEBDF] rounded-xl transition-all">Lihat Profil</a>
-                            @endif
-                            <button onclick="event.preventDefault(); document.getElementById('base-logout-form').submit();" class="flex items-center w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all mt-1">Keluar Sistem</button>
-                            <form id="base-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
-                        </div>
-                    @else
-                        <div class="p-4 flex flex-col gap-2.5">
-                            <a href="{{ route('login') }}" class="bg-[#0A174E] text-[#F5D042] hover:opacity-95 rounded-xl w-full text-center py-3 text-sm font-bold transition">Masuk</a>
-                            <a href="{{ route('register') }}" class="bg-[#EBEBDF]/50 text-[#0A174E] hover:bg-[#EBEBDF] rounded-xl w-full text-center py-3 text-sm font-bold transition">Daftar Akun Baru</a>
-                        </div>
-                    @endauth
-                </div>
-            </div>
-
-            <!-- Togle Menu Mobile -->
-            <button id="menu-toggle" class="md:hidden bg-[#EBEBDF]/50 text-[#0A174E] hover:bg-[#EBEBDF] p-2.5 rounded-full transition focus:outline-none z-[80] relative">
-                <i id="menu-icon" class="fas fa-bars text-xl"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- MENU MOBILE FULL-SCREEN -->
-    <div id="mobile-menu" class="fixed inset-0 bg-white z-[70] translate-x-full transition-transform duration-300 ease-out md:hidden overflow-y-auto">
-        <div class="flex flex-col h-full pt-28 px-8 pb-10">
-            <div class="flex flex-col gap-6 mb-12">
-                <a href="{{ route('home') }}" class="text-3xl font-extrabold text-[#0A174E] tracking-tight flex items-center justify-between pb-4 border-b border-gray-100 {{ request()->routeIs('home') ? 'text-[#F5D042]' : '' }}">Beranda <i class="fas fa-chevron-right text-sm text-gray-300"></i></a>
-                <a href="{{ route('browse') }}" class="text-3xl font-extrabold text-[#0A174E] tracking-tight flex items-center justify-between pb-4 border-b border-gray-100 {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'text-[#F5D042]' : '' }}">Cari Kendaraan <i class="fas fa-chevron-right text-sm text-gray-300"></i></a>
+            <div class="flex items-center justify-between pb-8">
                 @auth
-                    <a href="{{ route('booking.history') }}" class="text-3xl font-extrabold text-[#0A174E] tracking-tight flex items-center justify-between pb-4 border-b border-gray-100 {{ request()->routeIs('booking.history') ? 'text-[#F5D042]' : '' }}">Riwayat Sewa <i class="fas fa-chevron-right text-sm text-gray-300"></i></a>
-                @endauth
-                <a href="{{ route('how.it.works') }}" class="text-3xl font-extrabold text-[#0A174E] tracking-tight flex items-center justify-between pb-4 border-b border-gray-100 {{ request()->routeIs('how.it.works') ? 'text-[#F5D042]' : '' }}">Tentang Kami <i class="fas fa-chevron-right text-sm text-gray-300"></i></a>
-                <a href="{{ route('help') }}" class="text-3xl font-extrabold text-[#0A174E] tracking-tight flex items-center justify-between pb-4 border-b border-gray-100 {{ request()->routeIs('help') ? 'text-[#F5D042]' : '' }}">Bantuan <i class="fas fa-chevron-right text-sm text-gray-300"></i></a>
-            </div>
-            
-            <div class="mt-auto">
-                @auth
-                    <div class="mb-4 p-6 bg-[#F9F9F5] rounded-3xl border border-[#EBEBDF]">
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Akun Terhubung</p>
-                        <p class="text-2xl font-black text-[#0A174E] mb-4">{{ Auth::user()->name }}</p>
-                        <div class="flex flex-col gap-3">
-                            @if (Auth::user()->role === 'admin')
-                                <a href="{{ route('admin.dashboard') }}" class="bg-white px-4 py-3 rounded-xl border border-gray-200 text-sm font-bold text-[#0A174E] text-center">Dashboard Admin</a>
-                            @else
-                                <a href="{{ route('profile') }}" class="bg-white px-4 py-3 rounded-xl border border-gray-200 text-sm font-bold text-[#0A174E] text-center">Pengaturan Profil</a>
-                            @endif
-                            <button onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();" class="w-full text-center py-3 bg-red-50 text-red-600 font-bold rounded-xl text-sm border border-red-100">Keluar Sistem</button>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="h-10 w-10 bg-[#EBEBDF] rounded-full flex items-center justify-center text-[#0A174E] font-bold">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-[#0A174E]">{{ Auth::user()->name }}</p>
+                            <p class="text-xs text-red-500 hover:underline cursor-pointer"
+                                onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();">
+                                Keluar</p>
+                            <form id="mobile-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                                @csrf</form>
                         </div>
                     </div>
-                    <form id="mobile-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
                 @else
-                    <div class="flex flex-col gap-3">
-                        <a href="{{ route('login') }}" class="w-full text-center py-4 bg-[#0A174E] text-[#F5D042] font-black rounded-2xl text-lg hover:opacity-95 transition shadow-xl">Masuk Sistem</a>
-                        <a href="{{ route('register') }}" class="w-full text-center py-4 bg-[#EBEBDF] text-[#0A174E] font-bold rounded-2xl text-lg hover:bg-[#D4D4C3] transition">Daftar Akun Baru</a>
-                    </div>
+                    <a href="{{ route('login') }}"
+                        class="text-[#0A174E] font-medium text-base hover:text-[#F5D042] transition-colors">Masuk</a>
+                    <a href="{{ route('register') }}"
+                        class="bg-[#F5D042] text-[#0A174E] px-6 py-3 rounded-full font-bold text-sm shadow-[0_4px_14px_rgba(245,208,66,0.4)] flex items-center gap-2 hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                        Daftar Akun <i class="fas fa-arrow-right text-xs"></i>
+                    </a>
                 @endauth
             </div>
+
+            @auth
+                <div class="pb-6">
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('booking.history') }}"
+                        class="bg-[#F5D042] text-[#0A174E] w-full py-3.5 flex justify-center items-center gap-2 rounded-full font-bold text-sm shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                        Dashboard <i class="fas fa-arrow-right text-xs ml-1"></i>
+                    </a>
+                </div>
+            @endauth
         </div>
     </div>
 </header>

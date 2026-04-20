@@ -101,30 +101,27 @@
 
 @section('content')
     <div class="home-shell">
-        <section class="max-w-[1400px] mx-auto px-4 md:px-8 mt-2 pb-0">
-            <div
-                class="jt-hero relative min-h-[500px] md:min-h-[660px] lg:min-h-[720px] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-[#0A174E] border-[8px] border-white shadow-[0_0_0_1px_rgba(0,0,0,0.05)]">
-                <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1800&q=80"
-                    alt="Hero kendaraan Jatara" class="absolute inset-0 h-full w-full object-cover opacity-90">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#0A174E]/95 via-[#0A174E]/60 to-transparent"></div>
-
-                <div
-                    class="relative z-10 p-6 md:p-14 lg:p-20 h-full flex flex-col justify-center min-h-[500px] md:min-h-[660px] lg:min-h-[720px]">
-                    <div class="max-w-[640px] pt-10">
-                        <h1 class="text-white text-5xl md:text-[68px] leading-[1.05] font-bold mb-8 tracking-tight">
-                            Sewa kendaraan cepat <br class="hidden md:block">dan terjangkau
-                        </h1>
-                        <a href="{{ route('browse') }}"
-                            class="jt-cta inline-flex items-center p-1.5 pl-6 text-base shadow-lg">
-                            <span class="font-bold mr-4 text-[#0A174E]">Book your ride now</span>
-                            <div class="bg-[#0A174E] text-white p-3 rounded-md flex items-center justify-center">
-                                <i class="fas fa-arrow-right sm"></i>
-                            </div>
-                        </a>
-                    </div>
+        <section class="px-2 md:px-4 pt-0 pb-0 absolute inset-x-0 top-[1rem] md:top-[1.25rem] z-0">
+        <div class="jt-hero relative h-[700px] md:h-[800px] lg:h-[850px] rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden bg-[#0A174E]">
+            <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1800&q=80"
+                alt="Hero kendaraan Jatara" class="absolute inset-0 h-full w-full object-cover">
+            <div class="absolute inset-0 bg-[#0A174E]/60 md:bg-[#0A174E]/40"></div>
+            <div class="relative z-10 p-6 md:p-14 lg:p-20 h-full flex flex-col justify-center items-center text-center mt-12 md:mt-16">      
+                <div class="max-w-[800px]">
+                    <h1 class="text-white text-5xl md:text-[72px] lg:text-[84px] leading-[1.05] font-bold mb-6 tracking-tight">
+                        Sewa kendaraan cepat <br class="hidden md:block">dan terjangkau
+                    </h1>
+                    <p class="text-[#EBEBDF] text-lg md:text-xl font-medium mb-12 max-w-[600px] mx-auto">
+                        Make every customer interaction better, faster, and more consistent with the optimization platform for human and AI agents.
+                    </p>
+                    
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+    
+    <!-- spacer to push the rest of the content down below the absolute hero -->
+    <div class="h-[700px] md:h-[800px] lg:h-[850px]"></div>
 
         <section class="px-4">
             <form action="{{ route('browse') }}" method="GET"

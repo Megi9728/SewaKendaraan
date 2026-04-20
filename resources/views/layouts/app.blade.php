@@ -155,43 +155,52 @@
     </footer>
 
     {{-- ===== VANILLA JS ===== --}}
-    <script>
-        const menuToggle = document.getElementById('menu-toggle');
-        const menuIcon = document.getElementById('menu-icon');
+                <script>
         const mobileMenu = document.getElementById('mobile-menu');
-        const authDropdownToggle = document.getElementById('auth-dropdown-toggle');
-        const authDropdown = document.getElementById('auth-dropdown');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
 
-        // Toggle Mobile Menu
-        if (menuToggle && mobileMenu) {
-            menuToggle.addEventListener('click', () => {
-                const isOpen = !mobileMenu.classList.contains('translate-x-full');
-                if (isOpen) {
-                    mobileMenu.classList.add('translate-x-full');
-                    menuIcon.classList.replace('fa-times', 'fa-bars');
-                    menuToggle.classList.replace('text-[#0A174E]', 'text-white');
-                    document.body.classList.remove('overflow-hidden');
-                } else {
-                    mobileMenu.classList.remove('translate-x-full');
-                    menuIcon.classList.replace('fa-bars', 'fa-times');
-                    menuToggle.classList.replace('text-white', 'text-[#0A174E]');
-                    document.body.classList.add('overflow-hidden');
-                }
-            });
-        }
+        // Export functions to global scope so inline onclick works
+        window.openMobileMenu = function() {
+            if (mobileMenu && mobileMenuOverlay) {
+                mobileMenuOverlay.classList.remove('pointer-events-none');      
+                setTimeout(() => {
+                    mobileMenuOverlay.classList.remove('opacity-0');
+                    mobileMenu.classList.remove('-translate-y-full');
+                }, 10);
+                document.body.classList.add('overflow-hidden');
+            }
+        };
+
+        window.closeMobileMenu = function() {
+            if (mobileMenu && mobileMenuOverlay) {
+                mobileMenuOverlay.classList.add('opacity-0');
+                mobileMenu.classList.add('-translate-y-full');
+
+                setTimeout(() => {
+                    mobileMenuOverlay.classList.add('pointer-events-none');     
+                }, 500); 
+
+                document.body.classList.remove('overflow-hidden');
+            }
+        };
 
         // Desktop Auth Dropdown
+        const authDropdownToggle = document.getElementById('auth-dropdown-toggle');
+        const authDropdown = document.getElementById('auth-dropdown');
         if (authDropdownToggle) {
             authDropdownToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 authDropdown.classList.toggle('hidden');
+                authDropdown.classList.toggle('opacity-0');
+                authDropdown.classList.toggle('translate-y-2');
             });
         }
 
         document.addEventListener('click', (e) => {
-            if (authDropdown && !authDropdown.classList.contains('hidden') && !authDropdownToggle.contains(e
-                    .target) && !authDropdown.contains(e.target)) {
+            if (authDropdown && !authDropdown.classList.contains('hidden') && !authDropdownToggle.contains(e.target) && !authDropdown.contains(e.target)) {     
                 authDropdown.classList.add('hidden');
+                authDropdown.classList.add('opacity-0');
+                authDropdown.classList.add('translate-y-2');
             }
         });
     </script>

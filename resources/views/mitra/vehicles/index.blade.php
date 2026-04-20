@@ -44,13 +44,13 @@
         {{-- Search --}}
         <div class="relative">
             <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <i class="fas fa-search text-slate-400 text-sm"></i>
+                <i class="fas fa-search text-[#8F8F7E] text-sm"></i>
             </div>
-            <input type="text" id="search-vehicle" placeholder="Cari kendaraan..." class="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 w-56">
+            <input type="text" id="search-vehicle" placeholder="Cari kendaraan..." class="pl-10 pr-4 py-2.5 bg-white border border-[#D4D4C3] rounded-xl text-sm font-medium text-[#0A174E]/80 focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:border-[#0A174E] w-56">
         </div>
 
         {{-- Filter Status --}}
-        <select id="filter-status" class="bg-white border border-slate-200 text-sm font-medium text-slate-600 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300">
+        <select id="filter-status" class="bg-white border border-[#D4D4C3] text-sm font-medium text-[#0A174E]/70 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30">
             <option value="">Semua Status</option>
             <option value="tersedia">Tersedia</option>
             <option value="disewa">Disewa</option>
@@ -58,71 +58,71 @@
         </select>
     </div>
 
-    <button id="btn-tambah" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all active:scale-95 shadow-sm text-sm flex-shrink-0">
+    <button id="btn-tambah" class="flex items-center gap-2 bg-[#F5D042] hover:opacity-90 text-[#0A174E] font-semibold px-5 py-2.5 rounded-xl transition-all active:scale-95 shadow-sm text-sm flex-shrink-0">
         <i class="fas fa-plus"></i> Tambah Kendaraan
     </button>
 </div>
 
 {{-- ===== TABLE ===== --}}
-<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+<div class="bg-white rounded-2xl border border-[#EBEBDF] shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
-            <thead class="bg-slate-50 border-b border-slate-100">
+            <thead class="bg-[#0A174E] border-b border-[#EBEBDF]">
                 <tr>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Kendaraan</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Domisili</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Jenis</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Transmisi</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">BBM & CC</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Harga/Hari</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                    <th class="text-right px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Aksi</th>
+                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Kendaraan</th>
+                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Domisili</th>
+                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Jenis</th>
+                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Transmisi</th>
+                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">BBM & CC</th>
+                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Harga/Hari</th>
+                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Status</th>
+                    <th class="text-right px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50" id="vehicle-table-body">
+            <tbody class="divide-y divide-[#F9F9F5]" id="vehicle-table-body">
                 @foreach($vehicles as $v)
-                <tr class="hover:bg-slate-50/70 transition-colors vehicle-row"
+                <tr class="hover:bg-[#F9F9F5]/70 transition-colors vehicle-row"
                     data-name="{{ strtolower($v->name) }}"
                     data-status="{{ strtolower($v->status) }}"
                     data-jenis="{{ strtolower($v->type) }}">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#EBEBDF] flex-shrink-0">
                                 <img src="{{ $v->image ? asset('storage/' . $v->image) : 'https://placehold.co/600x400?text=No+Image' }}" class="w-full h-full object-cover" alt="{{ $v->name }}">
                             </div>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <p class="font-semibold text-slate-900">{{ $v->name }}</p>
+                                    <p class="font-semibold text-[#0A174E]">{{ $v->name }}</p>
                                     @if($v->units->first() && $v->units->first()->plate_number)
-                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">{{ $v->units->first()->plate_number }}</span>
+                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#EBEBDF] text-[#0A174E]/60 border border-[#D4D4C3]">{{ $v->units->first()->plate_number }}</span>
                                     @endif
                                 </div>
-                                <p class="text-xs text-slate-400 font-medium">Rating: {{ $v->rating }} ({{ $v->reviews_count }} Ulasan)</p>
+                                <p class="text-xs text-[#8F8F7E] font-medium">Rating: {{ $v->rating }} ({{ $v->reviews_count }} Ulasan)</p>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 font-bold text-slate-600"><i class="fas fa-map-marker-alt text-red-500 mr-1"></i> {{ $v->domicile ?? 'Jakarta' }}</td>
-                    <td class="px-6 py-4 text-slate-500 font-medium">{{ $v->type }}</td>
-                    <td class="px-6 py-4 text-slate-500">{{ $v->transmission }}</td>
+                    <td class="px-6 py-4 font-bold text-[#0A174E]/70"><i class="fas fa-map-marker-alt text-red-500 mr-1"></i> {{ $v->domicile ?? 'Jakarta' }}</td>
+                    <td class="px-6 py-4 text-[#0A174E]/60 font-medium">{{ $v->type }}</td>
+                    <td class="px-6 py-4 text-[#0A174E]/60">{{ $v->transmission }}</td>
                     <td class="px-6 py-4">
-                        <p class="text-xs font-bold text-slate-700">{{ $v->fuel_type ?? 'Bensin' }}</p>
-                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ $v->engine_capacity ?? '1500' }} CC</p>
+                        <p class="text-xs font-bold text-[#0A174E]/80">{{ $v->fuel_type ?? 'Bensin' }}</p>
+                        <p class="text-[10px] text-[#8F8F7E] uppercase tracking-wider">{{ $v->engine_capacity ?? '1500' }} CC</p>
                     </td>
-                    <td class="px-6 py-4 font-bold text-blue-600">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</td>
+                    <td class="px-6 py-4 font-bold text-[#0A174E]">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</td>
                     <td class="px-6 py-4">
                         @php
                             $statusClass = [
                                 'Tersedia' => 'bg-green-100 text-green-700',
                                 'Disewa' => 'bg-blue-100 text-blue-700',
                                 'Perawatan' => 'bg-orange-100 text-orange-700'
-                            ][$v->status] ?? 'bg-slate-100 text-slate-700';
+                            ][$v->status] ?? 'bg-[#EBEBDF] text-[#0A174E]/80';
                         @endphp
                         <span class="text-[10px] font-bold px-3 py-1.5 rounded-lg {{ $statusClass }} uppercase">{{ $v->status }}</span>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
                             <button onclick="openEditModal({{ json_encode($v->load(['images', 'units'])) }})"
-                                class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                class="w-8 h-8 flex items-center justify-center bg-[#EBEBDF] text-[#0A174E] hover:bg-[#D4D4C3] rounded-lg transition-colors"
                                 title="Edit">
                                 <i class="fas fa-edit text-xs"></i>
                             </button>
@@ -140,18 +140,18 @@
     </div>
 
     {{-- Table Footer --}}
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 py-4 border-t border-slate-100 bg-slate-50/50">
-        <p class="text-sm text-slate-500">Total Kendaraan: <span class="font-semibold text-slate-800">{{ $vehicles->count() }}</span> unit</p>
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 py-4 border-t border-[#EBEBDF] bg-[#F9F9F5]/50">
+        <p class="text-sm text-[#0A174E]/60">Total Kendaraan: <span class="font-semibold text-[#0A174E]">{{ $vehicles->count() }}</span> unit</p>
     </div>
 </div>
 
 {{-- ===== MODAL TAMBAH/EDIT ===== --}}
 <div id="modal-form" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 bg-slate-900/60 modal-overlay" onclick="closeModal('modal-form')"></div>
+    <div class="absolute inset-0 bg-[#0A174E]/60 modal-overlay" onclick="closeModal('modal-form')"></div>
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden flex flex-col">
-        <div class="flex justify-between items-center px-7 py-5 border-b border-slate-100">
-            <h2 id="modal-title" class="text-lg font-bold text-slate-900">Tambah Kendaraan Baru</h2>
-            <button onclick="closeModal('modal-form')" class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all">
+        <div class="flex justify-between items-center px-7 py-5 border-b border-[#EBEBDF]">
+            <h2 id="modal-title" class="text-lg font-bold text-[#0A174E]">Tambah Kendaraan Baru</h2>
+            <button onclick="closeModal('modal-form')" class="w-9 h-9 flex items-center justify-center rounded-xl text-[#8F8F7E] hover:bg-[#EBEBDF] hover:text-[#0A174E]/70 transition-all">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -161,12 +161,12 @@
             <div id="method-field"></div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Kendaraan</label>
-                    <input type="text" name="name" id="f-name" required placeholder="cth: Toyota Innova Zenix" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Nama Kendaraan</label>
+                    <input type="text" name="name" id="f-name" required placeholder="cth: Toyota Innova Zenix" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Domisili Cabang</label>
-                    <select name="domicile" id="f-domicile" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Domisili Cabang</label>
+                    <select name="domicile" id="f-domicile" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                         @foreach(['Jakarta', 'Bogor', 'Depok', 'Tangerang', 'Bekasi', 'Bandung', 'Bali'] as $city)
                             <option value="{{ $city }}">{{ $city }}</option>
                         @endforeach
@@ -179,8 +179,8 @@
                         <p class="text-xs text-amber-700 font-medium">Anda belum menyetel lokasi pool. <a href="{{ route('mitra.profile') }}" class="font-bold underline">Set lokasi sekarang</a> agar armada dapat dipesan.</p>
                     </div>
                     @else
-                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center gap-3">
-                        <i class="fas fa-map-marker-alt text-blue-500"></i>
+                    <div class="bg-[#EBEBDF] border border-[#EBEBDF] rounded-2xl p-4 flex items-center gap-3">
+                        <i class="fas fa-map-marker-alt text-[#0A174E]/80"></i>
                         <div>
                             <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Lokasi Pool Aktif</p>
                             <p class="text-xs text-blue-700 font-medium truncate max-w-[400px]">{{ Auth::user()->pool->address ?? 'Lokasi Terdaftar' }}</p>
@@ -189,8 +189,8 @@
                     @endif
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Jenis</label>
-                    <select name="type" id="f-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Jenis</label>
+                    <select name="type" id="f-type" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                         <option value="Mobil">Mobil</option>
                         <option value="Motor">Motor</option>
                         <option value="Minibus">Minibus</option>
@@ -199,19 +199,19 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Transmisi</label>
-                    <select name="transmission" id="f-transmission" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Transmisi</label>
+                    <select name="transmission" id="f-transmission" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                         <option value="Matic">Matic</option>
                         <option value="Manual">Manual</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kapasitas (Kursi)</label>
-                    <input type="number" name="seats" id="f-seats" required placeholder="cth: 7" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Kapasitas (Kursi)</label>
+                    <input type="number" name="seats" id="f-seats" required placeholder="cth: 7" min="1" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bahan Bakar</label>
-                    <select name="fuel_type" id="f-fuel" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Bahan Bakar</label>
+                    <select name="fuel_type" id="f-fuel" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                         <option value="Bensin">Bensin</option>
                         <option value="Diesel">Diesel</option>
                         <option value="Hybrid">Hybrid</option>
@@ -219,21 +219,21 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kapasitas Mesin (CC)</label>
-                    <input type="number" name="engine_capacity" id="f-cc" required placeholder="cth: 1500" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Kapasitas Mesin (CC)</label>
+                    <input type="number" name="engine_capacity" id="f-cc" required placeholder="cth: 1500" min="0" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nomor Plat (Opsional)</label>
-                    <input type="text" name="plate_number" id="f-plate" placeholder="cth: B 1234 ABC" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all uppercase">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Nomor Plat (Opsional)</label>
+                    <input type="text" name="plate_number" id="f-plate" placeholder="cth: B 1234 ABC" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all uppercase">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Harga / Hari (Rp)</label>
-                    <input type="number" name="price_per_day" id="f-price" required placeholder="cth: 650000" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Harga / Hari (Rp)</label>
+                    <input type="number" name="price_per_day" id="f-price" required placeholder="cth: 650000" min="0" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status</label>
-                    <select name="status" id="f-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Status</label>
+                    <select name="status" id="f-status" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
                         <option value="Tersedia">Tersedia</option>
                         <option value="Disewa">Disewa</option>
                         <option value="Perawatan">Perawatan</option>
@@ -241,12 +241,12 @@
                 </div>
                 {{-- Main Photo Section --}}
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Foto Utama (Thumbnail)</label>
-                    <div id="main-preview-area" class="w-full h-40 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden relative cursor-pointer hover:bg-slate-100 transition-all group">
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Foto Utama (Thumbnail)</label>
+                    <div id="main-preview-area" class="w-full h-40 rounded-2xl border-2 border-dashed border-[#D4D4C3] bg-[#F9F9F5] flex items-center justify-center overflow-hidden relative cursor-pointer hover:bg-[#EBEBDF] transition-all group">
                         <input type="file" name="image" id="f-image" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewMainImage(this)">
                         <div id="main-preview-placeholder" class="text-center group-hover:scale-110 transition-transform">
-                            <i class="fas fa-camera text-slate-300 text-3xl mb-2"></i>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Klik untuk unggah</p>
+                            <i class="fas fa-camera text-[#BDBDAC] text-3xl mb-2"></i>
+                            <p class="text-[10px] font-bold text-[#8F8F7E] uppercase">Klik untuk unggah</p>
                         </div>
                         <img id="main-preview-img" class="absolute inset-0 w-full h-full object-cover hidden">
                         <button type="button" id="btn-remove-main" onclick="removeMainImage(event)" class="absolute top-4 right-4 w-9 h-9 bg-red-500/90 text-white rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 hidden shadow-lg hover:bg-red-600">
@@ -258,7 +258,7 @@
 
                 {{-- Gallery Section --}}
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Galeri Foto (Banyak)</label>
+                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-3">Galeri Foto (Banyak)</label>
                     <div class="grid grid-cols-4 sm:grid-cols-6 gap-3" id="gallery-management">
                         {{-- Existing Images (from server) --}}
                         <div id="gallery-existing" class="contents"></div>
@@ -267,9 +267,9 @@
                         <div id="gallery-new" class="contents"></div>
 
                         {{-- Add Button --}}
-                        <div onclick="document.getElementById('f-gallery').click()" class="aspect-square rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-100 hover:border-slate-300 transition-all group">
-                            <i class="fas fa-plus text-slate-300 text-lg group-hover:scale-110 transition-transform"></i>
-                            <span class="text-[8px] font-bold text-slate-400 uppercase mt-1">Tambah</span>
+                        <div onclick="document.getElementById('f-gallery').click()" class="aspect-square rounded-xl border-2 border-dashed border-[#D4D4C3] bg-[#F9F9F5] flex flex-col items-center justify-center cursor-pointer hover:bg-[#EBEBDF] hover:border-slate-300 transition-all group">
+                            <i class="fas fa-plus text-[#BDBDAC] text-lg group-hover:scale-110 transition-transform"></i>
+                            <span class="text-[8px] font-bold text-[#8F8F7E] uppercase mt-1">Tambah</span>
                             <input type="file" id="f-gallery" multiple accept="image/*" class="hidden" onchange="previewGalleryImages(this)">
                         </div>
                     </div>
@@ -278,15 +278,15 @@
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Deskripsi</label>
-                <textarea name="description" id="f-desc" rows="3" placeholder="Deskripsi singkat kendaraan..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all resize-none"></textarea>
+                <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Deskripsi</label>
+                <textarea name="description" id="f-desc" rows="3" placeholder="Deskripsi singkat kendaraan..." class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all resize-none"></textarea>
             </div>
 
             <div class="flex gap-3 pt-2">
-                <button type="button" onclick="closeModal('modal-form')" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold py-3 rounded-xl transition-all text-sm">
+                <button type="button" onclick="closeModal('modal-form')" class="flex-1 border border-[#D4D4C3] hover:bg-[#F9F9F5] text-[#0A174E]/70 font-semibold py-3 rounded-xl transition-all text-sm">
                     Batal
                 </button>
-                <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-sm shadow-md">
+                <button type="submit" class="flex-1 bg-[#0A174E] hover:bg-[#0A174E]/90 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-sm shadow-md">
                     <i class="fas fa-save mr-2"></i>Simpan
                 </button>
             </div>
@@ -296,19 +296,19 @@
 
 {{-- ===== MODAL HAPUS ===== --}}
 <div id="modal-delete" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 bg-slate-900/60 modal-overlay" onclick="closeModal('modal-delete')"></div>
+    <div class="absolute inset-0 bg-[#0A174E]/60 modal-overlay" onclick="closeModal('modal-delete')"></div>
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm z-10 p-8 text-center">
         <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
             <i class="fas fa-trash-alt text-red-500 text-2xl"></i>
         </div>
-        <h3 class="text-xl font-black text-slate-900 mb-2">Hapus Kendaraan?</h3>
-        <p class="text-slate-500 text-sm mb-6">Anda akan menghapus <span id="delete-name" class="font-bold text-slate-800"></span>. Tindakan ini tidak dapat dibatalkan.</p>
+        <h3 class="text-xl font-black text-[#0A174E] mb-2">Hapus Kendaraan?</h3>
+        <p class="text-[#0A174E]/60 text-sm mb-6">Anda akan menghapus <span id="delete-name" class="font-bold text-[#0A174E]"></span>. Tindakan ini tidak dapat dibatalkan.</p>
         
         <form id="delete-form" action="" method="POST">
             @csrf
             @method('DELETE')
             <div class="flex gap-3">
-                <button type="button" onclick="closeModal('modal-delete')" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold py-3 rounded-xl transition-all text-sm">Batalkan</button>
+                <button type="button" onclick="closeModal('modal-delete')" class="flex-1 border border-[#D4D4C3] hover:bg-[#F9F9F5] text-[#0A174E]/70 font-semibold py-3 rounded-xl transition-all text-sm">Batalkan</button>
                 <button type="submit" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-sm">Ya, Hapus!</button>
             </div>
         </form>
@@ -393,7 +393,7 @@
                 reader.onload = e => {
                     const div = document.createElement('div');
                     div.id = previewId;
-                    div.className = 'aspect-square rounded-xl overflow-hidden border border-slate-200 relative group animate-in fade-in zoom-in duration-300';
+                    div.className = 'aspect-square rounded-xl overflow-hidden border border-[#D4D4C3] relative group animate-in fade-in zoom-in duration-300';
                     div.innerHTML = `
                         <img src="${e.target.result}" class="w-full h-full object-cover">
                         <button type="button" onclick="removeNewGalleryImage('${previewId}', '${file.name}')" class="absolute inset-0 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -457,7 +457,7 @@
         if (vehicle.images && vehicle.images.length > 0) {
             vehicle.images.forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'aspect-square rounded-xl overflow-hidden border border-slate-200 relative group';
+                div.className = 'aspect-square rounded-xl overflow-hidden border border-[#D4D4C3] relative group';
                 div.innerHTML = `
                     <img src="/storage/${img.image_path}" class="w-full h-full object-cover">
                     <button type="button" onclick="deleteGalleryImage(${img.id})" class="absolute inset-0 bg-red-500/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
