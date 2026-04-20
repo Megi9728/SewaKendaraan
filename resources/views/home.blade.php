@@ -2,214 +2,475 @@
 
 @section('title', 'Sewa Kendaraan Cepat & Praktis')
 
+@push('styles')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .home-shell {
+            --jt-oxford: #0a174e;
+            --jt-pale: #ebebdf;
+            --jt-maize: #f5d042;
+            --jt-ink: #111827;
+            --jt-muted: #5c6373;
+            --jt-border: rgba(10, 23, 78, 0.14);
+            --jt-soft: #f3f4f6;
+            font-family: 'Manrope', sans-serif;
+            background: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .home-shell h1,
+        .home-shell h2,
+        .home-shell h3,
+        .home-shell h4 {
+            font-family: 'Sora', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .jt-card {
+            border: 1px solid var(--jt-border);
+            background: #fff;
+            border-radius: 1.25rem;
+            box-shadow: 0 12px 28px rgba(10, 23, 78, 0.07);
+        }
+
+        .jt-cta {
+            background: var(--jt-maize);
+            color: var(--jt-oxford);
+            border-radius: 0.5rem;
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .jt-cta:hover {
+            filter: brightness(0.94);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(245, 208, 66, 0.35);
+        }
+
+        .jt-section {
+            padding-top: 4.5rem;
+            padding-bottom: 4.5rem;
+        }
+
+        .jt-search-form {
+            background: #fff;
+            border-radius: 1rem;
+            border: 1px solid var(--jt-pale);
+            box-shadow: 0 20px 40px rgba(10, 23, 78, 0.08);
+            padding: 1.5rem;
+            max-width: 1100px;
+            margin: -3rem auto 0;
+            position: relative;
+            z-index: 20;
+        }
+
+        .jt-input {
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            color: var(--jt-oxford);
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .jt-input:focus {
+            border-color: var(--jt-oxford);
+            box-shadow: 0 0 0 2px rgba(10, 23, 78, 0.1);
+        }
+
+        .jt-feature {
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .jt-section {
+                padding-top: 3.5rem;
+                padding-bottom: 3.5rem;
+            }
+        }
+    </style>
+@endpush
+
 @section('content')
+    <div class="home-shell">
+        <section class="max-w-[1400px] mx-auto px-4 md:px-8 mt-2 pb-0">
+            <div
+                class="jt-hero relative min-h-[500px] md:min-h-[660px] lg:min-h-[720px] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-[#0A174E] border-[8px] border-white shadow-[0_0_0_1px_rgba(0,0,0,0.05)]">
+                <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1800&q=80"
+                    alt="Hero kendaraan Jatara" class="absolute inset-0 h-full w-full object-cover opacity-90">
+                <div class="absolute inset-0 bg-gradient-to-r from-[#0A174E]/95 via-[#0A174E]/60 to-transparent"></div>
 
-{{-- ===== HERO SECTION (UBER STYLE: SPLIT LAYOUT) ===== --}}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 flex flex-col md:flex-row items-center gap-12 lg:gap-24 border-b border-gray-50">
-    <div class="w-full md:w-[45%]">
-        <h1 class="text-4xl md:text-[52px] font-bold text-uber-black leading-[1.1] mb-8 tracking-tighter">
-            Jelajahi kota,<br>
-            tanpa hambatan.
-        </h1>
-        
-        <form action="{{ route('browse') }}" method="GET" class="max-w-md space-y-4 relative">
-            <div class="relative z-10">
-                <select name="domicile" class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition border-r-8 border-transparent">
-                    <option value="">Semua Lokasi Pengambilan</option>
-                    <option value="Jakarta">Jakarta</option>
-                    <option value="Bogor">Bogor</option>
-                    <option value="Depok">Depok</option>
-                    <option value="Tangerang">Tangerang</option>
-                    <option value="Bekasi">Bekasi</option>
-                </select>
-            </div>
-
-            <div class="relative z-10">
-                <select name="type" class="w-full bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition border-r-8 border-transparent">
-                    <option value="">Semua Tipe Kendaraan</option>
-                    <option value="Mobil">Mobil</option>
-                    <option value="Motor">Motor</option>
-                    <option value="SUV">SUV</option>
-                    <option value="MPV">MPV</option>
-                </select>
-            </div>
-
-            <div class="relative z-10 flex flex-col sm:flex-row gap-2">
-                <input type="date" name="start_date" class="w-full sm:w-1/2 bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition" min="{{ date('Y-m-d') }}" title="Mulai">
-                <input type="date" name="end_date" class="w-full sm:w-1/2 bg-uber-chip hover:bg-gray-200 outline-none rounded-lg font-bold text-uber-black px-4 py-3.5 transition" min="{{ date('Y-m-d') }}" title="Selesai">
-            </div>
-            
-            <button type="submit" class="btn-primary w-full sm:w-auto inline-block text-center mt-2 font-bold text-lg px-12 py-3.5 shadow-uber">
-                Cari Sekarang
-            </button>
-        </form>
-    </div>
-
-    <div class="w-full md:w-[55%]">
-        <div class="w-full rounded-2xl overflow-hidden bg-uber-chip aspect-video relative group border border-gray-100">
-            <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1200&q=80" alt="Uber Style Driving" class="w-full h-full object-cover">
-        </div>
-    </div>
-</section>
-
-{{-- ===== CATEGORY QUICK LINKS (NEW) ===== --}}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-    <h2 class="text-3xl font-bold tracking-tight mb-10 text-uber-black">Kategori Populer</h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        @php
-        $cats = [
-            ['name' => 'Mobil Sedan', 'type' => 'sedan', 'icon' => 'fas fa-car-side'],
-            ['name' => 'MPV / SUV', 'type' => 'suv', 'icon' => 'fas fa-truck-pickup'],
-            ['name' => 'Motor', 'type' => 'motor', 'icon' => 'fas fa-motorcycle'],
-            ['name' => 'Minibus', 'type' => 'minibus', 'icon' => 'fas fa-bus'],
-        ];
-        @endphp
-        @foreach($cats as $cat)
-        <a href="{{ route('browse', ['type' => $cat['type']]) }}" class="bg-gray-50 hover:bg-uber-black hover:text-uber-white p-8 rounded-xl transition-all duration-300 group">
-            <i class="{{ $cat['icon'] }} text-3xl mb-4 text-uber-black group-hover:text-uber-white"></i>
-            <p class="text-xl font-bold">{{ $cat['name'] }}</p>
-        </a>
-        @endforeach
-    </div>
-</section>
-
-{{-- ===== WHY US (NEW) ===== --}}
-<section class="bg-uber-chip py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-16">
-            <div class="space-y-4">
-                <i class="fas fa-shield-alt text-4xl text-uber-black"></i>
-                <h3 class="text-2xl font-bold text-uber-black tracking-tight">Armada Terverifikasi</h3>
-                <p class="text-uber-text font-medium leading-relaxed italic opacity-80">"Setiap unit dicek fisik dan mekanis secara berkala untuk memastikan standar keamanan tertinggi selama perjalanan Anda."</p>
-            </div>
-            <div class="space-y-4">
-                <i class="fas fa-headset text-4xl text-uber-black"></i>
-                <h3 class="text-2xl font-bold text-uber-black tracking-tight">Dukungan 24/7</h3>
-                <p class="text-uber-text font-medium leading-relaxed italic opacity-80">"Tim bantuan kami selalu siaga kapan pun Anda membutuhkannya. Masalah di jalan bukan beban bagi Anda."</p>
-            </div>
-            <div class="space-y-4">
-                <i class="fas fa-bolt text-4xl text-uber-black"></i>
-                <h3 class="text-2xl font-bold text-uber-black tracking-tight">Konfirmasi Instan</h3>
-                <p class="text-uber-text font-medium leading-relaxed italic opacity-80">"Tanpa menunggu lama. Begitu data Anda terverifikasi, unit langsung dapat dipesan tanpa prosedur administrasi yang berbelit."</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- ===== SIMPLE STEPS (NEW) ===== --}}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-    <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16 border-b border-gray-100 pb-10">
-        <div class="max-w-2xl">
-            <h2 class="text-4xl md:text-5xl font-bold text-uber-black tracking-tighter">Cara pesannya gampang.</h2>
-            <p class="text-xl text-uber-text font-medium mt-4">Cukup tiga langkah dari layar HP sampai unit di garasi Anda.</p>
-        </div>
-        <a href="{{ route('how.it.works') }}" class="text-xs font-bold text-uber-black uppercase border-b-2 border-uber-black pb-1 hover:opacity-70 transition">Pelajari Selengkapnya</a>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-        <div class="flex flex-col">
-            <span class="text-7xl font-bold text-gray-100 mb-4 tracking-tighter select-none">01</span>
-            <h4 class="text-2xl font-bold text-uber-black mb-2">Cari Unit</h4>
-            <p class="text-uber-text font-medium leading-relaxed">Tentukan lokasi jemput, rentang tanggal, dan tipe armada idaman Anda.</p>
-        </div>
-        <div class="flex flex-col">
-            <span class="text-7xl font-bold text-gray-100 mb-4 tracking-tighter select-none">02</span>
-            <h4 class="text-2xl font-bold text-uber-black mb-2">Lengkapi Berkas</h4>
-            <p class="text-uber-text font-medium leading-relaxed">Verifikasi identitas (KTP/SIM) sekali saja dan unit siap dipesan langsung.</p>
-        </div>
-        <div class="flex flex-col">
-            <span class="text-7xl font-bold text-gray-100 mb-4 tracking-tighter select-none">03</span>
-            <h4 class="text-2xl font-bold text-uber-black mb-2">Mulai Jalan</h4>
-            <p class="text-uber-text font-medium leading-relaxed">Unit kami antar atau jemput di lokasi terdekat. Mulai perjalanan Anda dengan tenang.</p>
-        </div>
-    </div>
-</section>
-
-{{-- ===== APP PROMO (AS IS BUT REFINED) ===== --}}
-@guest
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="bg-uber-black text-uber-white rounded-2xl p-10 md:p-16 flex flex-col md:flex-row items-center gap-12 shadow-uber">
-        <div class="flex-1">
-            <h2 class="text-4xl font-bold tracking-tighter mb-6 italic">Mau Sewa Armada?</h2>
-            <p class="text-lg opacity-80 leading-relaxed font-medium mb-10 max-w-xl">
-                Jadilah mitra penyewa kami untuk akses eksklusif ke berbagai unit premium. Dapatkan layanan antar-jemput armada khusus bagi member terverifikasi.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{{ route('register') }}" class="px-10 py-4 bg-uber-white text-uber-black rounded-full font-bold hover:bg-gray-200 transition text-center shadow-lg">Daftar Sekarang</a>
-                <a href="{{ route('login') }}" class="px-10 py-4 border border-white/30 text-white rounded-full font-bold hover:bg-white/10 transition text-center">Masuk ke Akun</a>
-            </div>
-        </div>
-        <div class="hidden md:flex flex-shrink-0 bg-white p-6 rounded-2xl">
-            <i class="fas fa-qrcode text-[140px] text-uber-black"></i>
-        </div>
-    </div>
-</section>
-@endguest
-
-{{-- ===== VEHICLE CATALOGUE (PARTIAL) ===== --}}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 mb-16">
-    <div class="flex justify-between items-end mb-12">
-        <h2 class="text-4xl font-bold tracking-tight text-uber-black">Pilihan Teratas</h2>
-        <a href="{{ route('browse') }}" class="text-sm font-bold text-uber-black hover:underline underline-offset-4 decoration-2">Lihat Semua Katalog <i class="fas fa-chevron-right text-[10px] ml-1"></i></a>
-    </div>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-        @foreach($vehicles as $v)
-        <a href="{{ route('vehicle.detail', $v->id) }}" class="group block bg-uber-white transition-all duration-300 relative border-0 border-b border-gray-100 pb-10 md:border-0 md:pb-0">
-            
-            <div class="aspect-[16/10] w-full bg-uber-chip rounded-xl overflow-hidden relative mb-5">
-                <img src="{{ $v->image ? (strpos($v->image, 'http') === 0 ? $v->image : asset('storage/' . $v->image)) : 'https://placehold.co/600x400?text=' . urlencode($v->name) }}" 
-                     alt="{{ $v->name }}" 
-                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                
-                @if($v->available_units_count >= 1)
-                    <span class="absolute top-4 left-4 bg-uber-white text-uber-black text-[10px] font-bold px-3 py-1.5 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
-                @else
-                    <span class="absolute top-4 left-4 bg-uber-black text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
-                @endif
-            </div>
-
-            <div class="flex justify-between items-start mb-1">
-                <h3 class="font-bold text-2xl text-uber-black truncate group-hover:underline underline-offset-4">{{ $v->name }}</h3>
-                <div class="flex items-center gap-1.5 text-uber-black">
-                     <i class="fas fa-star text-xs"></i>
-                     <span class="text-sm font-bold">{{ $v->rating }}</span>
-                     <span class="text-[10px] font-bold text-uber-muted">({{ $v->reviews_count }})</span>
+                <div
+                    class="relative z-10 p-6 md:p-14 lg:p-20 h-full flex flex-col justify-center min-h-[500px] md:min-h-[660px] lg:min-h-[720px]">
+                    <div class="max-w-[640px] pt-10">
+                        <h1 class="text-white text-5xl md:text-[68px] leading-[1.05] font-bold mb-8 tracking-tight">
+                            Sewa kendaraan cepat <br class="hidden md:block">dan terjangkau
+                        </h1>
+                        <a href="{{ route('browse') }}"
+                            class="jt-cta inline-flex items-center p-1.5 pl-6 text-base shadow-lg">
+                            <span class="font-bold mr-4 text-[#0A174E]">Book your ride now</span>
+                            <div class="bg-[#0A174E] text-white p-3 rounded-md flex items-center justify-center">
+                                <i class="fas fa-arrow-right sm"></i>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
-            
-            <p class="text-uber-text font-medium text-xs mb-4">
-                {{ $v->seats }} Kursi • {{ $v->transmission }} • {{ $v->fuel_type ?? 'Bensin' }} • {{ $v->engine_capacity ?? '1500' }} CC
-            </p>
-            <div class="flex items-center gap-2">
-                <span class="font-bold text-lg text-uber-black">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</span>
-                <span class="text-xs text-uber-muted font-bold uppercase tracking-widest">/ hari</span>
+        </section>
+
+        <section class="px-4">
+            <form action="{{ route('browse') }}" method="GET"
+                class="jt-search-form grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                <div>
+                    <label
+                        class="block text-[11px] font-bold text-[#0A174E] uppercase tracking-widest mb-2 px-1">Lokasi</label>
+                    <select name="domicile" class="jt-input">
+                        <option value="">Semua Lokasi</option>
+                        <option value="Jakarta">Jakarta</option>
+                        <option value="Bogor">Bogor</option>
+                        <option value="Depok">Depok</option>
+                        <option value="Tangerang">Tangerang</option>
+                        <option value="Bekasi">Bekasi</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label
+                        class="block text-[11px] font-bold text-[#0A174E] uppercase tracking-widest mb-2 px-1">Tipe</label>
+                    <select name="type" class="jt-input">
+                        <option value="">Semua Tipe</option>
+                        <option value="Mobil">Mobil</option>
+                        <option value="Motor">Motor</option>
+                        <option value="SUV">SUV</option>
+                        <option value="MPV">MPV</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-[#0A174E] uppercase tracking-widest mb-2 px-1">Tanggal
+                        Mulai</label>
+                    <input type="date" name="start_date" class="jt-input text-gray-500" min="{{ date('Y-m-d') }}">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-[#0A174E] uppercase tracking-widest mb-2 px-1">Tanggal
+                        Akhir</label>
+                    <input type="date" name="end_date" class="jt-input text-gray-500" min="{{ date('Y-m-d') }}">
+                </div>
+
+                <button type="submit"
+                    class="bg-[#0A174E] text-white hover:opacity-90 hover:shadow-lg transition py-[14px] px-6 rounded-lg text-sm font-bold w-full h-[52px]">
+                    Cari Unit
+                </button>
+            </form>
+        </section>
+
+        <section class="jt-section max-w-[1400px] mx-auto px-4 md:px-8 mt-10">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <h2 class="text-4xl md:text-[2.5rem] w-full md:w-3/5 leading-tight font-bold">Kenyamanan fleksibel dengan
+                    tarif sewa terbaik dalam kota</h2>
             </div>
-        </a>
-        @endforeach
-    </div>
-</section>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+                <article
+                    class="jt-feature group p-6 rounded-2xl hover:bg-[#EBEBDF]/30 transition border border-transparent hover:border-[#EBEBDF]">
+                    <div class="bg-[#EBEBDF] w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-car-side text-[22px] text-[#0A174E] mb-0"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-[#0A174E]">Unit Prima</h3>
+                    <p class="text-gray-600 leading-relaxed font-medium">Semua armada dirawat berkala agar perjalanan aman,
+                        nyaman, dan mulus.</p>
+                </article>
+                <article
+                    class="jt-feature group p-6 rounded-2xl hover:bg-[#EBEBDF]/30 transition border border-transparent hover:border-[#EBEBDF]">
+                    <div class="bg-[#EBEBDF] w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-laptop text-[22px] text-[#0A174E] mb-0"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-[#0A174E]">Booking Mudah</h3>
+                    <p class="text-gray-600 leading-relaxed font-medium">Cukup beberapa klik, Anda langsung terhubung ke
+                        katalog dan jadwal secara real-time.</p>
+                </article>
+                <article
+                    class="jt-feature group p-6 rounded-2xl hover:bg-[#EBEBDF]/30 transition border border-transparent hover:border-[#EBEBDF]">
+                    <div class="bg-[#EBEBDF] w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-tags text-[22px] text-[#0A174E] mb-0"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-[#0A174E]">Harga Terjangkau</h3>
+                    <p class="text-gray-600 leading-relaxed font-medium">Tarif transparan dan sangat kompetitif, tanpa biaya
+                        tersembunyi di checkout.</p>
+                </article>
+                <article
+                    class="jt-feature group p-6 rounded-2xl hover:bg-[#EBEBDF]/30 transition border border-transparent hover:border-[#EBEBDF]">
+                    <div class="bg-[#EBEBDF] w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-headset text-[22px] text-[#0A174E] mb-0"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-[#0A174E]">Dukungan 24/7</h3>
+                    <p class="text-gray-600 leading-relaxed font-medium">Tim support ramah kami siap membantu kapan pun Anda
+                        membutuhkan bantuan di jalan.</p>
+                </article>
+            </div>
+        </section>
 
-{{-- ===== STATS (NEW) ===== --}}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 mb-20">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center md:text-left">
-        <div>
-            <p class="text-5xl font-bold text-uber-black tracking-tighter">500+</p>
-            <p class="text-xs font-bold text-uber-muted uppercase tracking-[0.2em] mt-3">Armada Pilihan</p>
-        </div>
-        <div>
-            <p class="text-5xl font-bold text-uber-black tracking-tighter">10k+</p>
-            <p class="text-xs font-bold text-uber-muted uppercase tracking-[0.2em] mt-3">Penyewaan Sukses</p>
-        </div>
-        <div>
-            <p class="text-5xl font-bold text-uber-black tracking-tighter">24hr</p>
-            <p class="text-xs font-bold text-uber-muted uppercase tracking-[0.2em] mt-3">Emergency Support</p>
-        </div>
-        <div>
-            <p class="text-5xl font-bold text-uber-black tracking-tighter">15m</p>
-            <p class="text-xs font-bold text-uber-muted uppercase tracking-[0.2em] mt-3">Verifikasi Kilat</p>
-        </div>
-    </div>
-</section>
+        <!-- Koleksi Kendaraan -->
+        <section class="max-w-[1400px] mx-auto px-4 md:px-8 mt-16">
+            <div class="flex items-end justify-between gap-4 mb-10">
+                <h2 class="text-4xl font-bold text-[#0A174E]">Koleksi Kendaraan</h2>
+                <a href="{{ route('browse') }}"
+                    class="hidden md:inline-flex bg-[#F5D042] text-[#0A174E] hover:brightness-95 transition items-center gap-3 px-6 py-3 rounded-md text-sm font-bold">
+                    Lihat Semua <i class="fas fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach ($vehicles as $v)
+                    <a href="{{ route('vehicle.detail', $v->id) }}"
+                        class="block bg-[#F9F9F5] rounded-3xl p-6 group hover:-translate-y-1 hover:shadow-xl transition duration-300">
+                        <div class="aspect-[16/10] mb-6 relative">
+                            <!-- Using object-cover to match real photos, but styling cleanly -->
+                            <img src="{{ $v->image ? (strpos($v->image, 'http') === 0 ? $v->image : asset('storage/' . $v->image)) : 'https://placehold.co/800x500?text=' . urlencode($v->name) }}"
+                                alt="{{ $v->name }}"
+                                class="w-full h-full object-cover rounded-2xl group-hover:scale-[1.02] transition duration-500 ease-out">
+                            <div
+                                class="absolute top-3 right-3 bg-white px-3 py-1.5 rounded-md text-xs font-black text-[#0A174E] shadow-sm">
+                                {{ $v->type }}
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-start mb-6">
+                            <h3 class="text-xl font-bold text-[#0A174E] w-2/3 leading-tight">{{ $v->name }}</h3>
+                            <div class="text-right">
+                                <p class="font-black text-xl text-[#0A174E]">Rp
+                                    {{ number_format($v->price_per_day, 0, ',', '.') }}</p>
+                                <p class="text-gray-500 text-xs font-semibold">/ hari</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 border-t border-gray-200 pt-6">
+                            <div class="flex flex-col gap-1">
+                                <i class="fas fa-chair text-lg text-gray-400"></i>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">Kursi</span>
+                                <span class="text-sm font-bold text-[#0A174E]">{{ $v->seats ?? '4' }}</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <i class="fas fa-cogs text-lg text-gray-400"></i>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">Transmisi</span>
+                                <span class="text-sm font-bold text-[#0A174E]">{{ $v->transmission ?? 'Auto' }}</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <i class="fas fa-gas-pump text-lg text-gray-400"></i>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">BBM</span>
+                                <span class="text-sm font-bold text-[#0A174E]">{{ $v->fuel_type ?? 'Bensin' }}</span>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+
+            <div class="mt-8 text-center md:hidden">
+                <a href="{{ route('browse') }}"
+                    class="inline-flex bg-[#F5D042] text-[#0A174E] hover:brightness-95 transition items-center gap-3 px-6 py-3 rounded-md text-sm font-bold">
+                    Lihat Semua Kendaraan
+                </a>
+            </div>
+        </section>
+
+        <!-- Kategori Sewa (Baru) -->
+        <section class="max-w-[1400px] mx-auto px-4 md:px-8 mt-24">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-10">
+                <div class="md:w-1/4">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#0A174E] leading-tight">Kategori<br>Pilihan</h2>
+                </div>
+                <div class="md:w-3/4 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
+                    <!-- Kategori 1 -->
+                    <div
+                        class="bg-[#F9F9F5] rounded-3xl p-4 md:p-6 text-center group hover:bg-[#EBEBDF] transition cursor-pointer">
+                        <div class="aspect-square rounded-full overflow-hidden mb-4 border-4 border-white shadow-sm">
+                            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=400&q=80"
+                                alt="Bisnis"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h4 class="font-bold text-[#0A174E]">Bisnis</h4>
+                    </div>
+                    <!-- Kategori 2 -->
+                    <div
+                        class="bg-[#F9F9F5] rounded-3xl p-4 md:p-6 text-center group hover:bg-[#EBEBDF] transition cursor-pointer">
+                        <div class="aspect-square rounded-full overflow-hidden mb-4 border-4 border-white shadow-sm">
+                            <img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80"
+                                alt="Keluarga"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h4 class="font-bold text-[#0A174E]">Keluarga</h4>
+                    </div>
+                    <!-- Kategori 3 -->
+                    <div
+                        class="bg-[#F9F9F5] rounded-3xl p-4 md:p-6 text-center group hover:bg-[#EBEBDF] transition cursor-pointer">
+                        <div class="aspect-square rounded-full overflow-hidden mb-4 border-4 border-white shadow-sm">
+                            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=400&q=80"
+                                alt="Petualangan"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h4 class="font-bold text-[#0A174E]">Petualangan</h4>
+                    </div>
+                    <!-- Kategori 4 -->
+                    <div
+                        class="bg-[#F9F9F5] rounded-3xl p-4 md:p-6 text-center group hover:bg-[#EBEBDF] transition cursor-pointer">
+                        <div class="aspect-square rounded-full overflow-hidden mb-4 border-4 border-white shadow-sm">
+                            <img src="https://images.unsplash.com/photo-1519671482749-fd098f392a56?auto=format&fit=crop&w=400&q=80"
+                                alt="Pernikahan"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h4 class="font-bold text-[#0A174E]">Komersial</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-[1400px] mx-auto px-4 md:px-8 mt-24 mb-16 relative">
+            <div
+                class="bg-[#0A174E] rounded-[2rem] overflow-hidden flex flex-col lg:flex-row relative shadow-[0_30px_60px_-15px_rgba(10,23,78,0.3)]">
+                <div class="lg:w-1/2 p-10 md:p-16 lg:p-24 relative z-10 flex flex-col justify-center">
+                    <h2 class="text-white text-4xl md:text-5xl font-bold mb-12 leading-tight">Sewa kendaraan Anda<br>dalam
+                        3 langkah mudah</h2>
+
+                    <div class="space-y-10">
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-full bg-[#F5D042] flex items-center justify-center text-[#0A174E] font-bold text-xl">
+                                01</div>
+                            <div>
+                                <h3 class="text-white text-xl font-bold mb-2">Pilih kendaraan Anda</h3>
+                                <p class="text-[#EBEBDF]/70 leading-relaxed font-medium">Jelajahi berbagai pilihan
+                                    kendaraan kami, mulai dari mobil kota yang ringkas hingga SUV yang luas. Pilih kendaraan
+                                    yang paling sesuai dengan kebutuhan Anda.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-full bg-[#F5D042] flex items-center justify-center text-[#0A174E] font-bold text-xl">
+                                02</div>
+                            <div>
+                                <h3 class="text-white text-xl font-bold mb-2">Pesan secara online</h3>
+                                <p class="text-[#EBEBDF]/70 leading-relaxed font-medium">Pesan mobil Anda hanya dalam
+                                    beberapa klik dengan sistem pemesanan kami yang ramah pengguna. Pilih tanggal, lokasi,
+                                    dan konfirmasi reservasi Anda secara instan.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-full bg-[#F5D042] flex items-center justify-center text-[#0A174E] font-bold text-xl">
+                                03</div>
+                            <div>
+                                <h3 class="text-white text-xl font-bold mb-2">Ambil & berkendara</h3>
+                                <p class="text-[#EBEBDF]/70 leading-relaxed font-medium">Kunjungi lokasi pengambilan
+                                    terdekat dan ambil kuncinya. Nikmati perjalanan yang lancar melintasi kota dengan
+                                    kendaraan kami yang andal dan terawat.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 min-h-[400px] lg:min-h-full relative">
+                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1200&q=80"
+                        alt="Kendaraan Jatara" class="absolute inset-0 w-full h-full object-cover">
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-[1400px] mx-auto px-4 md:px-8 py-16">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-[#0A174E]">Testimoni dari penyewa<br>yang puas</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-[#F9F9F5] p-8 rounded-3xl border border-[#EBEBDF] hover:shadow-lg transition duration-300">
+                    <div class="flex text-[#F5D042] mb-6 text-sm gap-1">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Saya membutuhkan sewa dadakan untuk liburan
+                        keluarga, dan layanan ini memudahkannya! Proses pemesanan lancar, mobil dalam kondisi prima, dan
+                        harga sangat terjangkau. Sangat direkomendasikan!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User"
+                            class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm">
+                        <h4 class="font-bold text-[#0A174E]">Budi Santoso</h4>
+                    </div>
+                </div>
+
+                <div class="bg-[#F9F9F5] p-8 rounded-3xl border border-[#EBEBDF] hover:shadow-lg transition duration-300">
+                    <div class="flex text-[#F5D042] mb-6 text-sm gap-1">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Sebagai orang yang sering bepergian untuk
+                        urusan dinas, saya sangat mengandalkan sewa kendaraan. Perusahaan ini selalu menjadi pilihan utama
+                        karena armada yang terawat dengan baik dan layanan pelanggan yang memuaskan!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User"
+                            class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm">
+                        <h4 class="font-bold text-[#0A174E]">Siti Aminah</h4>
+                    </div>
+                </div>
+
+                <div class="bg-[#F9F9F5] p-8 rounded-3xl border border-[#EBEBDF] hover:shadow-lg transition duration-300">
+                    <div class="flex text-[#F5D042] mb-6 text-sm gap-1">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Mobil sangat irit bahan bakar dan ramah
+                        lingkungan. Saya suka karena perusahaan ini menawarkan opsi berkelanjutan bagi pelancong modern.
+                        Tarif sewa sangat kompetitif."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="User"
+                            class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm">
+                        <h4 class="font-bold text-[#0A174E]">Andi Pratama</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Excellence Section (Redesigned to avoid duplicate feel) -->
+        <section class="max-w-[1400px] mx-auto px-4 md:px-8 py-24 mb-10">
+            <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-stretch">
+                <div class="lg:w-[45%] flex flex-col justify-between py-6">
+                    <div>
+                        <h2 class="text-4xl md:text-[3.5rem] font-bold text-[#0A174E] leading-[1.1] mb-6 tracking-tight">
+                            Mendorong keunggulan dalam layanan sewa mobil</h2>
+                        <p class="text-gray-600 font-medium text-lg leading-relaxed mb-10 max-w-md">Dengan armada kendaraan
+                            yang beragam dan komitmen terhadap kepuasan pelanggan, kami berusaha membuat perjalanan Anda
+                            mulus dan menyenangkan.</p>
+
+                        <a href="{{ route('how.it.works') }}"
+                            class="inline-flex items-center p-1.5 pl-6 text-base font-bold bg-[#F5D042] text-[#0A174E] rounded-xl hover:shadow-[0_10px_20px_rgba(245,208,66,0.3)] transition-all hover:-translate-y-1">
+                            <span class="mr-4">Cari tahu tentang kami</span>
+                            <div class="bg-[#0A174E] text-white p-3 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrow-right text-sm"></i>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-8 mt-24">
+                        <div>
+                            <h3 class="text-5xl md:text-[4rem] font-bold text-[#0A174E] mb-3 tracking-tighter">5K+</h3>
+                            <p class="text-gray-500 font-medium leading-relaxed pr-4">Pelanggan ceria yang telah
+                                mempercayai kami</p>
+                        </div>
+                        <div>
+                            <h3 class="text-5xl md:text-[4rem] font-bold text-[#0A174E] mb-3 tracking-tighter">99%</h3>
+                            <p class="text-gray-500 font-medium leading-relaxed pr-4">Pelanggan setuju dengan penawaran
+                                layanan kami</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-[55%] min-h-[500px] lg:min-h-[700px] relative">
+                    <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1200&q=80"
+                        alt="Supercar on winding road" class="absolute inset-0 w-full h-full object-cover rounded-[2rem]">
+                </div>
+            </div>
+        </section>
+    </div>
 @endsection

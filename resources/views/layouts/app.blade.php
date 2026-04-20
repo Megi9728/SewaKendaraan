@@ -47,260 +47,108 @@
         }
 
         .nav-link {
-            @apply text-uber-black hover:bg-uber-chip font-medium transition-colors duration-200 text-sm px-4 py-2.5 rounded-full;
+            @apply text-[#0A174E] hover:bg-[#EBEBDF] font-medium transition-colors duration-200 text-sm px-4 py-2.5 rounded-full;
         }
 
         .btn-primary {
-            @apply bg-uber-black hover:bg-gray-800 active:scale-95 text-uber-white font-medium px-6 py-3 rounded-full transition-all duration-200;
+            @apply bg-[#0A174E] hover:bg-gray-800 active:scale-95 text-white font-medium px-6 py-3 rounded-full transition-all duration-200;
         }
 
         .btn-secondary {
-            @apply bg-uber-chip hover:bg-uber-hover active:scale-95 text-uber-black font-medium px-6 py-3 rounded-full transition-all duration-200 text-sm;
+            @apply bg-[#EBEBDF] hover:bg-[#D4D4C3] active:scale-95 text-[#0A174E] font-medium px-6 py-3 rounded-full transition-all duration-200 text-sm;
         }
     </style>
 
     @stack('styles')
 </head>
 
-<body class="bg-uber-white text-uber-black antialiased">
-
-    {{-- ===== NAVBAR ===== --}}
-    <header id="navbar" class="bg-uber-black text-uber-white">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-[72px]">
-
-                {{-- Kiri: Logo & Menu --}}
-                <div class="flex items-center gap-8">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2 hover:opacity-80 transition">
-                        <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-10 md:h-14 w-auto">
-                    </a>
-
-                    {{-- Desktop Nav --}}
-                    <div class="hidden md:flex items-center gap-1">
-                        <a href="{{ route('home') }}"
-                            class="px-4 py-2 text-sm font-medium {{ request()->routeIs('home') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Beranda</a>
-                        <a href="{{ route('browse') }}"
-                            class="px-4 py-2 text-sm font-medium {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Cari
-                            Kendaraan</a>
-                        @auth
-                            <a href="{{ route('booking.history') }}"
-                                class="px-4 py-2 text-sm font-medium {{ request()->routeIs('booking.history') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Riwayat
-                                Sewa</a>
-                        @endauth
-                        <a href="{{ route('how.it.works') }}"
-                            class="px-4 py-2 text-sm font-medium {{ request()->routeIs('how.it.works') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">Tentang</a>
-                    </div>
-                </div>
-
-                {{-- Kanan: Aksi & Auth --}}
-                <div class="hidden md:flex items-center gap-2 relative">
-                    <a href="{{ route('help') }}"
-                        class="px-4 py-2 text-sm font-medium {{ request()->routeIs('help') ? 'bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10' }} rounded-full transition">
-                        Bantuan
-                    </a>
-
-                    <button id="auth-dropdown-toggle"
-                        class="flex items-center gap-2 bg-white text-black hover:bg-gray-200 transition-colors rounded-full px-5 py-2.5 ml-2 font-bold text-sm">
-                        <span>{{ Auth::check() ? Auth::user()->name : 'Masuk / Daftar' }}</span>
-                    </button>
-
-                    <div id="auth-dropdown"
-                        class="hidden absolute top-full right-0 mt-3 w-64 bg-uber-white border border-gray-100 shadow-uber rounded-xl py-2 z-[60] text-uber-black">
-                        @auth
-                            <div class="px-6 py-4 border-b border-gray-50">
-                                <p class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] mb-1 italic">
-                                    Masuk Sebagai</p>
-                                <p class="text-base font-bold text-uber-black truncate">{{ Auth::user()->name }}</p>
-                            </div>
-                            <div class="p-2">
-                                @if (Auth::user()->role === 'admin')
-                                    <a href="{{ route('admin.dashboard') }}"
-                                        class="block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">Dashboard
-                                        Admin</a>
-                                @else
-                                    <a href="{{ route('booking.history') }}"
-                                        class="block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">Riwayat
-                                        Sewa</a>
-                                    <a href="{{ route('profile') }}"
-                                        class="block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">Lihat
-                                        Profil Akun</a>
-                                @endif
-
-                                <button
-                                    onclick="event.preventDefault(); document.getElementById('base-logout-form').submit();"
-                                    class="w-full text-left block px-4 py-3 text-sm font-bold text-uber-black hover:bg-uber-chip rounded-lg transition-all">
-                                    Keluar dari Sistem
-                                </button>
-                                <form id="base-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                                    @csrf</form>
-                            </div>
-                        @else
-                            <div class="p-4 flex flex-col gap-3">
-                                <a href="{{ route('login') }}"
-                                    class="btn-primary w-full text-center py-3.5 text-sm font-bold">Masuk</a>
-                                <a href="{{ route('register') }}"
-                                    class="btn-secondary w-full text-center py-3.5 text-sm font-bold">Daftar Akun Baru</a>
-                            </div>
-                        @endauth
-                    </div>
-                </div>
-
-                {{-- Mobile Hamburger --}}
-                <button id="menu-toggle" class="md:hidden text-uber-white z-[80] relative focus:outline-none">
-                    <i id="menu-icon" class="fas fa-bars text-2xl"></i>
-                </button>
-            </div>
-        </nav>
-
-        {{-- Mobile Overlay Menu (Uber Style) --}}
-        <div id="mobile-menu"
-            class="fixed inset-0 bg-uber-white z-[70] translate-x-full transition-transform duration-300 ease-in-out md:hidden overflow-y-auto">
-            <div class="flex flex-col h-full pt-28 px-10 pb-16">
-                {{-- Nav Links --}}
-                <div class="flex flex-col gap-8 mb-12">
-                    <a href="{{ route('home') }}"
-                        class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('home') ? 'underline underline-offset-8' : '' }}">Beranda</a>
-                    <a href="{{ route('browse') }}"
-                        class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('browse') || request()->routeIs('vehicle.detail') ? 'underline underline-offset-8' : '' }}">Cari
-                        Kendaraan</a>
-                    @auth
-                        <a href="{{ route('booking.history') }}"
-                            class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('booking.history') ? 'underline underline-offset-8' : '' }}">Riwayat</a>
-                    @endauth
-                    <a href="{{ route('how.it.works') }}"
-                        class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('how.it.works') ? 'underline underline-offset-8' : '' }}">Tentang</a>
-                    <a href="{{ route('help') }}"
-                        class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->routeIs('help') ? 'underline underline-offset-8' : '' }}">Bantuan</a>
-
-                    {{-- Simplified Admin Link --}}
-                    @auth
-                        @if (Auth::user()->role === 'admin')
-                            <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col gap-8">
-                                <a href="{{ route('admin.dashboard') }}"
-                                    class="text-4xl font-bold text-uber-black tracking-tighter {{ request()->is('admin*') ? 'underline underline-offset-8' : '' }}">Panel
-                                    Admin</a>
-                            </div>
-                        @endif
-                    @endauth
-
-                    {{-- Guest Auth Links (Visible immediately) --}}
-                    @guest
-                        <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col gap-6">
-                            <a href="{{ route('login') }}"
-                                class="text-4xl font-bold text-uber-black tracking-tighter">Masuk</a>
-                            <a href="{{ route('register') }}"
-                                class="text-4xl font-bold text-uber-black tracking-tighter">Daftar Akun</a>
-                        </div>
-                    @endguest
-                </div>
-
-                {{-- Action / Profile --}}
-                <div class="mt-auto pt-10 border-t border-gray-100">
-                    @auth
-                        <div class="mb-8 flex justify-between items-end">
-                            <div>
-                                <p class="text-sm font-bold text-uber-muted uppercase tracking-widest mb-1 italic">Masuk
-                                    Sebagai</p>
-                                <p class="text-2xl font-bold text-uber-black">{{ Auth::user()->name }}</p>
-                            </div>
-                            <button
-                                onclick="event.preventDefault(); document.getElementById('mobile-logout-form').submit();"
-                                class="text-sm font-bold text-red-600 uppercase tracking-widest border-b-2 border-red-600 pb-1">
-                                Keluar
-                            </button>
-                            <form id="mobile-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                                @csrf</form>
-                        </div>
-
-                        @if (Auth::user()->role !== 'admin')
-                            <div class="flex flex-col gap-4">
-                                <a href="{{ route('booking.history') }}"
-                                    class="bg-blue-600 text-white rounded-full w-full text-center py-4 font-bold text-lg block shadow-lg active:scale-95 transition">Lihat
-                                    Riwayat Sewa</a>
-                                <a href="{{ route('profile') }}"
-                                    class="btn-secondary w-full text-center py-4 rounded-full text-sm font-bold block transition">Pengaturan
-                                    Akun</a>
-                            </div>
-                        @else
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="btn-primary w-full text-center py-5 text-lg block">Dashboard Admin</a>
-                        @endif
-                    @else
-                        <div class="bg-uber-chip p-6 rounded-2xl">
-                            <p class="text-sm font-bold text-uber-black mb-1">Sudah jadi member?</p>
-                            <p class="text-xs text-uber-text mb-4">Masuk untuk kemudahan pemesanan.</p>
-                            <a href="{{ route('login') }}"
-                                class="btn-primary w-full text-center py-4 text-sm font-bold block">Masuk ke Akun</a>
-                        </div>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </header>
+<body class="bg-white text-[#0A174E] antialiased">
+    @include('partials.navbar')
 
     {{-- ===== KONTEN UTAMA ===== --}}
     <main>
         @yield('content')
     </main>
 
-    {{-- ===== FOOTER ===== --}}
-    <footer class="bg-uber-black text-uber-white pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-6">
-            <img src="{{ asset('logo.png') }}" alt="Jatara Logo"
-                class="h-12 md:h-14 w-auto brightness-0 invert mb-10">
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-16">
-                <div>
-                    <h4 class="font-bold text-lg mb-6">Pesan Perjalanan</h4>
-                    <ul class="space-y-4 text-uber-muted text-sm">
-                        <li><a href="{{ route('browse') }}" class="hover:text-uber-white">Pesan Mobil</a></li>
-                        <li><a href="{{ route('browse') }}" class="hover:text-uber-white">Pesan Motor</a></li>
-                        <li><a href="#" class="hover:text-uber-white">Kota Layanan</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-lg mb-6">Mitra Pengemudi</h4>
-                    <ul class="space-y-4 text-uber-muted text-sm">
-                        <li><a href="#" class="hover:text-uber-white">Jadi Sopir Kami</a></li>
-                        <li><a href="#" class="hover:text-uber-white">Penghasilan</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-lg mb-6">Perusahaan</h4>
-                    <ul class="space-y-4 text-uber-muted text-sm">
-                        <li><a href="#" class="hover:text-uber-white">Tentang Kami</a></li>
-                        <li><a href="#" class="hover:text-uber-white">Karier</a></li>
-                        <li><a href="#" class="hover:text-uber-white">Blog</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="flex gap-4 mb-6">
-                        <a href="#"
-                            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800 transition"><i
-                                class="fab fa-facebook-f"></i></a>
-                        <a href="#"
-                            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800 transition"><i
-                                class="fab fa-twitter"></i></a>
-                        <a href="#"
-                            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800 transition"><i
-                                class="fab fa-youtube"></i></a>
-                        <a href="#"
-                            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800 transition"><i
-                                class="fab fa-instagram"></i></a>
+            {{-- ===== FOOTER ===== --}}
+    <footer class="px-4 md:px-8 pb-4">
+        <div class="max-w-[1400px] mx-auto bg-[#0A174E] text-[#EBEBDF] rounded-[2rem] p-10 md:p-16 lg:p-20 relative overflow-hidden">
+            <!-- Dekorasi Blur Latar Belakang -->
+            <div class="absolute top-0 left-0 w-64 h-64 bg-[#F5D042] rounded-full mix-blend-multiply filter blur-[128px] opacity-10 pointer-events-none"></div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 relative z-10">
+                <!-- Sisi Kiri: Logo & Newsletter -->
+                <div class="lg:col-span-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-10">
+                            <!-- Logo Box Putih Kecil untuk Kontras -->
+                            <div class="bg-white p-2 rounded-xl">
+                                <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-8 w-auto">
+                            </div>
+                            <span class="text-white text-3xl font-bold tracking-tight font-sans">Jatara</span>
+                        </div>
+                        
+                        <div class="mb-10 lg:mb-0">
+                            <h4 class="text-white text-xl font-bold mb-4">Berlangganan buletin kami</h4>
+                            <form class="flex flex-col sm:flex-row gap-3">
+                                <input type="email" placeholder="Masukkan alamat email Anda" class="w-full sm:flex-1 bg-white/10 border border-white/10 text-white placeholder-gray-400 px-5 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F5D042] transition">
+                                <button type="submit" class="bg-[#F5D042] hover:bg-[#ebc532] text-[#0A174E] font-bold px-7 py-3.5 rounded-xl transition duration-300 whitespace-nowrap">Berlangganan!</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="flex flex-col gap-2 text-uber-muted text-sm">
-                        <span class="flex items-center gap-2"><i class="fas fa-globe"></i> Bahasa Indonesia</span>
-                        <span class="flex items-center gap-2"><i class="fas fa-location-dot"></i> Jakarta, ID</span>
+                </div>
+
+                <!-- Bagian Kanan Lanjutan (3 Kolom Menu) -->
+                <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-10">
+                    <!-- Kolom 1 -->
+                    <div>
+                        <h4 class="text-white text-lg font-bold mb-6">Halaman</h4>
+                        <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
+                            <li><a href="{{ route('home') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('home') ? 'text-[#F5D042]' : '' }}">Beranda</a></li>
+                            <li><a href="{{ route('how.it.works') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('how.it.works') ? 'text-[#F5D042]' : '' }}">Tentang</a></li>
+                            <li><a href="{{ route('browse') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('browse') ? 'text-[#F5D042]' : '' }}">Kendaraan</a></li>
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Kontak</a></li>
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Blog</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Kolom 2 -->
+                    <div>
+                        <h4 class="text-white text-lg font-bold mb-6">Layanan</h4>
+                        <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Syarat & Ketentuan</a></li>
+                            <li><a href="{{ route('help') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('help') ? 'text-[#F5D042]' : '' }}">Bantuan</a></li>
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Lisensi</a></li>
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Kebijakan Privasi</a></li>
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Link in Bio</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Kolom 3 -->
+                    <div>
+                        <h4 class="text-white text-lg font-bold mb-6">Lainnya</h4>
+                        <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Segera Hadir</a></li>
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Dilindungi Sandi</a></li>
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Error 404</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <div
-                class="border-t border-gray-800 pt-8 flex flex-col items-center gap-4 text-uber-muted text-xs md:flex-row md:justify-between">
-                <p>&copy; {{ date('Y') }} Jatara Technologies Inc.</p>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:text-uber-white">Privasi</a>
-                    <a href="#" class="hover:text-uber-white">Ketentuan</a>
+            <!-- Footer Bottom -->
+            <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
+                <p class="text-sm font-medium text-[#EBEBDF]/60">Dibuat oleh <a href="#" class="text-[#F5D042] hover:underline">SewaKendaraan</a>. Didukung oleh <a href="https://laravel.com" target="_blank" class="text-[#F5D042] hover:underline">Laravel</a></p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-[#F5D042] hover:text-[#0A174E] transition-all duration-300">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-[#F5D042] hover:text-[#0A174E] transition-all duration-300">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-[#F5D042] hover:text-[#0A174E] transition-all duration-300">
+                        <i class="fab fa-instagram"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -321,12 +169,12 @@
                 if (isOpen) {
                     mobileMenu.classList.add('translate-x-full');
                     menuIcon.classList.replace('fa-times', 'fa-bars');
-                    menuToggle.classList.replace('text-uber-black', 'text-uber-white');
+                    menuToggle.classList.replace('text-[#0A174E]', 'text-white');
                     document.body.classList.remove('overflow-hidden');
                 } else {
                     mobileMenu.classList.remove('translate-x-full');
                     menuIcon.classList.replace('fa-bars', 'fa-times');
-                    menuToggle.classList.replace('text-uber-white', 'text-uber-black');
+                    menuToggle.classList.replace('text-white', 'text-[#0A174E]');
                     document.body.classList.add('overflow-hidden');
                 }
             });
@@ -342,7 +190,7 @@
 
         document.addEventListener('click', (e) => {
             if (authDropdown && !authDropdown.classList.contains('hidden') && !authDropdownToggle.contains(e
-                .target) && !authDropdown.contains(e.target)) {
+                    .target) && !authDropdown.contains(e.target)) {
                 authDropdown.classList.add('hidden');
             }
         });

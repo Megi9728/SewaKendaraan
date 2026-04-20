@@ -7,24 +7,24 @@
 
     {{-- Page Header (Uber style: Minimalist) --}}
     <div class="mb-10 text-center md:text-left">
-        <h1 class="text-4xl font-bold text-uber-black tracking-tight">Katalog Armada</h1>
-        <p class="text-uber-text font-medium mt-2">Pilih kendaraan terbaik untuk perjalanan Anda hari ini.</p>
+        <h1 class="text-4xl font-bold text-[#0A174E] tracking-tight">Katalog Armada</h1>
+        <p class="text-gray-600 font-medium mt-2">Pilih kendaraan terbaik untuk perjalanan Anda hari ini.</p>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-12">
 
         {{-- ===== SIDEBAR FILTER (Uber Style: Flat & Functional) ===== --}}
         <aside class="lg:w-72 flex-shrink-0">
-            <div class="bg-uber-white border-0 lg:border-r border-gray-100 lg:pr-8" id="filter-panel">
+            <div class="bg-white border-0 lg:border-r border-gray-100 lg:pr-8" id="filter-panel">
                 <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-xl font-bold text-uber-black">Filter</h2>
-                    <button id="reset-filter" class="text-xs font-bold text-uber-black hover:underline">Hapus Semua</button>
+                    <h2 class="text-xl font-bold text-[#0A174E]">Filter</h2>
+                    <button id="reset-filter" class="text-xs font-bold text-[#0A174E] hover:underline">Hapus Semua</button>
                 </div>
 
                 {{-- Jenis Kendaraan --}}
                 <div class="mb-8">
-                    <label class="text-xs font-bold text-uber-muted uppercase tracking-widest block mb-3">Jenis Kendaraan</label>
-                    <select name="jenis" class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all appearance-none cursor-pointer">
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-3">Jenis Kendaraan</label>
+                    <select name="jenis" class="w-full bg-[#EBEBDF] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-[#0A174E] transition-all appearance-none cursor-pointer">
                         @php
                         $types = ['Semua' => '', 'Mobil Sedan' => 'sedan', 'MPV / SUV' => 'mpv', 'Motor' => 'motor', 'Minibus' => 'minibus'];
                         @endphp
@@ -36,10 +36,10 @@
 
                 {{-- Wilayah --}}
                 <div class="mb-8 border-t border-gray-100 pt-8">
-                    <label class="text-xs font-bold text-uber-muted uppercase tracking-widest block mb-3">Wilayah</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-3">Wilayah</label>
                     <div class="grid grid-cols-2 gap-2">
                         @foreach(['Semua', 'Jakarta', 'Bogor', 'Tangerang', 'Bekasi'] as $wilayah)
-                            <button class="region-chip border border-gray-200 text-xs font-bold py-2.5 rounded-full hover:bg-uber-chip transition-all {{ ($loop->first && !request('domicile')) || (request('domicile') == strtolower($wilayah)) ? 'bg-uber-black text-uber-white border-uber-black' : 'text-uber-black bg-uber-white' }}" data-value="{{ $wilayah == 'Semua' ? '' : strtolower($wilayah) }}">
+                            <button class="region-chip border border-gray-200 text-xs font-bold py-2.5 rounded-full hover:bg-[#EBEBDF] transition-all {{ ($loop->first && !request('domicile')) || (request('domicile') == strtolower($wilayah)) ? 'bg-[#0A174E] text-white border-[#0A174E]' : 'text-[#0A174E] bg-white' }}" data-value="{{ $wilayah == 'Semua' ? '' : strtolower($wilayah) }}">
                                 {{ $wilayah }}
                             </button>
                         @endforeach
@@ -48,12 +48,12 @@
 
                 {{-- Harga --}}
                 <div class="mb-8 border-t border-gray-100 pt-8">
-                    <label class="text-xs font-bold text-uber-muted uppercase tracking-widest block mb-3">Harga Maksimum</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-3">Harga Maksimum</label>
                     <input type="range" id="price-range" min="50000" max="2000000" step="50000" value="2000000"
-                            class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-uber-black">
+                            class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-#0A174E">
                     <div class="flex justify-between mt-3">
-                        <span class="text-[10px] font-bold text-uber-muted">Rp 50K</span>
-                        <span id="price-display" class="text-sm font-bold text-uber-black">Rp 2.000.000</span>
+                        <span class="text-[10px] font-bold text-gray-500">Rp 50K</span>
+                        <span id="price-display" class="text-sm font-bold text-[#0A174E]">Rp 2.000.000</span>
                     </div>
                 </div>
 
@@ -70,12 +70,12 @@
             <div class="flex flex-col sm:flex-row justify-between items-center gap-6 mb-10 w-full">
                 <div class="flex-1 w-full max-w-md relative">
                     <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                    <input type="text" id="search-input" placeholder="Cari merk atau model..." class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black pl-12 pr-6 py-3.5 rounded-full focus:ring-2 focus:ring-uber-black transition-all">
+                    <input type="text" id="search-input" placeholder="Cari merk atau model..." class="w-full bg-[#EBEBDF] border-0 text-sm font-bold text-[#0A174E] pl-12 pr-6 py-3.5 rounded-full focus:ring-2 focus:ring-[#0A174E] transition-all">
                 </div>
 
                 <div class="flex items-center gap-4 w-full sm:w-auto">
-                    <span class="text-sm font-bold text-uber-muted whitespace-nowrap"><span id="vehicle-count-text">{{ $vehicles->count() }}</span> Armada Tersedia</span>
-                    <select id="sort-select" class="bg-uber-white border border-gray-200 text-xs font-bold text-uber-black px-4 py-2.5 rounded-full focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
+                    <span class="text-sm font-bold text-gray-500 whitespace-nowrap"><span id="vehicle-count-text">{{ $vehicles->count() }}</span> Armada Tersedia</span>
+                    <select id="sort-select" class="bg-white border border-gray-200 text-xs font-bold text-[#0A174E] px-4 py-2.5 rounded-full focus:ring-2 focus:ring-[#0A174E] transition-all cursor-pointer">
                         <option value="latest" {{ request('sort') == 'latest' || !request('sort') ? 'selected' : '' }}>Terbaru</option>
                         <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Harga Rendah</option>
                         <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Harga Tinggi</option>
@@ -85,7 +85,7 @@
 
             <div id="vehicle-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
                 @foreach($vehicles as $v)
-                <a href="{{ route('vehicle.detail', $v->id) }}" class="vehicle-card flex flex-col group bg-uber-white border border-transparent hover:border-gray-200 rounded-xl p-0 transition-all duration-300"
+                <a href="{{ route('vehicle.detail', $v->id) }}" class="vehicle-card flex flex-col group bg-white border border-transparent hover:border-gray-200 rounded-xl p-0 transition-all duration-300"
                     data-name="{{ strtolower($v->name) }}"
                     data-type="{{ strtolower($v->type) }}"
                     data-price="{{ $v->price_per_day }}"
@@ -94,7 +94,7 @@
                     data-domicile="{{ strtolower($v->domicile) }}">
                     
                     {{-- Image Aspect 16/10 --}}
-                    <div class="relative aspect-[16/10] mb-5 overflow-hidden rounded-lg bg-uber-chip">
+                    <div class="relative aspect-[16/10] mb-5 overflow-hidden rounded-lg bg-[#EBEBDF]">
                         <img src="{{ $v->image ? (strpos($v->image, 'http') === 0 ? $v->image : asset('storage/' . $v->image)) : 'https://placehold.co/600x400?text=' . urlencode($v->name) }}" 
                              alt="{{ $v->name }}" 
                              class="w-full h-full object-cover">
@@ -102,9 +102,9 @@
                         {{-- Status Badge (Minimalist) --}}
                         <div class="absolute top-3 left-3">
                             @if($v->available_units_count >= 1)
-                                <span class="bg-uber-white text-uber-black text-[10px] font-bold px-2.5 py-1 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
+                                <span class="bg-white text-[#0A174E] text-[10px] font-bold px-2.5 py-1 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
                             @else
-                                <span class="bg-uber-black text-uber-white text-[10px] font-bold px-2.5 py-1 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
+                                <span class="bg-[#0A174E] text-white text-[10px] font-bold px-2.5 py-1 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
                             @endif
                         </div>
                     </div>
@@ -112,22 +112,22 @@
                     {{-- Info --}}
                     <div class="flex flex-col flex-1 px-1">
                         <div class="flex justify-between items-start mb-1">
-                            <h3 class="text-xl font-bold text-uber-black leading-tight">{{ $v->name }}</h3>
-                            <div class="flex items-center gap-1.5 text-uber-black">
+                            <h3 class="text-xl font-bold text-[#0A174E] leading-tight">{{ $v->name }}</h3>
+                            <div class="flex items-center gap-1.5 text-[#0A174E]">
                                 <i class="fas fa-star text-xs"></i>
                                 <span class="text-sm font-bold">{{ $v->rating }}</span>
-                                <span class="text-[10px] font-bold text-uber-muted">({{ $v->reviews_count }})</span>
+                                <span class="text-[10px] font-bold text-gray-500">({{ $v->reviews_count }})</span>
                             </div>
                         </div>
 
-                        <p class="text-uber-text font-medium text-xs mb-4">
+                        <p class="text-gray-600 font-medium text-xs mb-4">
                             {{ $v->seats }} Kursi • {{ $v->transmission }} • {{ $v->fuel_type ?? 'Bensin' }} • {{ $v->engine_capacity ?? '1500' }} CC
                         </p>
 
                         <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                             <div class="flex flex-col">
-                                <span class="text-[10px] font-bold text-uber-muted uppercase tracking-widest">Tarif</span>
-                                <span class="text-lg font-bold text-uber-black">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</span>
+                                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Tarif</span>
+                                <span class="text-lg font-bold text-[#0A174E]">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</span>
                             </div>
                             <span class="btn-primary px-7 py-3 text-xs font-bold shadow-none group-active:scale-95 transition-transform">
                                 Pesan
@@ -141,19 +141,19 @@
             {{-- Empty State (Uber font style) --}}
             <div id="empty-state" class="hidden py-20 text-center">
                 <i class="fas fa-car-side text-5xl text-gray-200 mb-4 scale-x-[-1]"></i>
-                <h3 class="text-xl font-bold text-uber-black">Unit tidak ditemukan</h3>
-                <p class="text-uber-muted mt-2">Coba sesuaikan filter atau cari merk lain.</p>
+                <h3 class="text-xl font-bold text-[#0A174E]">Unit tidak ditemukan</h3>
+                <p class="text-gray-500 mt-2">Coba sesuaikan filter atau cari merk lain.</p>
             </div>
 
             {{-- Pagination (Uber style: Minimalist) --}}
             <div class="flex justify-center mt-20 gap-2">
-                <button class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-uber-black hover:bg-uber-chip transition-all mr-2">
+                <button class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-[#0A174E] hover:bg-[#EBEBDF] transition-all mr-2">
                     <i class="fas fa-chevron-left text-xs"></i>
                 </button>
-                <button class="px-5 h-10 flex items-center justify-center rounded-full bg-uber-black text-uber-white text-sm font-bold shadow-uber">
+                <button class="px-5 h-10 flex items-center justify-center rounded-full bg-[#0A174E] text-white text-sm font-bold shadow-uber">
                     1
                 </button>
-                <button class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-uber-black hover:bg-uber-chip transition-all ml-2">
+                <button class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-[#0A174E] hover:bg-[#EBEBDF] transition-all ml-2">
                     <i class="fas fa-chevron-right text-xs"></i>
                 </button>
             </div>
@@ -180,9 +180,9 @@
     regionButtons.forEach(btn => {
         btn.addEventListener('click', function() {
             regionButtons.forEach(b => {
-                b.className = 'region-chip border border-gray-200 text-xs font-bold py-2.5 rounded-full hover:bg-uber-chip transition-all text-uber-black bg-uber-white';
+                b.className = 'region-chip border border-gray-200 text-xs font-bold py-2.5 rounded-full hover:bg-[#EBEBDF] transition-all text-[#0A174E] bg-white';
             });
-            this.className = 'region-chip border border-uber-black text-xs font-bold py-2.5 rounded-full hover:bg-uber-chip transition-all bg-uber-black text-uber-white';
+            this.className = 'region-chip border border-[#0A174E] text-xs font-bold py-2.5 rounded-full hover:bg-[#EBEBDF] transition-all bg-[#0A174E] text-white';
             currentRegion = this.dataset.value;
             // Removed immediate filterVehicles()
         });
