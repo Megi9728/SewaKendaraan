@@ -36,7 +36,7 @@ class BookingController extends Controller
         $start = Carbon::parse($request->start_date);
         $end = Carbon::parse($request->end_date);
         $days = $start->diffInDays($end);
-        if($days <= 0) $days = 1;
+        if ($days <= 0) $days = 1;
 
         $subtotal = $vehicle->price_per_day * $days;
         $totalPrice = $subtotal;
@@ -46,7 +46,7 @@ class BookingController extends Controller
             'end_date'   => $request->end_date,
             'days'       => $days,
             'subtotal'   => $subtotal,
-            'total_price'=> $totalPrice,
+            'total_price' => $totalPrice,
         ];
 
         return view('checkout', compact('vehicle', 'bookingData'));
@@ -71,8 +71,8 @@ class BookingController extends Controller
         $start = Carbon::parse($request->start_date);
         $end = Carbon::parse($request->end_date);
         $days = $start->diffInDays($end);
-        
-        if($days <= 0) $days = 1;
+
+        if ($days <= 0) $days = 1;
 
         // Hitung total harga
         $totalPrice = $vehicle->price_per_day * $days;
@@ -84,13 +84,13 @@ class BookingController extends Controller
         // Cek bentrok jadwal (overlapping) untuk semua pesanan yang valid (belum dibatalkan/selesai)
         $overlappingBookings = \App\Models\Booking::where('vehicle_id', $vehicle->id)
             ->whereNotIn('status', ['Cancelled', 'Rejected', 'Completed'])
-            ->where(function($query) use ($request) {
+            ->where(function ($query) use ($request) {
                 $query->whereBetween('start_date', [$request->start_date, $request->end_date])
-                      ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
-                      ->orWhere(function($q2) use ($request) {
-                          $q2->where('start_date', '<=', $request->start_date)
-                             ->where('end_date', '>=', $request->end_date);
-                      });
+                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                    ->orWhere(function ($q2) use ($request) {
+                        $q2->where('start_date', '<=', $request->start_date)
+                            ->where('end_date', '>=', $request->end_date);
+                    });
             })->pluck('vehicle_unit_id');
 
         // Cari 1 unit mobil yang TIDAK bentrok jadwalnya
@@ -161,10 +161,10 @@ class BookingController extends Controller
             return response()->json(['error' => 'Status pembayaran tidak valid untuk aksi ini.'], 400);
         }
 
-        \Midtrans\Config::$serverKey = config('midtrans.server_key');
-        \Midtrans\Config::$isProduction = config('midtrans.is_production');
-        \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
-        \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
+        \Midtrans\Config::$serverKey = config('midtrans.server_key', env('MIDTRANS_SERVER_KEY'));
+        \Midtrans\Config::$isProduction = config('midtrans.is_production', false);
+        \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized', true);
+        \Midtrans\Config::$is3ds = config('midtrans.is_3ds', true);
         \Midtrans\Config::$curlOptions = [
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false,
@@ -203,38 +203,22 @@ class BookingController extends Controller
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'nullable|string',
-            'driver_rating' => 'nullable|integer|min:1|max:5',
-            'driver_review' => 'nullable|string',
         ]);
 
         $booking->update([
             'rating' => $request->rating,
             'review' => $request->review,
-            'driver_rating' => $request->driver_rating,
-            'driver_review' => $request->driver_review,
         ]);
 
         // Update rata-rata rating dan jumlah ulasan kendaraan
         $vehicle = $booking->vehicle;
         $allVehicleRatings = Booking::where('vehicle_id', $vehicle->id)->whereNotNull('rating')->pluck('rating');
-        if($allVehicleRatings->count() > 0) {
+        if ($allVehicleRatings->count() > 0) {
             $avg = $allVehicleRatings->average();
             $vehicle->update([
                 'rating' => number_format($avg, 1, '.', ''),
                 'reviews_count' => $allVehicleRatings->count()
             ]);
-        }
-
-        // Update rata-rata rating driver
-        if ($booking->driver_id && $request->driver_rating) {
-            $driver = $booking->driver;
-            $allDriverRatings = Booking::where('driver_id', $driver->id)->whereNotNull('driver_rating')->pluck('driver_rating');
-            if($allDriverRatings->count() > 0) {
-                $avg = $allDriverRatings->average();
-                $driver->update([
-                    'rating' => number_format($avg, 1, '.', '')
-                ]);
-            }
         }
 
         return back()->with('success', 'Terima kasih atas ulasan Anda!');
@@ -246,7 +230,7 @@ class BookingController extends Controller
     public function receipt(Booking $booking)
     {
         if ($booking->user_id !== Auth::id()) abort(403);
-        
+
         $booking->load(['vehicle', 'user', 'vehicleUnit.pool']);
         return view('user.receipt', compact('booking'));
     }
@@ -278,14 +262,6 @@ class BookingController extends Controller
         if (in_array($newStatus, ['Completed', 'Cancelled', 'Rejected'])) {
             if ($booking->vehicleUnit) {
                 $booking->vehicleUnit->update(['status' => 'tersedia']);
-            }
-        }
-
-        // SINKRONISASI LOGIKA STATUS DRIVER
-        if ($booking->with_driver && $booking->driver_id) {
-            $driver = $booking->driver;
-            if (in_array($newStatus, ['Picked_Up'])) {
-                $driver->update(['status' => 'Busy']);
             }
         }
 

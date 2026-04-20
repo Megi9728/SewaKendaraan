@@ -18,7 +18,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
-            
+
             if (Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin') {
                 return redirect()->intended(route('admin.dashboard'))->with('success', 'Selamat datang di Dashboard Super Admin!');
             }
@@ -27,10 +27,7 @@ class AuthController extends Controller
                 return redirect()->intended(route('mitra.dashboard'))->with('success', 'Selamat datang, Mitra!');
             }
 
-            if (Auth::user()->role === 'driver' || Auth::user()->role === 'sopir') {
-                return redirect()->intended(route('driver.dashboard'))->with('success', 'Selamat datang, Sopir!');
-            }
-            
+
             return redirect()->intended('/')->with('success', 'Selamat datang kembali!');
         }
 
@@ -112,7 +109,7 @@ class AuthController extends Controller
         $user = Auth::user();
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',

@@ -24,7 +24,7 @@ Route::get('/jelajah', function (\Illuminate\Http\Request $request) {
     }
 
     if ($request->filled('start_date') && $request->filled('end_date')) {
-        $query->where(function($q) use ($request) {
+        $query->where(function ($q) use ($request) {
             $q->whereRaw('COALESCE(units_count, 1) > (
                 SELECT COUNT(*) FROM bookings 
                 WHERE bookings.vehicle_id = vehicles.id 
@@ -35,9 +35,12 @@ Route::get('/jelajah', function (\Illuminate\Http\Request $request) {
                     (start_date <= ? AND end_date >= ?)
                 )
             )', [
-                $request->start_date, $request->end_date, 
-                $request->start_date, $request->end_date, 
-                $request->start_date, $request->end_date
+                $request->start_date,
+                $request->end_date,
+                $request->start_date,
+                $request->end_date,
+                $request->start_date,
+                $request->end_date
             ]);
         });
     }
@@ -59,7 +62,7 @@ Route::get('/jelajah', function (\Illuminate\Http\Request $request) {
 })->name('browse');
 
 Route::get('/mobil/{vehicle}', function (\App\Models\Vehicle $vehicle) {
-    $vehicle->load(['images', 'mitra', 'units.pool', 'bookings' => function($q) {
+    $vehicle->load(['images', 'mitra', 'units.pool', 'bookings' => function ($q) {
         $q->whereNotNull('review')->where('review', '!=', '')->with('user')->latest();
     }]);
     return view('vehicle-detail', compact('vehicle'));
@@ -138,7 +141,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/profil', [\App\Http\Controllers\AuthController::class, 'profile'])->name('profile');
     Route::put('/profil', [\App\Http\Controllers\AuthController::class, 'updateProfile'])->name('profile.update');
 
-    Route::resource('kendaraan', \App\Http\Controllers\Admin\VehicleController::class);
+    Route::resource('kendaraan', \App\Http\Controllers\Admin\VehicleController::class)->parameters([
+        'kendaraan' => 'vehicle'
+    ]);
     Route::delete('/kendaraan/image/{image}', [\App\Http\Controllers\Admin\VehicleController::class, 'destroyImage'])->name('kendaraan.destroyImage');
 });
 

@@ -16,7 +16,7 @@ class VehicleController extends Controller
             $vehicles = Vehicle::where('mitra_id', $mitraId)->with(['images', 'units.pool'])->latest()->get();
             return view('mitra.vehicles.index', compact('vehicles'));
         }
-        
+
         $vehicles = Vehicle::with(['images', 'units.pool'])->latest()->get();
         return view('admin.vehicles.index', compact('vehicles'));
     }
@@ -52,7 +52,7 @@ class VehicleController extends Controller
 
         if (auth()->user()->isMitra()) {
             $validated['mitra_id'] = auth()->id();
-            
+
             if (!auth()->user()->pool_id) {
                 return redirect()->back()->withErrors(['pool' => 'Silakan set lokasi pool Anda di halaman Profil terlebih dahulu.'])->withInput();
             }
@@ -66,13 +66,23 @@ class VehicleController extends Controller
                 $vehicle->images()->create(['image_path' => $path]);
             }
         }
-        
+
         $poolId = auth()->user()->pool_id;
-        
+
+        // Buatkan pool default jika admin yang add vehicle
+        if (!$poolId) {
+            $pool = \App\Models\Pool::firstOrCreate(
+                ['name' => 'Pool ' . $validated['domicile']],
+                ['address' => $validated['domicile']]
+            );
+            $poolId = $pool->id;
+        }
+
         $vehicle->units()->create([
+            'vehicle_id' => $vehicle->id,
             'pool_id' => $poolId,
             'plate_number' => $request->plate_number,
-            'status' => 'tersedia'
+            'status' => strtolower($validated['status'])
         ]);
 
         return redirect()->back()->with('success', 'Kendaraan berhasil ditambahkan!');
@@ -118,7 +128,7 @@ class VehicleController extends Controller
 
         $validated['plate_number'] = strtoupper($validated['plate_number']);
 
-        $vehicle->update(collect($validated)->except(['gallery', 'plate_number'])->toArray());
+        $vehicle->update(collect($validated)->except(['gallery', 'plate_number', 'latitude', 'longitude', 'pool_address', 'remove_main_image'])->toArray());
 
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
@@ -128,20 +138,22 @@ class VehicleController extends Controller
         }
 
         $pool = \App\Models\Pool::firstOrCreate(
-            ['name' => 'Pool ' . $validated['domicile']], 
+            ['name' => 'Pool ' . $validated['domicile']],
             ['address' => $validated['domicile']]
         );
 
         $unit = $vehicle->units()->first();
         if (!$unit) {
             $vehicle->units()->create([
+                'vehicle_id' => $vehicle->id,
                 'pool_id' => $pool->id,
                 'plate_number' => $request->plate_number,
-                'status' => 'tersedia'
+                'status' => strtolower($validated['status'])
             ]);
         } else {
             $unit->update([
                 'plate_number' => $request->plate_number,
+                'status' => strtolower($validated['status'])
             ]);
         }
 
@@ -163,5 +175,4 @@ class VehicleController extends Controller
         $image->delete();
         return redirect()->back()->with('success', 'Gambar galeri berhasil dihapus!');
     }
-
 }

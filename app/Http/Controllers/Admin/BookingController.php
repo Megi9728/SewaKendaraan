@@ -17,7 +17,7 @@ class BookingController extends Controller
 
         if (auth()->user()->isMitra()) {
             $mitraId = auth()->id();
-            $query->whereHas('vehicle', function($q) use ($mitraId) {
+            $query->whereHas('vehicle', function ($q) use ($mitraId) {
                 $q->where('mitra_id', $mitraId);
             });
             $bookings = $query->latest()->get();
@@ -33,8 +33,9 @@ class BookingController extends Controller
      */
     public function update(Request $request, Booking $booking)
     {
-        if (!auth()->user()->isMitra()) {
-            return redirect()->back()->withErrors('Akses Dibatalkan: Hanya pihak Mitra yang berhak melakukan verifikasi dan pembaruan status pada pesanan mereka sendiri.');
+        // Cegah Mitra mengedit pesanan milik Mitra lain (IDOR Protection)
+        if (auth()->user()->isMitra() && $booking->vehicle->mitra_id !== auth()->id()) {
+            return redirect()->back()->withErrors('Akses Dibatalkan: Anda hanya dapat mengelola pesanan untuk kendaraan Anda sendiri.');
         }
 
         $request->validate([
