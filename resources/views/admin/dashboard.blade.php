@@ -63,7 +63,7 @@
                 <h2 class="text-xl font-black text-slate-900 leading-none">Aktivitas Terkini</h2>
                 <p class="text-xs text-slate-400 mt-2 font-medium">5 pesanan terbaru yang masuk ke sistem</p>
             </div>
-            <a href="{{ route('admin.pemesanan') }}" class="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:translate-x-1 transition-transform">Lihat Semua <i class="fas fa-arrow-right"></i></a>
+            <a href="{{ route('admin.booking.monitor') }}" class="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:translate-x-1 transition-transform">Lihat Semua <i class="fas fa-arrow-right"></i></a>
         </div>
 
         <div class="overflow-x-auto">

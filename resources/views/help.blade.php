@@ -55,7 +55,7 @@
                 <i class="fab fa-whatsapp text-2xl"></i>
                 Hubungi via WhatsApp
             </a>
-            <a href="mailto:support@rentdrive.com" class="flex items-center justify-center gap-4 bg-uber-white text-uber-black border border-gray-200 px-10 py-5 rounded-full font-bold text-lg hover:bg-uber-chip transition shadow-sm">
+            <a href="mailto:support@jatara.com" class="flex items-center justify-center gap-4 bg-uber-white text-uber-black border border-gray-200 px-10 py-5 rounded-full font-bold text-lg hover:bg-uber-chip transition shadow-sm">
                 <i class="fas fa-envelope text-lg"></i>
                 Kirimkan Email
             </a>

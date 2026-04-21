@@ -36,20 +36,17 @@ class BookingController extends Controller
         $start = Carbon::parse($request->start_date);
         $end = Carbon::parse($request->end_date);
         $days = $start->diffInDays($end);
-        if($days <= 0) $days = 1;
+        if ($days <= 0) $days = 1;
 
-        $serviceFee = 0;
         $subtotal = $vehicle->price_per_day * $days;
         $totalPrice = $subtotal;
 
         $bookingData = [
             'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'days' => $days,
-            'subtotal' => $subtotal,
-            'service_fee' => $serviceFee,
+            'end_date'   => $request->end_date,
+            'days'       => $days,
+            'subtotal'   => $subtotal,
             'total_price' => $totalPrice,
-            'delivery_fee_amount' => 50000,
         ];
 
         return view('checkout', compact('vehicle', 'bookingData'));
@@ -66,8 +63,6 @@ class BookingController extends Controller
             'end_date'   => 'required|date|after:start_date',
             'ktp_photo'  => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'sim_photo'  => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'delivery_type' => 'required|in:self-pickup,delivery',
-            'delivery_location' => 'required_if:delivery_type,delivery|nullable|string',
         ]);
 
         $vehicle = Vehicle::findOrFail($request->vehicle_id);
@@ -76,39 +71,59 @@ class BookingController extends Controller
         $start = Carbon::parse($request->start_date);
         $end = Carbon::parse($request->end_date);
         $days = $start->diffInDays($end);
-        
-        if($days <= 0) $days = 1;
+
+        if ($days <= 0) $days = 1;
 
         // Hitung total harga
-        $serviceFee = $request->delivery_type === 'delivery' ? 50000 : 0;
-        $totalPrice = ($vehicle->price_per_day * $days) + $serviceFee;
+        $totalPrice = $vehicle->price_per_day * $days;
 
-        // Upload KTP & SIM
-        $ktpPath = $request->file('ktp_photo')->store('verifikasi', 'public');
-        $simPath = $request->file('sim_photo')->store('verifikasi', 'public');
+        // Upload KTP & SIM (Keduanya opsional jika pakai driver)
+        $ktpPath = $request->hasFile('ktp_photo') ? $request->file('ktp_photo')->store('verifikasi', 'public') : null;
+        $simPath = $request->hasFile('sim_photo') ? $request->file('sim_photo')->store('verifikasi', 'public') : null;
+
+        // Cek bentrok jadwal (overlapping) untuk semua pesanan yang valid (belum dibatalkan/selesai)
+        $overlappingBookings = \App\Models\Booking::where('vehicle_id', $vehicle->id)
+            ->whereNotIn('status', ['Cancelled', 'Rejected', 'Completed'])
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                    ->orWhere(function ($q2) use ($request) {
+                        $q2->where('start_date', '<=', $request->start_date)
+                            ->where('end_date', '>=', $request->end_date);
+                    });
+            })->pluck('vehicle_unit_id');
+
+        // Cari 1 unit mobil yang TIDAK bentrok jadwalnya
+        $unit = $vehicle->units()
+            ->whereNotIn('id', $overlappingBookings)
+            ->where('status', '!=', 'maintenance')
+            ->first();
+
+        if (!$unit) {
+            return back()->with('error', 'Kendaraan ini sudah habis dipesan oleh orang lain untuk rentang tanggal yang dipilih.');
+        }
 
         // Simpan booking
         Booking::create([
-            'user_id'     => Auth::id(),
-            'vehicle_id'  => $vehicle->id,
-            'start_date'  => $request->start_date,
-            'end_date'    => $request->end_date,
-            'days'        => $days,
-            'total_price' => $totalPrice,
-            'status'      => 'Pending',
-            'note'        => $request->note ?? null,
-            'ktp_photo'   => $ktpPath,
-            'sim_photo'   => $simPath,
-            'delivery_type' => $request->delivery_type,
-            'delivery_location' => $request->delivery_type === 'delivery' ? $request->delivery_location : null,
-            'payment_status' => 'unpaid',
+            'user_id'         => Auth::id(),
+            'vehicle_id'      => $vehicle->id,
+            'vehicle_unit_id' => $unit->id,
+            'start_date'      => $request->start_date,
+            'end_date'        => $request->end_date,
+            'days'            => $days,
+            'total_price'     => $totalPrice,
+            'status'          => 'Pending',
+            'note'            => $request->note ?? null,
+            'ktp_photo'       => $ktpPath,
+            'sim_photo'       => $simPath,
+            'payment_status'  => 'unpaid',
         ]);
 
         return redirect()->route('booking.history')->with('success', 'Pesanan berhasil dibuat. KTP dan SIM Anda sedang diverifikasi admin sebelum Anda dapat membayar DP.');
     }
 
     /**
-     * Proses pembayaran (Simulasi)
+     * Proses pembayaran (Simulasi -> Callback via Frontend)
      */
     public function pay(Request $request, Booking $booking)
     {
@@ -117,13 +132,64 @@ class BookingController extends Controller
         $type = $request->payment_type;
         if ($type === 'dp' && $booking->payment_status === 'unpaid') {
             $booking->update(['payment_status' => 'dp_paid']);
-            return back()->with('success', 'Pembayaran DP 30% berhasil dikonfirmasi.');
+            return back()->with('success', 'Pembayaran DP 30% berhasil dikonfirmasi via Midtrans.');
         } elseif ($type === 'full' && $booking->payment_status === 'dp_paid') {
             $booking->update(['payment_status' => 'fully_paid']);
-            return back()->with('success', 'Pelunasan berhasil dikonfirmasi.');
+            return back()->with('success', 'Pelunasan berhasil dikonfirmasi via Midtrans.');
         }
 
         return back()->with('error', 'Pembayaran tidak valid.');
+    }
+
+    /**
+     * Generate Midtrans Snap Token
+     */
+    public function getSnapToken(Request $request, Booking $booking)
+    {
+        if ($booking->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $type = $request->payment_type;
+        $amount = 0;
+
+        if ($type === 'dp' && $booking->payment_status === 'unpaid') {
+            $amount = $booking->total_price * 0.3;
+        } elseif ($type === 'full' && $booking->payment_status === 'dp_paid') {
+            $amount = $booking->total_price * 0.7;
+        } else {
+            return response()->json(['error' => 'Status pembayaran tidak valid untuk aksi ini.'], 400);
+        }
+
+        \Midtrans\Config::$serverKey = config('midtrans.server_key', env('MIDTRANS_SERVER_KEY'));
+        \Midtrans\Config::$isProduction = config('midtrans.is_production', false);
+        \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized', true);
+        \Midtrans\Config::$is3ds = config('midtrans.is_3ds', true);
+        \Midtrans\Config::$curlOptions = [
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_HTTPHEADER => []
+        ];
+
+        $orderId = 'TRX-' . $booking->id . '-' . time() . '-' . strtoupper($type);
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => round($amount),
+            ],
+            'customer_details' => [
+                'first_name' => Auth::user()->name,
+                'email' => Auth::user()->email,
+            ]
+        ];
+
+        try {
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+            return response()->json(['snap_token' => $snapToken]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -136,26 +202,37 @@ class BookingController extends Controller
 
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'review' => 'nullable|string'
+            'review' => 'nullable|string',
         ]);
 
         $booking->update([
             'rating' => $request->rating,
-            'review' => $request->review
+            'review' => $request->review,
         ]);
 
         // Update rata-rata rating dan jumlah ulasan kendaraan
         $vehicle = $booking->vehicle;
-        $allRatings = Booking::where('vehicle_id', $vehicle->id)->whereNotNull('rating')->pluck('rating');
-        if($allRatings->count() > 0) {
-            $avg = $allRatings->average();
+        $allVehicleRatings = Booking::where('vehicle_id', $vehicle->id)->whereNotNull('rating')->pluck('rating');
+        if ($allVehicleRatings->count() > 0) {
+            $avg = $allVehicleRatings->average();
             $vehicle->update([
                 'rating' => number_format($avg, 1, '.', ''),
-                'reviews_count' => $allRatings->count()
+                'reviews_count' => $allVehicleRatings->count()
             ]);
         }
 
         return back()->with('success', 'Terima kasih atas ulasan Anda!');
+    }
+
+    /**
+     * Tampilkan bukti pesanan
+     */
+    public function receipt(Booking $booking)
+    {
+        if ($booking->user_id !== Auth::id()) abort(403);
+
+        $booking->load(['vehicle', 'user', 'vehicleUnit.pool']);
+        return view('user.receipt', compact('booking'));
     }
 
     /**
@@ -166,12 +243,27 @@ class BookingController extends Controller
         if ($booking->user_id !== Auth::id()) abort(403);
 
         $request->validate([
-            'status' => 'required|string|in:Active,Waiting_Pickup,Returning'
+            'status' => 'nullable|string|in:Active,Waiting_Pickup,Returning,Picked_Up',
+            'payment_status' => 'nullable|string|in:unpaid,dp_paid,fully_paid'
         ]);
 
+        $newStatus = $request->status ?? $booking->status;
         $booking->update([
-            'status' => $request->status
+            'status' => $newStatus,
+            'payment_status' => $request->payment_status ?? $booking->payment_status
         ]);
+
+        // SINKRONISASI LOGIKA STATUS MOBIL
+        $vehicle = $booking->vehicle;
+        if (in_array($newStatus, ['Active', 'Picked_Up', 'Waiting_Pickup', 'Returning'])) {
+            $vehicle->update(['status' => 'Disewa']);
+        }
+
+        if (in_array($newStatus, ['Completed', 'Cancelled', 'Rejected'])) {
+            if ($booking->vehicleUnit) {
+                $booking->vehicleUnit->update(['status' => 'tersedia']);
+            }
+        }
 
         return back()->with('success', 'Status pesanan berhasil diperbarui!');
     }

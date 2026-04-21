@@ -22,12 +22,31 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'), // Ini adalah cara aman menyimpan password
         ]);
 
+        User::create([
+            'name' => 'Mitra Bintang',
+            'partner_name' => 'CV Bintang Semesta',
+            'email' => 'mitra@gmail.com',
+            'role' => 'mitra',
+            'is_verified' => true,
+            'phone' => '08123456789',
+            'address' => 'Jl. Mitra Utama No. 1, Jakarta',
+            'password' => Hash::make('password123'),
+        ]);
+
+        $pool = \App\Models\Pool::create([
+            'name' => 'Pool Utama',
+            'address' => 'Jakarta Pusat',
+            'latitude' => -6.2088,
+            'longitude' => 106.8456
+        ]);
+
         // 2. BUAT DATA KENDARAAN (CONTOH)
-        Vehicle::create([
+        $v1 = Vehicle::create([
             'name' => 'Toyota Innova Zenix',
             'type' => 'MPV',
             'seats' => 7,
             'transmission' => 'Matic',
+            'domicile' => 'Jakarta',
             'price_per_day' => 650000,
             'image' => 'https://images.unsplash.com/photo-1570733577524-3a047079e80d?auto=format&fit=crop&q=80&w=600',
             'rating' => 4.9,
@@ -35,12 +54,14 @@ class DatabaseSeeder extends Seeder
             'status' => 'Tersedia',
             'description' => 'Mobil keluarga premium dengan kenyamanan maksimal dan teknologi Hybrid terbaru.'
         ]);
+        $v1->units()->create(['pool_id' => $pool->id, 'plate_number' => 'B 1234 ABC', 'status' => 'tersedia']);
 
-        Vehicle::create([
+        $v2 = Vehicle::create([
             'name' => 'Honda PCX 160',
             'type' => 'Motor',
             'seats' => 2,
             'transmission' => 'Matic',
+            'domicile' => 'Jakarta',
             'price_per_day' => 120000,
             'image' => 'https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&q=80&w=600',
             'rating' => 4.7,
@@ -48,12 +69,14 @@ class DatabaseSeeder extends Seeder
             'status' => 'Disewa',
             'description' => 'Motor matic bongsor yang sangat nyaman untuk berkeliling kota.'
         ]);
+        $v2->units()->create(['pool_id' => $pool->id, 'plate_number' => 'B 5555 XYZ', 'status' => 'disewa']);
 
-        Vehicle::create([
+        $v3 = Vehicle::create([
             'name' => 'Daihatsu Xenia',
             'type' => 'MPV',
             'seats' => 7,
             'transmission' => 'Manual',
+            'domicile' => 'Jakarta',
             'price_per_day' => 380000,
             'image' => 'https://images.unsplash.com/photo-1603553329474-99f95f35394f?auto=format&fit=crop&q=80&w=600',
             'rating' => 4.5,
@@ -61,5 +84,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'Tersedia',
             'description' => 'Mobil keluarga ekonomis yang tangguh untuk perjalanan jauh.'
         ]);
+        $v3->units()->create(['pool_id' => $pool->id, 'plate_number' => 'B 7777 LMN', 'status' => 'tersedia']);
     }
 }

@@ -23,6 +23,21 @@
 </div>
 @endif
 
+@if($errors->any())
+<div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-700 rounded-2xl">
+    <div class="flex items-center gap-3 mb-2">
+        <i class="fas fa-exclamation-circle text-red-600"></i>
+        <p class="text-sm font-bold">Terjadi Kesalahan:</p>
+    </div>
+    <ul class="list-disc list-inside text-xs font-medium space-y-1 ml-6">
+        @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
+
 {{-- ===== TOOLBAR ===== --}}
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
     <div class="flex gap-3 flex-wrap">
@@ -59,7 +74,6 @@
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Jenis</th>
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Transmisi</th>
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">BBM & CC</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Stok</th>
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Harga/Hari</th>
                     <th class="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
                     <th class="text-right px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Aksi</th>
@@ -77,7 +91,12 @@
                                 <img src="{{ $v->image ? asset('storage/' . $v->image) : 'https://placehold.co/600x400?text=No+Image' }}" class="w-full h-full object-cover" alt="{{ $v->name }}">
                             </div>
                             <div>
-                                <p class="font-semibold text-slate-900">{{ $v->name }}</p>
+                                <div class="flex items-center gap-2">
+                                    <p class="font-semibold text-slate-900">{{ $v->name }}</p>
+                                    @if($v->units->first() && $v->units->first()->plate_number)
+                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">{{ $v->units->first()->plate_number }}</span>
+                                    @endif
+                                </div>
                                 <p class="text-xs text-slate-400 font-medium">Rating: {{ $v->rating }} ({{ $v->reviews_count }} Ulasan)</p>
                             </div>
                         </div>
@@ -88,11 +107,6 @@
                     <td class="px-6 py-4">
                         <p class="text-xs font-bold text-slate-700">{{ $v->fuel_type ?? 'Bensin' }}</p>
                         <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ $v->engine_capacity ?? '1500' }} CC</p>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center justify-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
-                            {{ $v->units_count ?? 1 }} Unit
-                        </span>
                     </td>
                     <td class="px-6 py-4 font-bold text-blue-600">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</td>
                     <td class="px-6 py-4">
@@ -195,13 +209,14 @@
                     <input type="number" name="engine_capacity" id="f-cc" required placeholder="cth: 1500" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Stok Unit Armada</label>
-                    <input type="number" name="units_count" id="f-units" required placeholder="cth: 1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nomor Plat (Opsional)</label>
+                    <input type="text" name="plate_number" id="f-plate" placeholder="cth: B 1234 ABC" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all uppercase">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Harga / Hari (Rp)</label>
                     <input type="number" name="price_per_day" id="f-price" required placeholder="cth: 650000" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status</label>
                     <select name="status" id="f-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:bg-white transition-all">
@@ -412,8 +427,9 @@
         document.getElementById('f-seats').value = vehicle.seats;
         document.getElementById('f-fuel').value = vehicle.fuel_type || 'Bensin';
         document.getElementById('f-cc').value = vehicle.engine_capacity || 1500;
-        document.getElementById('f-units').value = vehicle.units_count || 1;
+        document.getElementById('f-plate').value = (vehicle.units && vehicle.units.length > 0) ? vehicle.units[0].plate_number : '';
         document.getElementById('f-price').value = vehicle.price_per_day;
+
         document.getElementById('f-desc').value = vehicle.description || '';
         
         if (vehicle.image) {

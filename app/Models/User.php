@@ -19,11 +19,30 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'partner_name',
         'email',
         'phone',
+        'address',
         'role',
+        'is_verified',
         'password',
+        'pool_id',
     ];
+
+    public function pool()
+    {
+        return $this->belongsTo(Pool::class);
+    }
+
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class, 'mitra_id');
+    }
+
+
+    public function isSuperAdmin() { return $this->role === 'superadmin' || $this->role === 'admin'; }
+    public function isMitra()      { return $this->role === 'mitra'; }
+    public function isCustomer()   { return $this->role === 'customer' || $this->role === 'user'; }
 
     /**
      * The attributes that should be hidden for serialization.

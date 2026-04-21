@@ -17,4 +17,10 @@ class Booking extends Model
     {
         return $this->belongsTo(Vehicle::class);
     }
+
+
+    public function vehicleUnit()
+    {
+        return $this->belongsTo(VehicleUnit::class);
+    }
 }

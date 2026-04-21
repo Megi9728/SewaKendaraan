@@ -11,7 +11,13 @@ class VehicleController extends Controller
 {
     public function index()
     {
-        $vehicles = Vehicle::with('images')->latest()->get();
+        if (auth()->user()->isMitra()) {
+            $mitraId = auth()->id();
+            $vehicles = Vehicle::where('mitra_id', $mitraId)->with(['images', 'units.pool'])->latest()->get();
+            return view('mitra.vehicles.index', compact('vehicles'));
+        }
+
+        $vehicles = Vehicle::with(['images', 'units.pool'])->latest()->get();
         return view('admin.vehicles.index', compact('vehicles'));
     }
 
@@ -24,14 +30,17 @@ class VehicleController extends Controller
             'transmission' => 'required',
             'fuel_type' => 'nullable|string',
             'engine_capacity' => 'nullable|integer',
-            'units_count' => 'required|integer',
             'price_per_day' => 'required|integer',
             'status' => 'required',
             'domicile' => 'required|string',
+            'plate_number' => 'nullable|string|max:50|unique:vehicle_units,plate_number',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'gallery' => 'nullable|array',
             'gallery.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'pool_address' => 'nullable|string',
         ]);
 
         if ($request->hasFile('image')) {
@@ -39,7 +48,17 @@ class VehicleController extends Controller
             $validated['image'] = $imagePath;
         }
 
-        $vehicle = Vehicle::create(collect($validated)->except(['gallery'])->toArray());
+        $validated['plate_number'] = strtoupper($validated['plate_number']);
+
+        if (auth()->user()->isMitra()) {
+            $validated['mitra_id'] = auth()->id();
+
+            if (!auth()->user()->pool_id) {
+                return redirect()->back()->withErrors(['pool' => 'Silakan set lokasi pool Anda di halaman Profil terlebih dahulu.'])->withInput();
+            }
+        }
+
+        $vehicle = Vehicle::create(collect($validated)->except(['gallery', 'plate_number', 'latitude', 'longitude', 'pool_address'])->toArray());
 
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
@@ -48,11 +67,32 @@ class VehicleController extends Controller
             }
         }
 
+        $poolId = auth()->user()->pool_id;
+
+        // Buatkan pool default jika admin yang add vehicle
+        if (!$poolId) {
+            $pool = \App\Models\Pool::firstOrCreate(
+                ['name' => 'Pool ' . $validated['domicile']],
+                ['address' => $validated['domicile']]
+            );
+            $poolId = $pool->id;
+        }
+
+        $vehicle->units()->create([
+            'vehicle_id' => $vehicle->id,
+            'pool_id' => $poolId,
+            'plate_number' => $request->plate_number,
+            'status' => strtolower($validated['status'])
+        ]);
+
         return redirect()->back()->with('success', 'Kendaraan berhasil ditambahkan!');
     }
 
     public function update(Request $request, Vehicle $vehicle)
     {
+        $unit = $vehicle->units()->first();
+        $unitId = $unit ? $unit->id : null;
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required',
@@ -60,14 +100,17 @@ class VehicleController extends Controller
             'transmission' => 'required',
             'fuel_type' => 'nullable|string',
             'engine_capacity' => 'nullable|integer',
-            'units_count' => 'required|integer',
             'price_per_day' => 'required|integer',
             'status' => 'required',
             'domicile' => 'required|string',
+            'plate_number' => 'nullable|string|max:50|unique:vehicle_units,plate_number' . ($unitId ? ',' . $unitId : ''),
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'gallery' => 'nullable|array',
             'gallery.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'pool_address' => 'nullable|string',
         ]);
 
         if ($request->hasFile('image')) {
@@ -83,13 +126,35 @@ class VehicleController extends Controller
             $validated['image'] = null;
         }
 
-        $vehicle->update(collect($validated)->except(['gallery'])->toArray());
+        $validated['plate_number'] = strtoupper($validated['plate_number']);
+
+        $vehicle->update(collect($validated)->except(['gallery', 'plate_number', 'latitude', 'longitude', 'pool_address', 'remove_main_image'])->toArray());
 
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
                 $path = $image->store('vehicles/gallery', 'public');
                 $vehicle->images()->create(['image_path' => $path]);
             }
+        }
+
+        $pool = \App\Models\Pool::firstOrCreate(
+            ['name' => 'Pool ' . $validated['domicile']],
+            ['address' => $validated['domicile']]
+        );
+
+        $unit = $vehicle->units()->first();
+        if (!$unit) {
+            $vehicle->units()->create([
+                'vehicle_id' => $vehicle->id,
+                'pool_id' => $pool->id,
+                'plate_number' => $request->plate_number,
+                'status' => strtolower($validated['status'])
+            ]);
+        } else {
+            $unit->update([
+                'plate_number' => $request->plate_number,
+                'status' => strtolower($validated['status'])
+            ]);
         }
 
         return redirect()->back()->with('success', 'Kendaraan berhasil diperbarui!');

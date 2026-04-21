@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Autentikasi') - RentDrive</title>
+    <title>@yield('title', 'Autentikasi') - Jatara</title>
     
     {{-- Tailwind CSS & Inter Font --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -61,7 +61,7 @@
 
         <div class="relative z-10">
             <a href="{{ route('home') }}" class="text-3xl font-black tracking-tighter">
-                RentDrive.
+                Jatara.
             </a>
         </div>
 
@@ -86,7 +86,7 @@
         </div>
 
         <div class="relative z-10 text-xs font-bold text-uber-muted uppercase tracking-widest">
-            &copy; {{ date('Y') }} RentDrive Technologies Inc.
+            &copy; {{ date('Y') }} Jatara Technologies Inc.
         </div>
     </div>
 
