@@ -4,7 +4,7 @@
 
 @push('styles')
 <style>
-    .tab-btn.active { border-bottom: 2px solid #000000; color: #000000; font-weight: 700; }
+    .tab-btn.active { border-bottom: 2px solid #0A174E; color: #0A174E; font-weight: 700; }
     .tab-content.active { display: block; }
     input[type="date"]::-webkit-calendar-picker-indicator {
         filter: invert(0);
@@ -16,8 +16,8 @@
     .swiper-button-next:after, .swiper-button-prev:after { font-size: 32px; font-weight: 900; }
     .swiper-button-next { right: 20px; }
     .swiper-button-prev { left: 20px; }
-    .swiper-pagination-bullet-active { background: #000 !important; }
-    .thumbnail-item.active { border-color: #000 !important; }
+    .swiper-pagination-bullet-active { background: #0A174E !important; }
+    .thumbnail-item.active { border-color: #0A174E !important; }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpush
@@ -26,12 +26,12 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
     {{-- Breadcrumb (Uber style) --}}
-    <nav class="flex items-center gap-2 text-xs font-bold text-uber-muted mb-8 uppercase tracking-widest">
-        <a href="{{ route('home') }}" class="hover:text-uber-black transition-colors">Beranda</a>
+    <nav class="flex items-center gap-2 text-xs font-bold text-[#8F8F7E] mb-8 uppercase tracking-widest">
+        <a href="{{ route('home') }}" class="hover:text-[#0A174E] transition-colors">Beranda</a>
         <i class="fas fa-chevron-right text-[8px]"></i>
-        <a href="{{ route('browse') }}" class="hover:text-uber-black transition-colors">Armada</a>
+        <a href="{{ route('browse') }}" class="hover:text-[#0A174E] transition-colors">Armada</a>
         <i class="fas fa-chevron-right text-[8px]"></i>
-        <span class="text-uber-black">{{ $vehicle->name }}</span>
+        <span class="text-[#0A174E]">{{ $vehicle->name }}</span>
     </nav>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20">
@@ -40,7 +40,7 @@
         <div class="lg:col-span-2">
 
             {{-- Main Image Slider --}}
-            <div class="swiper vehicle-swiper rounded-xl overflow-hidden aspect-[16/9] relative border border-gray-100 bg-uber-chip">
+            <div class="swiper vehicle-swiper rounded-xl overflow-hidden aspect-[16/9] relative border border-gray-100 bg-[#F9F9F5]">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
                         <img src="{{ $vehicle->image ? (strpos($vehicle->image, 'http') === 0 ? $vehicle->image : asset('storage/' . $vehicle->image)) : 'https://placehold.co/1200x800?text=No+Image' }}"
@@ -60,9 +60,9 @@
                 {{-- Badges --}}
                 <div class="absolute top-5 left-5 flex gap-2 z-10 pointer-events-none">
                     @if($vehicle->available_units_count >= 1)
-                        <span class="bg-uber-white text-uber-black text-[10px] font-bold px-3 py-1.5 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
+                        <span class="bg-uber-white text-[#0A174E] text-[10px] font-bold px-3 py-1.5 rounded shadow-sm border border-gray-100 uppercase tracking-widest">Tersedia</span>
                     @else
-                        <span class="bg-uber-black text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
+                        <span class="bg-[#0A174E] text-uber-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-widest">Tidak Tersedia</span>
                     @endif
                 </div>
             </div>
@@ -85,8 +85,8 @@
             <div class="mt-10 mb-8">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h1 class="text-4xl md:text-5xl font-bold text-uber-black tracking-tighter">{{ $vehicle->name }}</h1>
-                        <div class="flex items-center gap-2 mt-2 font-bold text-xs uppercase tracking-widest text-uber-muted">
+                        <h1 class="text-4xl md:text-5xl font-bold text-[#0A174E] tracking-tighter">{{ $vehicle->name }}</h1>
+                        <div class="flex items-center gap-2 mt-2 font-bold text-xs uppercase tracking-widest text-[#8F8F7E]">
                             <i class="fas fa-store"></i> Disediakan oleh: <span class="text-blue-600">{{ $vehicle->mitra->name ?? 'Jatara Official' }}</span>
                         </div>
                         <p class="text-uber-text font-medium mt-3 text-lg uppercase tracking-wide">
@@ -105,12 +105,12 @@
                         </div>
                     </div>
                     <div class="flex flex-col items-end">
-                        <div class="flex items-center gap-1.5 text-uber-black mb-1">
+                        <div class="flex items-center gap-1.5 text-[#0A174E] mb-1">
                             <i class="fas fa-star text-lg"></i>
                             <span class="text-xl font-bold">{{ $vehicle->rating }}</span>
-                            <span class="text-sm font-medium text-uber-muted ml-0.5">({{ $vehicle->reviews_count }} Ulasan)</span>
+                            <span class="text-sm font-medium text-[#8F8F7E] ml-0.5">({{ $vehicle->reviews_count }} Ulasan)</span>
                         </div>
-                        <span class="text-xs font-bold text-uber-muted uppercase tracking-widest">Skor User</span>
+                        <span class="text-xs font-bold text-[#8F8F7E] uppercase tracking-widest">Skor User</span>
                     </div>
                 </div>
             </div>
@@ -118,10 +118,10 @@
             {{-- Tabs (Uber style: Flat Underline) --}}
             <div class="mt-8 border-b border-gray-200">
                 <div class="flex gap-10">
-                    <button class="tab-btn pb-4 text-sm font-bold text-uber-muted hover:text-uber-black transition-all relative active" data-tab="tab-spek">Spesifikasi</button>
-                    <button class="tab-btn pb-4 text-sm font-bold text-uber-muted hover:text-uber-black transition-all relative" data-tab="tab-lokasi">Lokasi Pool</button>
-                    <button class="tab-btn pb-4 text-sm font-bold text-uber-muted hover:text-uber-black transition-all relative" data-tab="tab-ulasan">Ulasan Pengguna</button>
-                    <button class="tab-btn pb-4 text-sm font-bold text-uber-muted hover:text-uber-black transition-all relative" data-tab="tab-syarat">Ketentuan</button>
+                    <button class="tab-btn pb-4 text-sm font-bold text-[#8F8F7E] hover:text-[#0A174E] transition-all relative active" data-tab="tab-spek">Spesifikasi</button>
+                    <button class="tab-btn pb-4 text-sm font-bold text-[#8F8F7E] hover:text-[#0A174E] transition-all relative" data-tab="tab-lokasi">Lokasi Pool</button>
+                    <button class="tab-btn pb-4 text-sm font-bold text-[#8F8F7E] hover:text-[#0A174E] transition-all relative" data-tab="tab-ulasan">Ulasan Pengguna</button>
+                    <button class="tab-btn pb-4 text-sm font-bold text-[#8F8F7E] hover:text-[#0A174E] transition-all relative" data-tab="tab-syarat">Ketentuan</button>
                 </div>
             </div>
 
@@ -142,14 +142,14 @@
                     @endphp
                     @foreach($specs as $spec)
                     <div class="bg-gray-50 border border-gray-100 rounded-lg p-5 flex items-center gap-5">
-                        <div class="w-12 h-12 bg-uber-white border border-gray-200 text-uber-black rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div class="w-12 h-12 bg-uber-white border border-gray-200 text-[#0A174E] rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
                             <i class="{{ $spec['icon'] }} text-lg"></i>
                         </div>
                         <div>
-                            <p class="text-[10px] text-uber-muted font-bold uppercase tracking-widest mb-1">{{ $spec['label'] }}</p>
-                            <p class="font-bold text-uber-black text-sm">{{ $spec['value'] }}</p>
+                            <p class="text-[10px] text-[#8F8F7E] font-bold uppercase tracking-widest mb-1">{{ $spec['label'] }}</p>
+                            <p class="font-bold text-[#0A174E] text-sm">{{ $spec['value'] }}</p>
                             @if(isset($spec['note']))
-                                <p class="text-[10px] text-uber-muted mt-0.5 italic font-medium opacity-80">{{ $spec['note'] }}</p>
+                                <p class="text-[10px] text-[#8F8F7E] mt-0.5 italic font-medium opacity-80">{{ $spec['note'] }}</p>
                             @endif
                         </div>
                     </div>
@@ -172,11 +172,11 @@
                             <i class="fas fa-map-marker-alt text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.2em] mb-1">Titik Penjemputan</p>
-                            <p class="font-bold text-uber-black text-lg leading-tight">{{ $pool->address ?? 'Alamat tidak tersedia' }}</p>
+                            <p class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-[0.2em] mb-1">Titik Penjemputan</p>
+                            <p class="font-bold text-[#0A174E] text-lg leading-tight">{{ $pool->address ?? 'Alamat tidak tersedia' }}</p>
                         </div>
                     </div>
-                    <a href="https://www.google.com/maps/search/?api=1&query={{ $pool->latitude }},{{ $pool->longitude }}" target="_blank" class="bg-white border border-gray-200 text-uber-black font-bold px-6 py-3 rounded-xl text-xs hover:bg-gray-50 transition-all flex items-center gap-2 shadow-sm">
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ $pool->latitude }},{{ $pool->longitude }}" target="_blank" class="bg-white border border-gray-200 text-[#0A174E] font-bold px-6 py-3 rounded-xl text-xs hover:bg-gray-50 transition-all flex items-center gap-2 shadow-sm">
                         <i class="fas fa-directions"></i> PETUNJUK ARAH
                     </a>
                 </div>
@@ -187,14 +187,14 @@
                 <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                     <i class="fas fa-map-pin text-gray-300 text-2xl"></i>
                 </div>
-                <p class="text-sm font-bold text-uber-black mb-2">Koordinat Pool Belum Diatur</p>
-                <p class="text-xs text-uber-muted max-w-xs mx-auto leading-relaxed">
-                    Alamat terdaftar: <span class="text-uber-black">{{ $pool->address }}</span>. 
+                <p class="text-sm font-bold text-[#0A174E] mb-2">Koordinat Pool Belum Diatur</p>
+                <p class="text-xs text-[#8F8F7E] max-w-xs mx-auto leading-relaxed">
+                    Alamat terdaftar: <span class="text-[#0A174E]">{{ $pool->address }}</span>. 
                     Titik peta belum disetel oleh Mitra.
                 </p>
             </div>
             @else
-            <div class="py-20 text-center text-uber-muted bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+            <div class="py-20 text-center text-[#8F8F7E] bg-gray-50 rounded-3xl border border-dashed border-gray-200">
                 <i class="fas fa-map-marked-alt text-5xl mb-6 opacity-20"></i>
                 <p class="font-bold uppercase tracking-widest text-xs">Lokasi Pool Belum Tersedia</p>
             </div>
@@ -206,7 +206,7 @@
             <div id="tab-syarat" class="tab-content py-10 hidden">
                  <div class="max-w-2xl space-y-6">
                     @foreach (['KTP asli yang masih berlaku', 'SIM sesuai jenis kendaraan (A/C)', 'Deposit jaminan identitas', 'Minimal usia 21 tahun', 'Kendaraan dikembalikan dalam kondisi BBM awal'] as $s)
-                    <div class="flex items-start gap-4 text-uber-black">
+                    <div class="flex items-start gap-4 text-[#0A174E]">
                         <i class="fas fa-check mt-1 text-sm"></i>
                         <span class="text-sm font-bold leading-relaxed">{{ $s }}</span>
                     </div>
@@ -216,12 +216,12 @@
 
             {{-- Tab Content: Ulasan --}}
             <div id="tab-ulasan" class="tab-content py-10 hidden">
-                <div class="bg-uber-black text-uber-white rounded-xl p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 mb-10 overflow-hidden relative group/slider">
+                <div class="bg-[#0A174E] text-uber-white rounded-xl p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 mb-10 overflow-hidden relative group/slider">
                     
                     {{-- Left: Score --}}
                     <div class="text-center md:text-left flex-shrink-0 z-10 border-b md:border-b-0 md:border-r border-white/10 pb-8 md:pb-0 md:pr-12 w-full md:w-auto">
                         <p class="text-7xl font-bold mb-2 tracking-tighter">{{ $vehicle->rating }}</p>
-                        <p class="text-[10px] font-bold text-uber-muted uppercase tracking-[0.3em]">Peringkat Bintang</p>
+                        <p class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-[0.3em]">Peringkat Bintang</p>
                     </div>
 
                     {{-- Right: Reviews Slider --}}
@@ -238,7 +238,7 @@
                                     </div>
                                     <div>
                                         <p class="text-xs font-bold uppercase tracking-widest text-white">{{ $b->user->name }}</p>
-                                        <p class="text-[10px] font-bold text-uber-muted uppercase tracking-widest mt-0.5">{{ $b->created_at->format('d M Y') }}</p>
+                                        <p class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest mt-0.5">{{ $b->created_at->format('d M Y') }}</p>
                                     </div>
                                  </div>
                             </div>
@@ -247,7 +247,7 @@
                                  <p class="text-xl md:text-2xl font-medium leading-relaxed italic opacity-90">
                                     "Kualitas kenyamanan dan keamanan armada dijamin oleh platform kami melalui pemeliharaan berkala setiap bulannya."
                                  </p>
-                                 <p class="text-xs font-bold text-uber-muted uppercase tracking-widest mt-4">Pesan Layanan Kami</p>
+                                 <p class="text-xs font-bold text-[#8F8F7E] uppercase tracking-widest mt-4">Pesan Layanan Kami</p>
                             </div>
                             @endforelse
                         </div>
@@ -285,10 +285,10 @@
 
                 {{-- Price Banner --}}
                 <div class="mb-10 text-center">
-                    <p class="text-xs font-bold text-uber-muted uppercase tracking-[0.3em] mb-3">Tarif Harian</p>
+                    <p class="text-xs font-bold text-[#8F8F7E] uppercase tracking-[0.3em] mb-3">Tarif Harian</p>
                     <div class="flex items-baseline justify-center gap-2">
-                        <span class="text-5xl font-bold text-uber-black tracking-tighter">Rp {{ number_format($vehicle->price_per_day, 0, ',', '.') }}</span>
-                        <span class="text-uber-muted font-bold">/ hari</span>
+                        <span class="text-5xl font-bold text-[#0A174E] tracking-tighter">Rp {{ number_format($vehicle->price_per_day, 0, ',', '.') }}</span>
+                        <span class="text-[#8F8F7E] font-bold">/ hari</span>
                     </div>
                 </div>
 
@@ -300,31 +300,31 @@
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
 
                     <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-uber-muted uppercase tracking-widest block pl-1">Penjemputan</label>
+                        <label class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest block pl-1">Penjemputan</label>
                         <div class="relative">
-                            <i class="fas fa-calendar-alt absolute right-4 top-1/2 -translate-y-1/2 text-uber-muted z-10 pointer-events-none"></i>
-                            <input type="text" name="start_date" id="book-start" required placeholder="YYYY-MM-DD" class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
+                            <i class="fas fa-calendar-alt absolute right-4 top-1/2 -translate-y-1/2 text-[#8F8F7E] z-10 pointer-events-none"></i>
+                            <input type="text" name="start_date" id="book-start" required placeholder="YYYY-MM-DD" class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
                         </div>
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-uber-muted uppercase tracking-widest block pl-1">Pengembalian</label>
+                        <label class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest block pl-1">Pengembalian</label>
                         <div class="relative">
-                            <i class="fas fa-calendar-check absolute right-4 top-1/2 -translate-y-1/2 text-uber-muted z-10 pointer-events-none"></i>
-                            <input type="text" name="end_date" id="book-end" required placeholder="YYYY-MM-DD" class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
+                            <i class="fas fa-calendar-check absolute right-4 top-1/2 -translate-y-1/2 text-[#8F8F7E] z-10 pointer-events-none"></i>
+                            <input type="text" name="end_date" id="book-end" required placeholder="YYYY-MM-DD" class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
                         </div>
                     </div>
 
                     {{-- Estimasi (Auto show) --}}
                     <div id="price-breakdown" class="hidden bg-gray-50 rounded-lg p-5 border border-gray-100 space-y-4 animate-in fade-in transition-all duration-300 overflow-hidden">
                         <div class="flex justify-between items-center text-sm font-bold">
-                            <span class="text-uber-muted">Sewa <span id="days-count">0</span> hari</span>
-                            <span id="subtotal" class="text-uber-black">Rp 0</span>
+                            <span class="text-[#8F8F7E]">Sewa <span id="days-count">0</span> hari</span>
+                            <span id="subtotal" class="text-[#0A174E]">Rp 0</span>
                         </div>
                         <hr class="border-gray-200">
                         <div class="flex justify-between items-center pt-2">
-                            <span class="text-sm font-bold text-uber-black uppercase tracking-widest">Estimasi Total</span>
-                            <span id="grand-total" class="text-2xl font-bold text-uber-black">Rp 0</span>
+                            <span class="text-sm font-bold text-[#0A174E] uppercase tracking-widest">Estimasi Total</span>
+                            <span id="grand-total" class="text-2xl font-bold text-[#0A174E]">Rp 0</span>
                         </div>
                     </div>
 
@@ -333,17 +333,17 @@
                              Mulai Pesan Sekarang
                         </button>
                     @else
-                        <button type="button" disabled class="w-full bg-uber-chip border border-gray-100 text-uber-muted py-5 text-base font-bold cursor-not-allowed flex items-center justify-center gap-3">
+                        <button type="button" disabled class="w-full bg-[#F9F9F5] border border-gray-100 text-[#8F8F7E] py-5 text-base font-bold cursor-not-allowed flex items-center justify-center gap-3">
                              <i class="fas fa-times-circle"></i> Armada Sedang Tidak Tersedia
                         </button>
                     @endif
-                    <p class="text-center text-[10px] font-bold text-uber-muted uppercase tracking-widest">Aman • Terpercaya • Cepat</p>
+                    <p class="text-center text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest">Aman • Terpercaya • Cepat</p>
                 </form>
                 @else
                     <div class="space-y-6">
                         <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-uber-muted uppercase tracking-widest block pl-1">Pilih Tanggal</label>
-                            <input type="text" placeholder="Gunakan akun Anda untuk memesan" disabled class="w-full bg-uber-chip border-0 text-sm font-bold text-uber-black px-4 py-3.5 rounded-lg opacity-50 cursor-not-allowed">
+                            <label class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest block pl-1">Pilih Tanggal</label>
+                            <input type="text" placeholder="Gunakan akun Anda untuk memesan" disabled class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg opacity-50 cursor-not-allowed">
                         </div>
                         <a href="{{ route('login') }}" class="w-full btn-primary py-5 text-center block text-base font-bold shadow-uber">
                             Login Untuk Pesan
@@ -353,7 +353,7 @@
 
                 <div class="mt-8 pt-8 border-t border-gray-100">
                     <a href="https://wa.me/6281234567890" target="_blank"
-                        class="flex items-center justify-center gap-3 w-full bg-white border border-gray-200 text-uber-black hover:bg-uber-chip font-bold py-4 rounded-lg transition-all text-sm">
+                        class="flex items-center justify-center gap-3 w-full bg-white border border-gray-200 text-[#0A174E] hover:bg-[#F9F9F5] font-bold py-4 rounded-lg transition-all text-sm">
                         <i class="fab fa-whatsapp text-lg"></i> Hubungi Customer Service
                     </a>
                 </div>
@@ -365,10 +365,10 @@
     <div class="mt-28 border-t border-gray-200 pt-20 pb-20">
          <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
             <div>
-                <h2 class="text-4xl font-bold text-uber-black tracking-tight">Armada Lainnya</h2>
+                <h2 class="text-4xl font-bold text-[#0A174E] tracking-tight">Armada Lainnya</h2>
                 <p class="text-uber-text font-medium mt-2">Mungkin kendaraan ini juga cocok untuk Anda.</p>
             </div>
-            <a href="{{ route('browse') }}" class="text-xs font-bold text-uber-black uppercase border-b-2 border-uber-black pb-1">Lihat Semua Katalog</a>
+            <a href="{{ route('browse') }}" class="text-xs font-bold text-[#0A174E] uppercase border-b-2 border-[#0A174E] pb-1">Lihat Semua Katalog</a>
          </div>
 
          @php
@@ -381,15 +381,15 @@
          <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
             @foreach($related as $r)
             <div class="group border-0 border-b border-gray-100 pb-8 md:border-0 md:pb-0">
-                <a href="{{ route('vehicle.detail', $r->id) }}" class="block mb-6 relative aspect-video bg-uber-chip rounded-lg overflow-hidden">
+                <a href="{{ route('vehicle.detail', $r->id) }}" class="block mb-6 relative aspect-video bg-[#F9F9F5] rounded-lg overflow-hidden">
                     <img src="{{ $r->image ? (strpos($r->image, 'http') === 0 ? $r->image : asset('storage/' . $r->image)) : 'https://placehold.co/600x400?text=' . urlencode($r->name) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $r->name }}">
                 </a>
                 <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-xl font-bold text-uber-black">{{ $r->name }}</h3>
-                    <span class="font-bold text-uber-black">Rp {{ number_format($r->price_per_day, 0, ',', '.') }}</span>
+                    <h3 class="text-xl font-bold text-[#0A174E]">{{ $r->name }}</h3>
+                    <span class="font-bold text-[#0A174E]">Rp {{ number_format($r->price_per_day, 0, ',', '.') }}</span>
                 </div>
-                <p class="text-sm font-medium text-uber-muted">{{ $r->seats }} Kursi • {{ $r->transmission }}</p>
-                <a href="{{ route('vehicle.detail', $r->id) }}" class="mt-4 inline-block text-xs font-bold uppercase tracking-widest text-uber-black hover:underline underline-offset-4">Detail Unit <i class="fas fa-chevron-right text-[8px] ml-1"></i></a>
+                <p class="text-sm font-medium text-[#8F8F7E]">{{ $r->seats }} Kursi • {{ $r->transmission }}</p>
+                <a href="{{ route('vehicle.detail', $r->id) }}" class="mt-4 inline-block text-xs font-bold uppercase tracking-widest text-[#0A174E] hover:underline underline-offset-4">Detail Unit <i class="fas fa-chevron-right text-[8px] ml-1"></i></a>
             </div>
             @endforeach
          </div>
