@@ -7,277 +7,316 @@
 @endphp
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <div class="mb-8 text-center md:text-left">
-        <h1 class="text-3xl font-black text-slate-900 mb-2">Selesaikan <span class="text-blue-600">Pesanan</span></h1>
-        <p class="text-slate-500">Lengkapi data verifikasi untuk melanjutkan pemesanan</p>
-    </div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-10 lg:pt-36 lg:pb-16">
 
-    @if ($errors->any())
-        <div class="bg-red-50 text-red-600 p-4 rounded-xl mb-6 shadow-sm border border-red-100">
-            <ul class="list-disc pl-5 text-sm font-medium">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+        {{-- Header --}}
+        <div class="mb-10">
+            <a href="javascript:history.back()"
+                class="inline-flex items-center text-sm font-semibold text-[#8F8F7E] hover:text-[#0A174E] transition-colors mb-6">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
+            </a>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-[#0A174E] tracking-tight mb-3">Selesaikan pesanan.</h1>
+            <p class="text-[#8F8F7E] text-base md:text-lg font-medium">Lengkapi verifikasi data untuk segera memulai
+                perjalanan Anda.</p>
         </div>
-    @endif
 
-    <div class="flex flex-col lg:flex-row gap-8">
-        {{-- ==== BAGIAN KIRI: FORM VERIFIKASI ==== --}}
-        <div class="lg:w-2/3 space-y-8">
-            <div class="bg-white rounded-[2.5rem] p-8 md:p-10 border border-slate-100 shadow-2xl shadow-slate-200/50 relative overflow-hidden">
-                {{-- Decorative Element --}}
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                
-                <form action="{{ route('booking.store') }}" method="POST" enctype="multipart/form-data" id="checkout-form">
-                    @csrf
-                    <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
-                    <input type="hidden" name="start_date" value="{{ $bookingData['start_date'] }}">
-                    <input type="hidden" name="end_date" value="{{ $bookingData['end_date'] }}">
-                    <input type="hidden" name="delivery_type" value="self-pickup">
+        @if ($errors->any())
+            <div class="bg-red-50 text-red-600 p-5 rounded-2xl mb-8 border border-red-100">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span class="font-bold">Terdapat kesalahan:</span>
+                </div>
+                <ul class="list-disc pl-8 text-sm font-medium">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('booking.store') }}" method="POST" enctype="multipart/form-data" id="checkout-form">
+            @csrf
+            <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
+            <input type="hidden" name="start_date" value="{{ $bookingData['start_date'] }}">
+            <input type="hidden" name="end_date" value="{{ $bookingData['end_date'] }}">
+            <input type="hidden" name="delivery_type" value="self-pickup">
+
+            <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
+
+                {{-- ==== BAGIAN KIRI: FORM VERIFIKASI ==== --}}
+                <div class="lg:w-2/3 space-y-8">
 
                     {{-- Section 1: Identitas --}}
-                    <div id="identity_section" class="relative transition-all duration-300">
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-500/20">
-                                <i class="fas fa-id-card text-lg"></i>
-                            </div>
+                    <div
+                        class="bg-white border border-[#EBEBDF] rounded-[2rem] p-6 sm:p-8 lg:p-10 shadow-[0_2px_20px_rgb(0,0,0,0.02)]">
+                        <h2 class="text-2xl font-bold text-[#0A174E] mb-2">Berkas Keamanan</h2>
+                        <p class="text-[#8F8F7E] text-sm mb-8 font-medium">Syarat wajib pendaftaran lepas kunci. Data Anda
+                            dienkripsi dan aman.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {{-- KTP --}}
                             <div>
-                                <h2 class="text-2xl font-black text-slate-900 leading-tight">Berkas Verifikasi</h2>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Identitas Penyewa Terdaftar</p>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-slate-50/50 rounded-[2rem] p-8 border border-slate-100/80 mb-10">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div class="group">
-                                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-4 ml-1">Unggah Foto KTP <span class="text-red-500">*</span></label>
-                                    <div class="relative">
-                                        <input type="file" name="ktp_photo" id="ktp_photo" accept="image/*" required class="w-full text-slate-900 text-xs file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:tracking-widest file:bg-slate-900 file:text-white hover:file:bg-slate-800 transition-all cursor-pointer">
+                                <label class="block text-sm font-semibold text-[#0A174E] mb-3">Foto KTP Asli <span
+                                        class="text-red-500">*</span></label>
+                                <div class="relative group cursor-pointer">
+                                    <div
+                                        class="absolute inset-0 bg-[#F9F9F5] border-2 border-dashed border-[#D4D4C3] rounded-2xl group-hover:border-[#F5D042] group-hover:bg-[#F5D042]/5 transition-all duration-300">
                                     </div>
-                                </div>
-                                <div id="sim_upload_wrapper" class="group transition-all duration-300">
-                                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-4 ml-1">Unggah Foto SIM (A/C) <span class="text-red-500">*</span></label>
-                                    <div class="relative">
-                                        <input type="file" name="sim_photo" id="sim_photo" accept="image/*" required class="w-full text-slate-900 text-xs file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:tracking-widest file:bg-slate-900 file:text-white hover:file:bg-slate-800 transition-all cursor-pointer">
+                                    <div
+                                        class="relative p-8 flex flex-col items-center justify-center text-center pointer-events-none">
+                                        <div
+                                            class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#8F8F7E] group-hover:text-[#F5D042] mb-4 transition-colors shadow-sm">
+                                            <i class="fas fa-id-card text-xl"></i>
+                                        </div>
+                                        <span class="text-sm font-bold text-[#0A174E]">Pilih Dokumen KTP</span>
+                                        <span class="text-xs text-[#8F8F7E] mt-1">Maks. 2MB (JPG/PNG)</span>
                                     </div>
+                                    <input type="file" name="ktp_photo" id="ktp_photo" accept="image/*" required
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        onchange="previewText('ktp_photo', this)">
                                 </div>
+                                <p id="label_ktp_photo"
+                                    class="text-xs font-semibold text-[#0A174E] mt-2 hidden text-center truncate px-2"></p>
                             </div>
-                            <p class="mt-6 text-[10px] text-slate-400 font-bold leading-relaxed flex items-center gap-2">
-                                <i class="fas fa-info-circle text-blue-500"></i>
-                                Pastikan berkas terlihat jelas dan tidak terpotong (Format: JPG, PNG, maks 2MB).
-                            </p>
+
+                            {{-- SIM --}}
+                            <div>
+                                <label class="block text-sm font-semibold text-[#0A174E] mb-3">Foto SIM A/C <span
+                                        class="text-red-500">*</span></label>
+                                <div class="relative group cursor-pointer">
+                                    <div
+                                        class="absolute inset-0 bg-[#F9F9F5] border-2 border-dashed border-[#D4D4C3] rounded-2xl group-hover:border-[#F5D042] group-hover:bg-[#F5D042]/5 transition-all duration-300">
+                                    </div>
+                                    <div
+                                        class="relative p-8 flex flex-col items-center justify-center text-center pointer-events-none">
+                                        <div
+                                            class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#8F8F7E] group-hover:text-[#F5D042] mb-4 transition-colors shadow-sm">
+                                            <i class="fas fa-car-side text-xl"></i>
+                                        </div>
+                                        <span class="text-sm font-bold text-[#0A174E]">Pilih Dokumen SIM</span>
+                                        <span class="text-xs text-[#8F8F7E] mt-1">Maks. 2MB (JPG/PNG)</span>
+                                    </div>
+                                    <input type="file" name="sim_photo" id="sim_photo" accept="image/*" required
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        onchange="previewText('sim_photo', this)">
+                                </div>
+                                <p id="label_sim_photo"
+                                    class="text-xs font-semibold text-[#0A174E] mt-2 hidden text-center truncate px-2"></p>
+                            </div>
                         </div>
                     </div>
 
                     {{-- Section 2: Lokasi Pool --}}
-                    <div class="relative">
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="w-12 h-12 bg-blue-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-900/20">
-                                <i class="fas fa-map-marked-alt text-lg"></i>
+                    <div class="bg-white border border-[#EBEBDF] rounded-[2rem] p-6 sm:p-8 lg:p-10 shadow-[0_2px_20px_rgb(0,0,0,0.02)]"
+                        id="pool_map_section">
+                        <h2 class="text-2xl font-bold text-[#0A174E] mb-2">Lokasi Penjemputan</h2>
+                        <p class="text-[#8F8F7E] text-sm mb-8 font-medium">Titik pengambilan armada mandiri secara langsung.
+                        </p>
+
+                        @if ($checkoutPool && $checkoutPool->latitude && $checkoutPool->longitude)
+                            <div
+                                class="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#F9F9F5] p-5 rounded-2xl border border-[#EBEBDF]">
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-[#EBEBDF] text-[#0A174E] flex-shrink-0">
+                                        <i class="fas fa-map-pin"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-[#0A174E] mb-1">{{ $checkoutPool->name }}</p>
+                                        <p class="text-xs text-[#8F8F7E] font-medium leading-relaxed">
+                                            {{ $checkoutPool->address }}</p>
+                                    </div>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ $checkoutPool->latitude }},{{ $checkoutPool->longitude }}"
+                                    target="_blank"
+                                    class="flex-shrink-0 text-xs font-bold text-[#0A174E] hover:text-[#F5D042] bg-white border border-[#EBEBDF] px-4 py-2.5 rounded-xl hover:border-[#F5D042] transition-colors text-center w-full sm:w-auto">
+                                    Tampilkan Rute
+                                </a>
+                            </div>
+                            <div id="checkout-pool-map"
+                                class="w-full rounded-2xl overflow-hidden bg-[#F9F9F5] border border-[#EBEBDF] relative z-0"
+                                style="height: 250px;"></div>
+                        @else
+                            <div
+                                class="aspect-video w-full rounded-2xl overflow-hidden bg-[#F9F9F5] border border-[#EBEBDF] flex flex-col items-center justify-center text-[#8F8F7E]">
+                                <i class="fas fa-map-marked-alt text-3xl mb-3 opacity-40"></i>
+                                <p class="text-sm font-bold text-[#0A174E]">{{ $vehicle->domicile ?? 'Lokasi Pool' }}</p>
+                                <p class="text-xs mt-1">Titik penjemputan spesifik akan diinformasikan oleh mitra.</p>
+                            </div>
+                        @endif
+
+                        <div class="mt-6 flex items-start gap-3 bg-[#0A174E]/5 p-4 rounded-xl border border-[#0A174E]/10">
+                            <i class="fas fa-info-circle text-[#0A174E] mt-0.5"></i>
+                            <p class="text-xs font-medium text-[#0A174E] leading-relaxed">
+                                Pastikan Anda tiba sesuai jadwal. Tunjukkan bukti pemesanan aktif yang tampil di dasbor akun
+                                Anda saat pengambilan armada.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                {{-- ==== BAGIAN KANAN: RINGKASAN PESANAN ==== --}}
+                <div class="lg:w-1/3 relative">
+                    <div
+                        class="bg-white border border-[#EBEBDF] rounded-[2rem] p-6 lg:p-8 sticky top-28 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                        <h3 class="text-xl font-bold text-[#0A174E] mb-6">Ringkasan Sewa</h3>
+
+                        {{-- Kendaraan Info --}}
+                        <div class="flex gap-4 items-center">
+                            <div
+                                class="w-20 h-20 rounded-xl overflow-hidden bg-[#F9F9F5] flex-shrink-0 border border-[#EBEBDF]">
+                                <img src="{{ $vehicle->image ? asset('storage/' . $vehicle->image) : 'https://placehold.co/600x400?text=No+Image' }}"
+                                    class="w-full h-full object-cover">
                             </div>
                             <div>
-                                <h2 class="text-2xl font-black text-slate-900 leading-tight">Lokasi Pool</h2>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Titik Pengambilan Armada</p>
+                                <h4 class="font-bold text-[#0A174E] mb-1 line-clamp-1">{{ $vehicle->name }}</h4>
+                                <p
+                                    class="text-xs font-semibold text-[#8F8F7E] bg-[#F9F9F5] px-2 py-1 rounded inline-flex items-center gap-1">
+                                    <i class="fas fa-map-marker-alt text-[#F5D042]"></i>
+                                    {{ $vehicle->domicile ?? 'Jakarta' }}
+                                </p>
                             </div>
                         </div>
 
-                        <div id="pool_map_section" class="mt-0 mb-10">
-                            <div class="bg-white rounded-[2.5rem] p-8 border-2 border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden relative group">
-                                <div class="flex items-center gap-4 mb-6">
-                                    <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-500/20">
-                                        <i class="fas fa-map-marker-alt text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-black text-slate-900 text-lg leading-none">Lokasi Pool Utama</h3>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Titik Pengambilan Armada Mandiri</p>
-                                    </div>
-                                </div>
+                        <hr class="border-[#EBEBDF] my-6">
 
-                                @if($checkoutPool && $checkoutPool->latitude && $checkoutPool->longitude)
-                                <div class="mb-4 flex items-start gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    <i class="fas fa-map-pin text-slate-500 mt-0.5"></i>
-                                    <div>
-                                        <p class="text-xs font-black text-slate-700">{{ $checkoutPool->name }}</p>
-                                        <p class="text-[10px] text-slate-400 font-medium mt-0.5">{{ $checkoutPool->address }}</p>
-                                    </div>
-                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $checkoutPool->latitude }},{{ $checkoutPool->longitude }}" target="_blank" class="ml-auto flex-shrink-0 text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1">
-                                        <i class="fas fa-directions"></i> Rute
-                                    </a>
-                                </div>
-                                <div id="checkout-pool-map" class="w-full rounded-2xl overflow-hidden shadow-inner border border-slate-100 relative" style="height: 300px;"></div>
-                                @else
-                                <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-slate-400">
-                                    <i class="fas fa-map-marked-alt text-4xl mb-3 opacity-30"></i>
-                                    <p class="text-xs font-bold uppercase tracking-widest">{{ $vehicle->domicile ?? 'Lokasi Pool' }}</p>
-                                    <p class="text-[10px] mt-1 opacity-70">Koordinat belum diatur oleh mitra</p>
-                                </div>
-                                @endif
-
-                                <div class="mt-4 flex items-start gap-3 bg-red-50 p-4 rounded-xl border border-red-100">
-                                    <i class="fas fa-info-circle text-red-500 mt-0.5"></i>
-                                    <p class="text-[10px] font-bold text-red-700 leading-relaxed uppercase tracking-tighter">
-                                        Harap tunjukkan kode booking ini saat pengambilan di pool {{ $checkoutPool->name ?? $vehicle->domicile ?? 'Jakarta' }}. Jam operasional Pool: 08.00 - 20.00 WIB.
-                                    </p>
-                                </div>
+                        {{-- Waktu Sewa --}}
+                        <div
+                            class="flex justify-between items-center bg-[#F9F9F5] p-4 rounded-2xl border border-[#EBEBDF]">
+                            <div class="text-left w-1/2">
+                                <p class="text-[10px] font-bold text-[#8F8F7E] uppercase mb-1">Pengambilan</p>
+                                <p class="font-bold text-[#0A174E] text-sm">
+                                    {{ \Carbon\Carbon::parse($bookingData['start_date'])->format('d M Y') }}</p>
+                            </div>
+                            <div class="text-center px-2">
+                                <p
+                                    class="text-xs font-bold text-[#0A174E] bg-white border border-[#EBEBDF] rounded-full w-8 h-8 flex items-center justify-center shadow-sm">
+                                    {{ $bookingData['days'] }}
+                                </p>
+                                <p class="text-[9px] font-bold text-[#8F8F7E] uppercase mt-1">Hari</p>
+                            </div>
+                            <div class="text-right w-1/2">
+                                <p class="text-[10px] font-bold text-[#8F8F7E] uppercase mb-1">Pengembalian</p>
+                                <p class="font-bold text-[#0A174E] text-sm">
+                                    {{ \Carbon\Carbon::parse($bookingData['end_date'])->format('d M Y') }}</p>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="pt-8 text-center md:text-right">
-                        <button type="submit" class="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white font-black py-6 px-14 rounded-3xl transition-all shadow-2xl shadow-slate-200 active:scale-95 group flex items-center justify-center gap-4 text-lg">
-                            BUAT PESANAN SEKARANG
-                            <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:translate-x-2 transition-transform">
-                                <i class="fas fa-arrow-right text-xs"></i>
+                        <hr class="border-[#EBEBDF] my-6">
+
+                        {{-- Harga Total --}}
+                        <div class="flex justify-between items-end mb-8">
+                            <div>
+                                <p class="text-sm font-semibold text-[#8F8F7E] mb-1">Total Pembayaran</p>
+                                <p class="text-[10px] font-medium text-[#8F8F7E]">Termasuk PPN & Asuransi Dasar</p>
                             </div>
+                            <div class="text-right">
+                                <span class="block text-2xl font-extrabold text-[#0A174E] tracking-tight">Rp
+                                    {{ number_format($bookingData['subtotal'], 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-[#0A174E] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#F5D042] hover:text-[#0A174E] hover:shadow-[0_8px_20px_rgba(245,208,66,0.3)] transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 group">
+                            Konfirmasi Pesanan
+                            <i class="fas fa-chevron-right text-sm group-hover:translate-x-1 transition-transform"></i>
                         </button>
-                        <div class="flex flex-col md:flex-row items-center justify-center md:justify-end gap-6 mt-8">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-lock text-green-500 text-xs"></i>
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Enskripsi SSL 256-bit</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-shield-check text-blue-500 text-xs"></i>
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Garansi Layanan 24/7</span>
-                            </div>
+
+                        <div class="mt-4 flex justify-center text-[10px] font-semibold text-[#8F8F7E] gap-4">
+                            <span class="flex items-center gap-1.5"><i class="fas fa-lock text-[#0A174E]/30"></i> Enkripsi
+                                Aman</span>
+                            <span class="flex items-center gap-1.5"><i class="fas fa-shield-alt text-[#0A174E]/30"></i>
+                                Transaksi Terlindungi</span>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
-
-        {{-- ==== BAGIAN KANAN: RINGKASAN PESANAN ==== --}}
-        <div class="lg:w-1/3">
-            <div class="bg-white border border-slate-100 rounded-[2rem] shadow-xl p-6 md:p-8 top-24">
-                <h3 class="font-black text-slate-800 text-lg mb-6">Ringkasan Pesanan</h3>
-
-                {{-- Kendaraan Info --}}
-                <div class="flex gap-4 items-center mb-6 border-b border-slate-100 pb-6">
-                    <div class="w-24 h-16 rounded-lg overflow-hidden bg-slate-50">
-                        <img src="{{ $vehicle->image ? asset('storage/' . $vehicle->image) : 'https://placehold.co/600x400?text=No+Image' }}" class="w-full h-full object-cover">
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-slate-900">{{ $vehicle->name }}</h4>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"><i class="fas fa-map-marker-alt text-red-500"></i> {{ $vehicle->domicile ?? 'Jakarta' }}</p>
-                    </div>
-                </div>
-
-                {{-- Waktu Sewa --}}
-                <div class="space-y-4 mb-6 border-b border-slate-100 pb-6">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Mulai</p>
-                            <p class="font-semibold text-slate-800 text-sm">{{ \Carbon\Carbon::parse($bookingData['start_date'])->format('d M Y') }}</p>
-                        </div>
-                        <div class="w-10 border-b-2 border-dashed border-slate-200"></div>
-                        <div class="text-right">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Selesai</p>
-                            <p class="font-semibold text-slate-800 text-sm">{{ \Carbon\Carbon::parse($bookingData['end_date'])->format('d M Y') }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Rincian Biaya --}}
-                <div class="space-y-3 mb-6">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Rincian Biaya</p>
-                    <div class="flex justify-between text-sm text-slate-600">
-                        <span>Biaya Sewa × {{ $bookingData['days'] }} Hari</span>
-                        <span class="font-bold text-slate-800">Rp {{ number_format($bookingData['subtotal'], 0, ',', '.') }}</span>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
-                    <span class="font-bold text-slate-800">Total Bayar</span>
-                    <span class="text-2xl font-black text-blue-600">Rp {{ number_format($bookingData['subtotal'], 0, ',', '.') }}</span>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-</div>
 @endsection
 
 @push('scripts')
-<script>
-    // No extra scripts needed
-</script>
-<style>
-    .animate-fade-in {
-        animation: fadeIn 0.3s ease-in-out forwards;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    #checkout-pool-map {
-        height: 300px !important;
-        width: 100% !important;
-        display: block !important;
-        z-index: 1;
-        border-radius: 1rem;
-    }
-    #checkout-pool-map .leaflet-container {
-        border-radius: 1rem;
-    }
-</style>
-@endpush
-
-@if($checkoutPool && $checkoutPool->latitude && $checkoutPool->longitude)
-@push('scripts')
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    let checkoutMapInstance = null;
-
-    function initCheckoutMap() {
-        const poolSection = document.getElementById('pool_map_section');
-        if (!poolSection || poolSection.classList.contains('hidden')) return;
-
-        if (checkoutMapInstance) {
-            checkoutMapInstance.invalidateSize();
-            return;
+    <script>
+        // JS for showing selected file name cleanly
+        function previewText(id, input) {
+            if (input.files && input.files[0]) {
+                const label = document.getElementById('label_' + id);
+                label.textContent = "File: " + input.files[0].name;
+                label.classList.remove('hidden');
+            }
+        }
+    </script>
+    <style>
+        /* Prevent z-index overlap on maps */
+        #checkout-pool-map {
+            display: block !important;
+            z-index: 10;
+            border-radius: 1rem;
         }
 
-        const container = document.getElementById('checkout-pool-map');
-        if (!container) return;
+        #checkout-pool-map .leaflet-container {
+            border-radius: 1rem;
+        }
+    </style>
+@endpush
 
-        // Fix Leaflet default marker icons
-        delete L.Icon.Default.prototype._getIconUrl;
-        L.Icon.Default.mergeOptions({
-            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-            iconUrl:       'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-            shadowUrl:     'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        });
+@if ($checkoutPool && $checkoutPool->latitude && $checkoutPool->longitude)
+    @push('scripts')
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script>
+            let checkoutMapInstance = null;
 
-        const lat = {{ number_format($checkoutPool->latitude, 8, '.', '') }};
-        const lng = {{ number_format($checkoutPool->longitude, 8, '.', '') }};
+            function initCheckoutMap() {
+                const poolSection = document.getElementById('pool_map_section');
+                if (!poolSection || poolSection.classList.contains('hidden')) return;
 
-        checkoutMapInstance = L.map('checkout-pool-map', {
-            scrollWheelZoom: false,
-            zoomControl: true,
-        }).setView([lat, lng], 16);
+                if (checkoutMapInstance) {
+                    checkoutMapInstance.invalidateSize();
+                    return;
+                }
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            maxZoom: 19
-        }).addTo(checkoutMapInstance);
+                const container = document.getElementById('checkout-pool-map');
+                if (!container) return;
 
-        const marker = L.marker([lat, lng]).addTo(checkoutMapInstance);
-        marker.bindPopup(`
+                // Fix Leaflet default marker icons
+                delete L.Icon.Default.prototype._getIconUrl;
+                L.Icon.Default.mergeOptions({
+                    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+                });
+
+                const lat = {{ number_format($checkoutPool->latitude, 8, '.', '') }};
+                const lng = {{ number_format($checkoutPool->longitude, 8, '.', '') }};
+
+                checkoutMapInstance = L.map('checkout-pool-map', {
+                    scrollWheelZoom: false,
+                    zoomControl: true,
+                }).setView([lat, lng], 16);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    maxZoom: 19
+                }).addTo(checkoutMapInstance);
+
+                const marker = L.marker([lat, lng]).addTo(checkoutMapInstance);
+                marker.bindPopup(`
             <div style="font-family:'Inter',sans-serif; min-width:150px; padding:2px 0;">
                 <p style="font-weight:800;color:#121212;margin-bottom:4px;font-size:13px;">{{ $checkoutPool->name }}</p>
                 <p style="font-size:11px;color:#5e5e5e;line-height:1.4;margin:0;">{{ $checkoutPool->address }}</p>
             </div>
         `).openPopup();
 
-        setTimeout(() => { checkoutMapInstance.invalidateSize(); }, 400);
-    }
+                setTimeout(() => {
+                    checkoutMapInstance.invalidateSize();
+                }, 400);
+            }
 
-    // Override toggleOptionDetails tidak diperlukan lagi
-    // Render saat halaman sepenuhnya dimuat (termasuk Leaflet JS)
-    window.addEventListener('load', function() {
-        setTimeout(initCheckoutMap, 200);
-    });
-</script>
-@endpush
+            window.addEventListener('load', function() {
+                setTimeout(initCheckoutMap, 200);
+            });
+        </script>
+    @endpush
 @endif
