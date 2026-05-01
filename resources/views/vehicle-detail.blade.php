@@ -234,10 +234,10 @@
                                  </p>
                                  <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-full flex items-center justify-center text-sm font-bold border border-white/5 shadow-inner">
-                                        {{ substr($b->user->name, 0, 1) }}
+                                        {{ substr($b->customer->name, 0, 1) }}
                                     </div>
                                     <div>
-                                        <p class="text-xs font-bold uppercase tracking-widest text-white">{{ $b->user->name }}</p>
+                                        <p class="text-xs font-bold uppercase tracking-widest text-white">{{ $b->customer->name }}</p>
                                         <p class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest mt-0.5">{{ $b->created_at->format('d M Y') }}</p>
                                     </div>
                                  </div>
@@ -295,7 +295,7 @@
                 <hr class="border-gray-100 mb-10">
 
                 {{-- Booking Form --}}
-                @auth
+                @auth('customer')
                 <form action="{{ route('checkout', $vehicle->id) }}" method="GET" class="space-y-6">
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
 
@@ -303,7 +303,7 @@
                         <label class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest block pl-1">Penjemputan</label>
                         <div class="relative">
                             <i class="fas fa-calendar-alt absolute right-4 top-1/2 -translate-y-1/2 text-[#8F8F7E] z-10 pointer-events-none"></i>
-                            <input type="text" name="start_date" id="book-start" required placeholder="YYYY-MM-DD" class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
+                            <input type="text" name="start_date" id="book-start" required placeholder="YYYY-MM-DD HH:mm" class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
                         </div>
                     </div>
 
@@ -311,7 +311,7 @@
                         <label class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest block pl-1">Pengembalian</label>
                         <div class="relative">
                             <i class="fas fa-calendar-check absolute right-4 top-1/2 -translate-y-1/2 text-[#8F8F7E] z-10 pointer-events-none"></i>
-                            <input type="text" name="end_date" id="book-end" required placeholder="YYYY-MM-DD" class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
+                            <input type="text" name="end_date" id="book-end" required placeholder="YYYY-MM-DD HH:mm" class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-uber-black transition-all cursor-pointer">
                         </div>
                     </div>
 
@@ -474,7 +474,9 @@
             const e = new Date(endInput.value);
             if (isNaN(s) || isNaN(e) || e <= s) { priceBreakdown.classList.add('hidden'); return; }
 
-            const days = Math.ceil((e - s) / (1000*60*60*24));
+            const diffMs = e - s;
+            const hours = Math.ceil(diffMs / (1000 * 60 * 60));
+            const days = Math.ceil(hours / 24);
             const subtotal = days * pricePerDay;
 
             document.getElementById('days-count').textContent = days;
@@ -484,7 +486,9 @@
         }
 
         startPicker = flatpickr(startInput, {
-            dateFormat: "Y-m-d",
+            dateFormat: "Y-m-d H:i",
+            enableTime: true,
+            time_24hr: true,
             minDate: "today",
             disable: disabledDates,
             defaultDate: today,
@@ -503,7 +507,9 @@
         });
 
         endPicker = flatpickr(endInput, {
-            dateFormat: "Y-m-d",
+            dateFormat: "Y-m-d H:i",
+            enableTime: true,
+            time_24hr: true,
             minDate: tomorrow,
             disable: disabledDates,
             defaultDate: tomorrow,

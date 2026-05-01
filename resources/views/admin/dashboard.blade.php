@@ -7,7 +7,18 @@
 @section('content')
 
 {{-- ===== STAT CARDS ===== --}}
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-6 mb-10">
+    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7 flex items-start gap-5 hover:shadow-xl transition-all duration-500 group">
+        <div class="w-14 h-14 bg-teal-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-teal-100 group-hover:scale-110 transition-transform">
+            <i class="fas fa-handshake text-xl"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1">Total Mitra</p>
+            <p class="text-2xl font-black text-slate-900 leading-none">{{ $stats['total_mitra'] }} <span class="text-xs text-slate-400 font-bold">Mitra</span></p>
+            <p class="text-[10px] text-teal-600 font-bold mt-2 uppercase tracking-wider">Terdaftar</p>
+        </div>
+    </div>
+
     <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7 flex items-start gap-5 hover:shadow-xl transition-all duration-500 group">
         <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-100 group-hover:scale-110 transition-transform">
             <i class="fas fa-wallet text-xl"></i>
@@ -56,63 +67,18 @@
 {{-- ===== CONTENT GRID ===== --}}
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
 
-    {{-- Recent Bookings --}}
-    <div class="xl:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-        <div class="flex justify-between items-center px-8 py-7 border-b border-slate-50">
+    {{-- Chart Statistik Mitra --}}
+    <div class="xl:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden p-8">
+        <div class="flex justify-between items-center mb-6">
             <div>
-                <h2 class="text-xl font-black text-slate-900 leading-none">Aktivitas Terkini</h2>
-                <p class="text-xs text-slate-400 mt-2 font-medium">5 pesanan terbaru yang masuk ke sistem</p>
+                <h2 class="text-xl font-black text-slate-900 leading-none">Statistik Transaksi Mitra</h2>
+                <p class="text-xs text-slate-400 mt-2 font-medium">Performa transaksi 5 mitra teratas</p>
             </div>
-            <a href="{{ route('admin.booking.monitor') }}" class="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:translate-x-1 transition-transform">Lihat Semua <i class="fas fa-arrow-right"></i></a>
+            <a href="{{ route('admin.mitra.index') }}" class="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:translate-x-1 transition-transform">Kelola Mitra <i class="fas fa-arrow-right"></i></a>
         </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead class="bg-slate-50/50">
-                    <tr>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pelanggan</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Unit</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Durasi</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    @forelse($recentBookings as $b)
-                    <tr class="hover:bg-slate-50/30 transition-colors">
-                        <td class="px-8 py-5 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-black uppercase">
-                                {{ substr($b->user->name, 0, 1) }}
-                            </div>
-                            <p class="text-sm font-bold text-slate-800">{{ $b->user->name }}</p>
-                        </td>
-                        <td class="px-8 py-5 text-sm font-bold text-slate-600">{{ $b->vehicle->name }}</td>
-                        <td class="px-8 py-5 text-xs text-slate-400 font-bold italic">{{ $b->days }} Hari</td>
-                        <td class="px-8 py-5 text-sm font-black text-blue-600">Rp {{ number_format($b->total_price, 0, ',', '.') }}</td>
-                        <td class="px-8 py-5">
-                            @php
-                                $colors = [
-                                    'Pending' => 'bg-orange-100 text-orange-600',
-                                    'Confirmed' => 'bg-blue-100 text-blue-600',
-                                    'Completed' => 'bg-green-100 text-green-700',
-                                    'Cancelled' => 'bg-red-100 text-red-600',
-                                ];
-                            @endphp
-                            <span class="text-[10px] font-black px-3 py-1.5 rounded-lg {{ $colors[$b->status] ?? 'bg-slate-100 text-slate-600' }} uppercase tracking-widest">
-                                {{ $b->status }}
-                            </span>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="px-8 py-20 text-center">
-                            <i class="fas fa-mug-hot text-3xl text-slate-200 mb-3"></i>
-                            <p class="text-sm font-bold text-slate-400">Belum ada aktivitas pesanan hari ini.</p>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        
+        <div class="relative w-full h-[350px]">
+            <canvas id="mitraChart"></canvas>
         </div>
     </div>
 
@@ -158,7 +124,121 @@
             </div>
         </div>
 
+        {{-- Top Mitra --}}
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8">
+            <h2 class="text-xl font-black text-slate-900 mb-6">Top Mitra</h2>
+            <div class="space-y-4">
+                @forelse($topMitras as $mitra)
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-black uppercase text-xs">
+                            {{ substr($mitra->name, 0, 1) }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-900">{{ $mitra->name }}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">{{ $mitra->vehicles_count }} Armada</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-black text-blue-600">{{ $mitra->bookings_count }}</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Transaksi Selesai</p>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-6 text-slate-400">
+                    <p class="text-sm font-bold">Belum ada mitra.</p>
+                </div>
+                @endforelse
+            </div>
+            <a href="{{ route('admin.mitra.index') }}" class="mt-6 block text-center text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">Kelola Mitra</a>
+        </div>
+
     </div>
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('mitraChart').getContext('2d');
+        
+        // Data from server
+        const mitraData = @json($topMitras);
+        
+        const labels = mitraData.map(m => m.name);
+        const data = mitraData.map(m => m.bookings_count);
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jumlah Transaksi',
+                    data: data,
+                    backgroundColor: 'rgba(37, 99, 235, 0.8)', // blue-600
+                    borderColor: 'rgb(37, 99, 235)',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 11
+                            }
+                        },
+                        grid: {
+                            color: '#f1f5f9', // slate-100
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 12,
+                                weight: 'bold'
+                            },
+                            color: '#64748b' // slate-500
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleFont: {
+                            family: "'Inter', sans-serif",
+                            size: 13
+                        },
+                        bodyFont: {
+                            family: "'Inter', sans-serif",
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        padding: 12,
+                        cornerRadius: 12,
+                        displayColors: false
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush

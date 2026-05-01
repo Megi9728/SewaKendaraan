@@ -4,19 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
     /**
-     * Tampilkan semua pesanan pelanggan (Admin)
+     * Tampilkan semua pesanan (Admin: semua | Mitra: hanya miliknya)
      */
     public function index()
     {
-        $query = Booking::with(['user', 'vehicle']);
+        $query = Booking::with(['customer', 'vehicle', 'payment', 'driver', 'vehicleUnit']);
 
-        if (auth()->user()->isMitra()) {
-            $mitraId = auth()->id();
+        if (auth('mitra')->check()) {
+            $mitraId = auth('mitra')->id();
             $query->whereHas('vehicle', function ($q) use ($mitraId) {
                 $q->where('mitra_id', $mitraId);
             });
@@ -29,18 +30,18 @@ class BookingController extends Controller
     }
 
     /**
-     * Update status pesanan & Sinkronisasi status unit
+     * Update status pesanan + sinkronisasi status unit
      */
     public function update(Request $request, Booking $booking)
     {
-        // Cegah Mitra mengedit pesanan milik Mitra lain (IDOR Protection)
-        if (auth()->user()->isMitra() && $booking->vehicle->mitra_id !== auth()->id()) {
-            return redirect()->back()->withErrors('Akses Dibatalkan: Anda hanya dapat mengelola pesanan untuk kendaraan Anda sendiri.');
+        // IDOR Protection untuk Mitra
+        if (auth('mitra')->check() && $booking->vehicle->mitra_id !== auth('mitra')->id()) {
+            return redirect()->back()->withErrors('Akses Dibatalkan: Anda hanya dapat mengelola pesanan kendaraan Anda sendiri.');
         }
 
         $request->validate([
-            'status'           => 'required|string|in:Pending,Confirmed,Active,Picked_Up,Returning,Completed,Cancelled,Rejected',
-            'payment_status'   => 'nullable|string|in:unpaid,dp_paid,fully_paid',
+            'status'           => 'required|string|in:Pending,Confirmed,Active,Picked_Up,Returning,Completed,Cancelled,Rejected,On_the_Way',
+            'payment_status'   => 'nullable|string|in:unpaid,dp_paid,fully_paid,rejected',
             'rejection_reason' => 'required_if:status,Rejected|nullable|string',
         ]);
 
@@ -48,24 +49,57 @@ class BookingController extends Controller
 
         $booking->update([
             'status'           => $newStatus,
-            'payment_status'   => $request->payment_status ?? $booking->payment_status,
             'rejection_reason' => $request->rejection_reason ?? $booking->rejection_reason,
         ]);
 
-        // Sinkronisasi status unit kendaraan
-        $vehicle = $booking->vehicle;
+        // Update payment status jika dikirim
+        if ($request->filled('payment_status')) {
+            $booking->payment()->updateOrCreate(
+                ['booking_id' => $booking->id],
+                [
+                    'payment_status' => $request->payment_status,
+                    'payment_date'   => in_array($request->payment_status, ['dp_paid', 'fully_paid']) ? now() : null,
+                ]
+            );
+        }
 
-        if (in_array($newStatus, ['Confirmed', 'Active', 'Picked_Up', 'Returning'])) {
-            if (in_array($newStatus, ['Active', 'Picked_Up', 'Returning']) && $booking->vehicleUnit) {
-                $booking->vehicleUnit->update(['status' => 'disewa']);
-            }
+        // Sinkronisasi status unit kendaraan
+        if (in_array($newStatus, ['Active', 'Picked_Up', 'Returning', 'On_the_Way'])) {
+            $booking->vehicleUnit?->update(['status' => 'disewa']);
         } elseif (in_array($newStatus, ['Completed', 'Rejected', 'Cancelled'])) {
-            $vehicle->update(['status' => 'Tersedia']);
-            if ($booking->vehicleUnit) {
-                $booking->vehicleUnit->update(['status' => 'tersedia']);
+            $booking->vehicle->update(['status' => 'Tersedia']);
+            $booking->vehicleUnit?->update(['status' => 'tersedia']);
+
+            // Bebaskan driver jika ada
+            if ($booking->driver_id) {
+                $booking->driver?->update(['status' => 'available']);
             }
         }
 
         return redirect()->back()->with('success', 'Status pesanan berhasil diperbarui!');
+    }
+
+    /**
+     * Konfirmasi pembayaran manual (bukti transfer dari customer)
+     */
+    public function confirmPayment(Request $request, Booking $booking)
+    {
+        // IDOR check
+        if (auth('mitra')->check() && $booking->vehicle->mitra_id !== auth('mitra')->id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'payment_status'   => 'required|in:dp_paid,fully_paid,rejected',
+            'rejection_reason' => 'required_if:payment_status,rejected|nullable|string',
+        ]);
+
+        $booking->payment()->update([
+            'payment_status'   => $request->payment_status,
+            'rejection_reason' => $request->rejection_reason,
+            'payment_date'     => $request->payment_status !== 'rejected' ? now() : null,
+        ]);
+
+        return redirect()->back()->with('success', 'Status pembayaran berhasil diperbarui!');
     }
 }

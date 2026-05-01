@@ -7,14 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class VehicleUnit extends Model
 {
     protected $fillable = [
-        'vehicle_id', 
-        'pool_id', 
-        'plate_number', 
-        'status', 
-        'latitude', 
-        'longitude', 
+        'vehicle_id',
+        'pool_id',
+        'plate_number',
+        'status',
+        'latitude',
+        'longitude',
         'last_tracked_at',
-        'tracking_token'
+        'tracking_token',
+    ];
+
+    protected $casts = [
+        'last_tracked_at' => 'datetime',
     ];
 
     protected static function boot()
@@ -25,6 +29,7 @@ class VehicleUnit extends Model
         });
     }
 
+    // ─── Relasi ──────────────────────────────────────────────────────
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);

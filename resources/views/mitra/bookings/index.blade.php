@@ -12,7 +12,7 @@
                 ['label' => 'Total Pesanan', 'value' => $bookings->count(), 'icon' => 'fas fa-list', 'color' => 'blue'],
                 ['label' => 'Pending', 'value' => $bookings->where('status', 'Pending')->count(), 'icon' => 'fas fa-clock', 'color' => 'orange'],
                 ['label' => 'Terjadwal', 'value' => $bookings->where('status', 'Confirmed')->count(), 'icon' => 'fas fa-calendar-check', 'color' => 'blue'],
-                ['label' => 'Disewa', 'value' => $bookings->whereIn('status', ['Active','Picked_Up'])->count(), 'icon' => 'fas fa-car', 'color' => 'green'],
+                ['label' => 'Disewa', 'value' => $bookings->whereIn('status', ['Active','Picked_Up', 'On_the_Way'])->count(), 'icon' => 'fas fa-car', 'color' => 'green'],
                 ['label' => 'Selesai', 'value' => $bookings->where('status', 'Completed')->count(), 'icon' => 'fas fa-check-double', 'color' => 'slate'],
             ];
         @endphp
@@ -62,23 +62,36 @@
                         <td class="px-6 py-5">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px] font-black uppercase">
-                                    {{ substr($booking->user->name, 0, 1) }}
+                                    {{ substr($booking->customer->name, 0, 1) }}
                                 </div>
                                 <div class="min-w-0">
-                                    <p class="text-sm font-bold text-slate-800 truncate">{{ $booking->user->name }}</p>
-                                    <p class="text-[10px] text-slate-400 truncate">{{ $booking->user->email }}</p>
+                                    <p class="text-sm font-bold text-slate-800 truncate">{{ $booking->customer->name }}</p>
+                                    <p class="text-[10px] text-slate-400 truncate mb-0.5">{{ $booking->customer->email }}</p>
+                                    @if($booking->customer->phone)
+                                        <p class="text-[10px] text-slate-500 font-semibold truncate"><i class="fas fa-phone-alt text-[9px] mr-1"></i> {{ $booking->customer->phone }}</p>
+                                    @endif
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-5">
-                            <p class="font-bold text-slate-700 text-sm mb-2">{{ $booking->vehicle->name }}</p>
+                            <div class="flex items-center gap-2 mb-1">
+                                <p class="font-bold text-slate-700 text-sm">{{ $booking->vehicle->name }}</p>
+                                @if($booking->vehicleUnit && $booking->vehicleUnit->plate_number)
+                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">{{ $booking->vehicleUnit->plate_number }}</span>
+                                @endif
+                            </div>
+                            @if($booking->driver_fee > 0 || !is_null($booking->driver_id))
+                                <p class="text-[10px] text-purple-600 font-bold uppercase mb-3"><i class="fas fa-user-tie mr-1"></i> {{ $booking->driver->name ?? 'Menunggu Sopir' }}</p>
+                            @else
+                                <p class="text-[10px] text-orange-600 font-bold uppercase mb-3"><i class="fas fa-key mr-1"></i> Lepas Kunci</p>
+                            @endif
                             <div class="flex gap-2">
                                 @if($booking->status !== 'Completed')
                                     @if($booking->ktp_photo)
-                                    <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP - {{ $booking->user->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">KTP</button>
+                                    <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP - {{ $booking->customer->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">KTP</button>
                                     @endif
                                     @if($booking->sim_photo)
-                                    <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM - {{ $booking->user->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">SIM</button>
+                                    <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM - {{ $booking->customer->name }}')" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">SIM</button>
                                     @endif
                                 @else
                                     <span class="text-[9px] font-bold text-slate-400 italic"><i class="fas fa-lock mr-1"></i> Data Terkunci</span>
@@ -87,7 +100,7 @@
                         </td>
                         <td class="px-6 py-5">
                             <p class="text-xs text-slate-600 mb-1">
-                                {{ \Carbon\Carbon::parse($booking->start_date)->format('d/m') }} - {{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}
+                                {{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/y H:i') }} - {{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/y H:i') }}
                                 <span class="font-bold text-slate-400">({{ $booking->days }}x)</span>
                             </p>
                             <p class="text-sm font-black text-blue-600">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</p>
@@ -97,6 +110,7 @@
                                 $colors = [
                                     'Pending'   => 'bg-orange-100 text-orange-600',
                                     'Confirmed' => 'bg-blue-100 text-blue-600',
+                                    'On_the_Way' => 'bg-blue-100 text-blue-600',
                                     'Active'    => 'bg-indigo-100 text-indigo-600',
                                     'Picked_Up' => 'bg-indigo-100 text-indigo-600',
                                     'Returning' => 'bg-indigo-100 text-indigo-600',
@@ -147,15 +161,22 @@
                                     @elseif($booking->payment_status === 'fully_paid')
                                         <form action="{{ route('mitra.booking.update', $booking->id) }}" method="POST">
                                             @csrf @method('PUT')
-                                            <input type="hidden" name="status" value="Picked_Up">
-                                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
-                                                <i class="fas fa-key"></i> KONFIRMASI DIAMBIL
-                                            </button>
+                                            @if($booking->driver_fee > 0)
+                                                <input type="hidden" name="status" value="On_the_Way">
+                                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+                                                    <i class="fas fa-paper-plane"></i> KONFIRMASI BERANGKAT
+                                                </button>
+                                            @else
+                                                <input type="hidden" name="status" value="Picked_Up">
+                                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+                                                    <i class="fas fa-key"></i> KONFIRMASI DIAMBIL
+                                                </button>
+                                            @endif
                                         </form>
                                     @endif
                                 @endif
 
-                                @if(in_array($booking->status, ['Active', 'Picked_Up', 'Returning']))
+                                @if(in_array($booking->status, ['Active', 'Picked_Up', 'Returning', 'On_the_Way']))
                                     <form action="{{ route('mitra.booking.update', $booking->id) }}" method="POST">
                                         @csrf @method('PUT')
                                         <input type="hidden" name="status" value="Completed">

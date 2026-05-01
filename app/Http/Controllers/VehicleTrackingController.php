@@ -28,11 +28,11 @@ class VehicleTrackingController extends Controller
 
     public function monitor()
     {
-        $mitraId = auth()->id();
+        $mitraId  = auth('mitra')->id();
         $vehicles = Vehicle::where('mitra_id', $mitraId)
             ->with('units')
             ->get();
-            
+
         return view('mitra.monitoring', compact('vehicles'));
     }
 

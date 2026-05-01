@@ -1,3 +1,7 @@
+@php
+    $user = auth('admin')->user() ?? auth('mitra')->user();
+    $role = auth('admin')->check() ? 'admin' : (auth('mitra')->check() ? 'mitra' : null);
+@endphp
 {{-- ===== SIDEBAR ===== --}}
 <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-80 bg-slate-900 flex flex-col shadow-2xl">
 
@@ -15,7 +19,7 @@
         <div>
             <p class="px-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Navigasi</p>
             <div class="space-y-1">
-                @if (Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin')
+                @if ($role === 'admin')
                     <a href="{{ route('admin.dashboard') }}"
                         class="sidebar-link {{ Request::routeIs('admin.dashboard') ? 'active' : '' }}">
                         <i class="icon fas fa-chart-line"></i>
@@ -41,7 +45,7 @@
                                 class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full ring-4 ring-slate-900">{{ $pendingCount }}</span>
                         @endif
                     </a>
-                @elseif(Auth::user()->role === 'mitra')
+                @elseif($role === 'mitra')
                     <a href="{{ route('mitra.dashboard') }}"
                         class="sidebar-link {{ Request::routeIs('mitra.dashboard') ? 'active' : '' }}">
                         <i class="icon fas fa-chart-line"></i>
@@ -56,6 +60,11 @@
                         class="sidebar-link {{ Request::routeIs('mitra.vehicles.index') ? 'active' : '' }}">
                         <i class="icon fas fa-car"></i>
                         <span>Armada Saya</span>
+                    </a>
+                    <a href="{{ route('mitra.drivers.index') }}"
+                        class="sidebar-link {{ Request::routeIs('mitra.drivers.*') ? 'active' : '' }}">
+                        <i class="icon fas fa-id-card"></i>
+                        <span>Kelola Sopir</span>
                     </a>
 
                     <a href="{{ route('mitra.booking.index') }}"
@@ -72,7 +81,7 @@
             <p class="px-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Konfigurasi</p>
             <div class="space-y-1">
                 @php
-                    $profileRoute = Auth::user()->role === 'admin' ? 'admin.profile' : 'mitra.profile';
+                    $profileRoute = $role === 'admin' ? 'admin.profile' : 'mitra.profile';
                 @endphp
                 <a href="{{ route($profileRoute) }}"
                     class="sidebar-link {{ Request::routeIs($profileRoute) ? 'active' : '' }}">
@@ -92,11 +101,11 @@
         <div class="flex items-center gap-3 p-4 bg-white/5 rounded-3xl group">
             <div
                 class="w-10 h-10 bg-blue-600/20 text-blue-500 flex items-center justify-center text-sm font-black rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all">
-                {{ substr(Auth::user()->name, 0, 1) }}
+                {{ substr($user->name ?? 'A', 0, 1) }}
             </div>
             <div class="flex-1 min-w-0">
-                <p class="text-xs font-bold text-white truncate">{{ Auth::user()->name }}</p>
-                <p class="text-[10px] text-slate-500 truncate">{{ Auth::user()->email }}</p>
+                <p class="text-xs font-bold text-white truncate">{{ $user->name ?? 'User' }}</p>
+                <p class="text-[10px] text-slate-500 truncate">{{ $user->email ?? '' }}</p>
             </div>
             <form id="logout-sidebar" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
             <button onclick="document.getElementById('logout-sidebar').submit()"

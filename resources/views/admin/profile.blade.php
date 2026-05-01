@@ -1,7 +1,10 @@
+@php
+    $role = auth('admin')->check() ? 'admin' : (auth('mitra')->check() ? 'mitra' : 'customer');
+@endphp
 @extends('layouts.admin')
 
 @section('title', 'Profil Saya')
-@section('page-title', $user->role === 'admin' ? 'Profil Admin' : 'Profil Mitra')
+@section('page-title', $role === 'admin' ? 'Profil Admin' : 'Profil Mitra')
 @section('page-subtitle', 'Kelola informasi akun Anda di sini')
 
 @section('content')
@@ -23,8 +26,8 @@
                     <i class="fas fa-user-shield text-blue-600 text-3xl"></i>
                 </div>
                 <h3 class="font-bold text-slate-900 text-lg">{{ $user->name }}</h3>
-                <p class="text-xs font-bold {{ $user->role === 'admin' ? 'text-red-500 bg-red-50' : 'text-blue-500 bg-blue-50' }} px-3 py-1 rounded-full inline-block mt-2 uppercase tracking-widest">
-                    {{ $user->role === 'admin' ? 'Administrator' : 'Mitra Rental' }}
+                <p class="text-xs font-bold {{ $role === 'admin' ? 'text-red-500 bg-red-50' : 'text-blue-500 bg-blue-50' }} px-3 py-1 rounded-full inline-block mt-2 uppercase tracking-widest">
+                    {{ $role === 'admin' ? 'Administrator' : 'Mitra Rental' }}
                 </p>
                 
                 <div class="mt-8 pt-8 border-t border-slate-50 space-y-4 text-left">
@@ -47,7 +50,7 @@
                     <h3 class="font-bold text-slate-800">Edit Informasi Akun</h3>
                 </div>
                 
-                <form action="{{ $user->role === 'admin' ? route('admin.profile.update') : route('mitra.profile.update') }}" method="POST" class="p-8 space-y-6">
+                <form action="{{ $role === 'admin' ? route('admin.profile.update') : route('mitra.profile.update') }}" method="POST" class="p-8 space-y-6">
                     @csrf
                     @method('PUT')
                     
@@ -81,7 +84,7 @@
                         </div>
                     </div>
 
-                    @if($user->role === 'mitra')
+                    @if($role === 'mitra')
                     <div class="pt-6 border-t border-slate-50">
                         <h4 class="text-sm font-bold text-slate-800 mb-6">Lokasi Pool Utama <span class="text-[10px] font-normal text-slate-400 ml-1">(Lokasi penempatan kendaraan)</span></h4>
                         <div class="space-y-4">
@@ -115,7 +118,7 @@
 
 @endsection
 
-@if($user->role === 'mitra')
+@if($role === 'mitra')
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>

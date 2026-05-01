@@ -48,6 +48,7 @@
                         $statusStyles = [
                             'Pending'    => 'bg-[#F9F9F5] text-[#8F8F7E] border-[#EBEBDF]',
                             'Confirmed'  => 'bg-[#F5D042]/10 text-[#0A174E] border-[#F5D042]',
+                            'On_the_Way' => 'bg-blue-50 text-blue-600 border-blue-200',
                             'Active'     => 'bg-[#0A174E] text-[#F5D042] border-[#0A174E]',
                             'Picked_Up'  => 'bg-[#0A174E] text-[#F5D042] border-[#0A174E]',
                             'Returning'  => 'bg-[#0A174E]/5 text-[#0A174E] border-[#0A174E]/20',
@@ -58,6 +59,7 @@
                         $statusLabels = [
                             'Pending'    => 'Menunggu Verifikasi',
                             'Confirmed'  => 'Dikonfirmasi',
+                            'On_the_Way' => 'Sopir Menuju Lokasi',
                             'Active'     => 'Masa Sewa Aktif',
                             'Picked_Up'  => 'Kendaraan Diambil',
                             'Returning'  => 'Menunggu Pengembalian',
@@ -77,11 +79,11 @@
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-[#F9F9F5] p-5 rounded-2xl border border-[#EBEBDF]">
                     <div>
                         <p class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest mb-1">Mulai</p>
-                        <p class="font-bold text-[#0A174E] text-sm">{{ \Carbon\Carbon::parse($booking->start_date)->format('d M Y') }}</p>
+                        <p class="font-bold text-[#0A174E] text-sm">{{ \Carbon\Carbon::parse($booking->start_date)->format('d M Y, H:i') }}</p>
                     </div>
                     <div>
                         <p class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest mb-1">Selesai</p>
-                        <p class="font-bold text-[#0A174E] text-sm">{{ \Carbon\Carbon::parse($booking->end_date)->format('d M Y') }}</p>
+                        <p class="font-bold text-[#0A174E] text-sm">{{ \Carbon\Carbon::parse($booking->end_date)->format('d M Y, H:i') }}</p>
                     </div>
                     <div>
                         <p class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest mb-1">Durasi</p>
@@ -151,13 +153,20 @@
                         </a>
                     </div>
                 
-                {{-- Active / In Use / Returning --}}
-                @elseif(in_array($booking->status, ['Active', 'Picked_Up', 'Returning']))
+                {{-- Active / In Use / Returning / On the Way --}}
+                @elseif(in_array($booking->status, ['Active', 'Picked_Up', 'Returning', 'On_the_Way']))
                     <div class="bg-[#0A174E] border border-[#0A174E] p-4 rounded-xl text-center text-white h-full flex flex-col justify-center shadow-sm">
-                        <i class="fas fa-key text-[#F5D042] text-xl mb-2"></i>
-                        <p class="text-[10px] font-bold text-[#F9F9F5] uppercase tracking-widest leading-relaxed">
-                            {{ $booking->status === 'Returning' ? 'Konfirmasi Pengembalian' : 'Sewa Aktif' }}
-                        </p>
+                        @if($booking->status === 'On_the_Way')
+                            <i class="fas fa-car-side text-[#F5D042] text-xl mb-2 animate-pulse"></i>
+                            <p class="text-[10px] font-bold text-[#F9F9F5] uppercase tracking-widest leading-relaxed">
+                                driver sedang menuju ke lokasi
+                            </p>
+                        @else
+                            <i class="fas fa-key text-[#F5D042] text-xl mb-2"></i>
+                            <p class="text-[10px] font-bold text-[#F9F9F5] uppercase tracking-widest leading-relaxed">
+                                {{ $booking->status === 'Returning' ? 'Konfirmasi Pengembalian' : 'Sewa Aktif' }}
+                            </p>
+                        @endif
                     </div>
 
                 {{-- Completed --}}

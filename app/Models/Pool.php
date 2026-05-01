@@ -6,7 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pool extends Model
 {
-    protected $fillable = ['name', 'address'];
+    protected $fillable = [
+        'mitra_id',
+        'name',
+        'address',
+        'latitude',
+        'longitude',
+    ];
+
+    // ─── Relasi ──────────────────────────────────────────────────────
+    public function mitra()
+    {
+        return $this->belongsTo(Mitra::class, 'mitra_id');
+    }
 
     public function vehicleUnits()
     {
