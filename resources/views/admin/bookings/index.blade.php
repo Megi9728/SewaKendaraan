@@ -82,7 +82,6 @@
                                 Harga</th>
                             <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status &
                                 Bayar</th>
-                            <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
@@ -97,27 +96,41 @@
                                     <div class="flex items-center gap-3">
                                         <div
                                             class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px] font-black uppercase">
-                                            {{ substr($booking->user->name, 0, 1) }}
+                                            {{ substr($booking->customer->name, 0, 1) }}
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="text-sm font-bold text-slate-800 truncate">{{ $booking->user->name }}
+                                            <p class="text-sm font-bold text-slate-800 truncate">{{ $booking->customer->name }}
                                             </p>
-                                            <p class="text-[10px] text-slate-400 truncate">{{ $booking->user->email }}</p>
+                                            <p class="text-[10px] text-slate-400 truncate mb-0.5">{{ $booking->customer->email }}</p>
+                                            @if($booking->customer->phone)
+                                                <p class="text-[10px] text-slate-500 font-semibold truncate"><i class="fas fa-phone-alt text-[9px] mr-1"></i> {{ $booking->customer->phone }}</p>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
-                                    <p class="font-bold text-slate-700 text-sm mb-2">{{ $booking->vehicle->name }}</p>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="font-bold text-slate-700 text-sm">{{ $booking->vehicle->name }}</p>
+                                        @if($booking->vehicleUnit && $booking->vehicleUnit->plate_number)
+                                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">{{ $booking->vehicleUnit->plate_number }}</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-[10px] text-blue-600 font-bold uppercase mb-1"><i class="fas fa-handshake mr-1"></i> {{ $booking->vehicle->mitra->name ?? 'Internal Jatara' }}</p>
+                                    @if($booking->driver_fee > 0 || !is_null($booking->driver_id))
+                                        <p class="text-[10px] text-purple-600 font-bold uppercase mb-3"><i class="fas fa-user-tie mr-1"></i> {{ $booking->driver->name ?? 'Menunggu Sopir' }}</p>
+                                    @else
+                                        <p class="text-[10px] text-orange-600 font-bold uppercase mb-3"><i class="fas fa-key mr-1"></i> Lepas Kunci</p>
+                                    @endif
                                     <div class="flex gap-2">
                                         @if ($booking->status !== 'Completed')
                                             @if ($booking->ktp_photo)
                                                 <button type="button"
-                                                    onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP - {{ $booking->user->name }}')"
+                                                    onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP - {{ $booking->customer->name }}')"
                                                     class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">KTP</button>
                                             @endif
                                             @if ($booking->sim_photo)
                                                 <button type="button"
-                                                    onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM - {{ $booking->user->name }}')"
+                                                    onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM - {{ $booking->customer->name }}')"
                                                     class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">SIM</button>
                                             @endif
                                         @else
@@ -169,68 +182,10 @@
                                         </span>
                                     </div>
                                 </td>
-                                <td class="px-6 py-5">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        @if ($booking->status === 'Pending')
-                                            <form action="{{ route('admin.pemesanan.update', $booking->id) }}"
-                                                method="POST">
-                                                @csrf @method('PUT')
-                                                <input type="hidden" name="status" value="Confirmed">
-                                                <button type="submit"
-                                                    class="text-[10px] font-bold px-3 py-1.5 rounded bg-green-50 text-green-600 hover:bg-green-100 transition shadow-sm border border-green-200">
-                                                    VERIFIKASI
-                                                </button>
-                                            </form>
-                                            <button type="button" onclick="openRejectModal({{ $booking->id }})"
-                                                class="text-[10px] font-bold px-3 py-1.5 rounded bg-red-50 text-red-600 hover:bg-red-100 transition shadow-sm border border-red-200">
-                                                TOLAK
-                                            </button>
-                                        @endif
-
-                                        @if ($booking->status === 'Confirmed')
-                                            @if ($booking->payment_status === 'unpaid')
-                                                <span class="text-[10px] font-bold text-blue-400 italic">Menunggu Bayar
-                                                    DP...</span>
-                                            @elseif($booking->payment_status === 'dp_paid')
-                                                <span class="text-[10px] font-bold text-orange-500 italic">Menunggu
-                                                    Pelunasan...</span>
-                                            @elseif($booking->payment_status === 'fully_paid')
-                                                <form action="{{ route('admin.pemesanan.update', $booking->id) }}"
-                                                    method="POST">
-                                                    @csrf @method('PUT')
-                                                    <input type="hidden" name="status" value="Picked_Up">
-                                                    <button type="submit"
-                                                        class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
-                                                        <i class="fas fa-key"></i> KONFIRMASI DIAMBIL
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        @endif
-
-                                        @if (in_array($booking->status, ['Active', 'Picked_Up', 'Returning']))
-                                            <form action="{{ route('admin.pemesanan.update', $booking->id) }}"
-                                                method="POST">
-                                                @csrf @method('PUT')
-                                                <input type="hidden" name="status" value="Completed">
-                                                <button type="submit"
-                                                    class="bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
-                                                    <i class="fas fa-check-double"></i> KONFIRMASI KEMBALI
-                                                </button>
-                                            </form>
-                                        @endif
-
-                                        @if (in_array($booking->status, ['Completed', 'Cancelled', 'Rejected']))
-                                            <span
-                                                class="text-[9px] font-black text-slate-400 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 italic uppercase tracking-widest">
-                                                SELESAI
-                                            </span>
-                                        @endif
-                                    </div>
-                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
+                                <td colspan="5" class="px-6 py-12 text-center">
                                     <div
                                         class="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <i class="fas fa-calendar-minus text-2xl"></i>
@@ -246,29 +201,6 @@
     </div>
 
 
-
-    {{-- Modal Tolak --}}
-    <div id="modal-reject" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeRejectModal()"></div>
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md z-10 overflow-hidden text-center p-8">
-            <h3 class="text-xl font-black text-slate-900 mb-2">Tolak Pesanan</h3>
-            <p class="text-slate-500 text-sm mb-6">Berikan alasan mengapa pesanan ini ditolak.</p>
-            <form id="form-reject" action="" method="POST">
-                @csrf @method('PUT')
-                <input type="hidden" name="status" value="Rejected">
-                <textarea name="rejection_reason" required rows="3"
-                    class="w-full bg-slate-50 text-slate-900 border border-slate-200 rounded-xl p-4 text-sm focus:outline-none focus:border-red-500 mb-6"
-                    placeholder="Contoh: Foto KTP buram, tidak dapat dibaca..."></textarea>
-                <div class="flex gap-3">
-                    <button type="button" onclick="closeRejectModal()"
-                        class="flex-1 font-semibold py-3 rounded-xl transition-all text-sm border border-slate-200 text-slate-600 hover:bg-slate-50">Batal</button>
-                    <button type="submit"
-                        class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-sm">Ya,
-                        Tolak</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     {{-- Modal Preview Dokumen --}}
     <div id="modal-preview" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden animate-fade-in">
@@ -303,16 +235,6 @@
 
 @push('scripts')
     <script>
-        function openRejectModal(id) {
-            let form = document.getElementById('form-reject');
-            form.action = '/admin/pemesanan/' + id;
-            document.getElementById('modal-reject').classList.remove('hidden');
-        }
-
-        function closeRejectModal() {
-            document.getElementById('modal-reject').classList.add('hidden');
-        }
-
         function openPreviewModal(url, title) {
             document.getElementById('preview-img').src = url;
             document.getElementById('preview-title').textContent = title;
@@ -329,7 +251,6 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closePreviewModal();
-                closeRejectModal();
             }
         });
     </script>

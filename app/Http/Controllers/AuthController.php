@@ -2,33 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Admin;
+use App\Models\Customer;
+use App\Models\Mitra;
+use App\Models\Pool;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // ════════════════════════════════════════════════════════════════
+    // LOGIN (multi-guard: coba semua guard)
+    // ════════════════════════════════════════════════════════════════
+
+    public function showLogin()
+    {
+        return view('auth.login');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        // 1. Coba guard Admin
+        if (auth('admin')->attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
+            return redirect()->route('admin.dashboard')
+                ->with('success', 'Selamat datang, Admin!');
+        }
 
-            if (Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin') {
-                return redirect()->intended(route('admin.dashboard'))->with('success', 'Selamat datang di Dashboard Super Admin!');
+        // 2. Coba guard Mitra
+        if (auth('mitra')->attempt($credentials, $request->remember)) {
+            $request->session()->regenerate();
+            $mitra = auth('mitra')->user();
+            if (!$mitra->is_verified) {
+                auth('mitra')->logout();
+                return back()->withErrors([
+                    'email' => 'Akun Mitra Anda belum diverifikasi oleh admin.',
+                ])->onlyInput('email');
             }
+            return redirect()->route('mitra.dashboard')
+                ->with('success', 'Selamat datang, ' . $mitra->name . '!');
+        }
 
-            if (Auth::user()->role === 'mitra') {
-                return redirect()->intended(route('mitra.dashboard'))->with('success', 'Selamat datang, Mitra!');
-            }
-
-
-            return redirect()->intended('/')->with('success', 'Selamat datang kembali!');
+        // 3. Coba guard Customer
+        if (auth('customer')->attempt($credentials, $request->remember)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/')
+                ->with('success', 'Selamat datang kembali!');
         }
 
         return back()->withErrors([
@@ -36,125 +60,237 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
+    // ════════════════════════════════════════════════════════════════
+    // REGISTER CUSTOMER
+    // ════════════════════════════════════════════════════════════════
+
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
+
     public function doRegister(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:20',
-            'password' => 'required|string|min:8',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|max:255|unique:customers,email',
+            'phone'    => 'required|string|max:20',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
+        $customer = Customer::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'phone'    => $request->phone,
             'password' => Hash::make($request->password),
-            'role' => 'user',
         ]);
 
-        Auth::login($user);
+        auth('customer')->login($customer);
 
         return redirect('/')->with('success', 'Pendaftaran berhasil! Akun Anda siap digunakan.');
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // REGISTER MITRA
+    // ════════════════════════════════════════════════════════════════
+
+    public function showRegisterMitra()
+    {
+        return view('auth.register-mitra');
     }
 
     public function doRegisterMitra(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'partner_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:20',
-            'password' => 'required|string|min:8',
-            'address' => 'required|string',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|max:255|unique:mitras,email',
+            'phone'    => 'required|string|max:20',
+            'password' => 'required|string|min:8|confirmed',
+            'address'  => 'required|string',
+            'ktp_photo'=> 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'partner_name' => $request->partner_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'password' => Hash::make($request->password),
-            'role' => 'mitra',
-            'is_verified' => false, // Default: unverified
+        $ktpPath = $request->hasFile('ktp_photo')
+            ? $request->file('ktp_photo')->store('mitra/ktp', 'public')
+            : null;
+
+        $mitra = Mitra::create([
+            'name'        => $request->name,
+            'email'       => $request->email,
+            'phone'       => $request->phone,
+            'address'     => $request->address,
+            'ktp_photo'   => $ktpPath,
+            'password'    => Hash::make($request->password),
+            'is_verified' => false,
         ]);
 
-        Auth::login($user);
+        auth('mitra')->login($mitra);
 
-        return redirect()->route('mitra.dashboard')->with('success', 'Pendaftaran Mitra berhasil! Menunggu verifikasi admin.');
+        return redirect()->route('mitra.dashboard')
+            ->with('success', 'Pendaftaran Mitra berhasil! Menunggu verifikasi admin.');
     }
+
+    // ════════════════════════════════════════════════════════════════
+    // LOGOUT (semua guard)
+    // ════════════════════════════════════════════════════════════════
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        auth('admin')->logout();
+        auth('mitra')->logout();
+        auth('customer')->logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect('/')->with('success', 'Anda telah keluar dari sistem.');
     }
 
+    // ════════════════════════════════════════════════════════════════
+    // PROFIL (ditangani oleh guard yang sedang aktif)
+    // ════════════════════════════════════════════════════════════════
+
     public function profile()
     {
-        $user = Auth::user();
-        if ($user->role === 'admin' || $user->role === 'mitra') {
+        if (auth('admin')->check()) {
+            $user = auth('admin')->user();
             return view('admin.profile', compact('user'));
         }
+
+        if (auth('mitra')->check()) {
+            $user = auth('mitra')->user();
+            return view('mitra.profile', compact('user'));
+        }
+
+        $user = auth('customer')->user();
         return view('user.profile', compact('user'));
     }
 
     public function updateProfile(Request $request)
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'nullable|string|max:20',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'pool_address' => 'nullable|string',
-            'password' => 'nullable|min:8|confirmed',
-        ]);
+        // ── Admin Profile ────────────────────────────────────────────
+        if (auth('admin')->check()) {
+            /** @var Admin $user */
+            $user = auth('admin')->user();
+            $request->validate([
+                'name'     => 'required|string|max:255',
+                'email'    => 'required|email|unique:admins,email,' . $user->id,
+                'phone'    => 'nullable|string|max:20',
+                'password' => 'nullable|min:8|confirmed',
+            ]);
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
+            $user->name  = $request->name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
 
-        // Handle Pool for Mitra
-        if ($user->role === 'mitra') {
-            $pool = $user->pool ?: new \App\Models\Pool();
-            $pool->name = "Pool " . $user->name;
-            $pool->address = $request->pool_address ?? $request->address;
+            if ($request->hasFile('profile_photo')) {
+                $user->profile_photo = $request->file('profile_photo')
+                    ->store('admin/photos', 'public');
+            }
 
-            // Use provided coordinates or geocode via Nominatim
+            if ($request->password) {
+                $user->password = Hash::make($request->password);
+            }
+            $user->save();
+
+            return back()->with('success', 'Profil berhasil diperbarui!');
+        }
+
+        // ── Mitra Profile ────────────────────────────────────────────
+        if (auth('mitra')->check()) {
+            /** @var Mitra $user */
+            $user = auth('mitra')->user();
+            $request->validate([
+                'name'         => 'required|string|max:255',
+                'email'        => 'required|email|unique:mitras,email,' . $user->id,
+                'phone'        => 'nullable|string|max:20',
+                'address'      => 'nullable|string',
+                'latitude'     => 'nullable|numeric',
+                'longitude'    => 'nullable|numeric',
+                'pool_address' => 'nullable|string',
+                'password'     => 'nullable|min:8|confirmed',
+            ]);
+
+            $user->name    = $request->name;
+            $user->email   = $request->email;
+            $user->phone   = $request->phone;
+            $user->address = $request->address;
+
+            if ($request->hasFile('mitra_photo')) {
+                $user->mitra_photo = $request->file('mitra_photo')
+                    ->store('mitra/photos', 'public');
+            }
+
+            if ($request->hasFile('ktp_photo')) {
+                $user->ktp_photo = $request->file('ktp_photo')
+                    ->store('mitra/ktp', 'public');
+            }
+
+            // Handle Pool update
+            $pool = $user->pools()->first() ?? new Pool();
+            $pool->mitra_id = $user->id;
+            $pool->name     = 'Pool ' . $user->name;
+            $pool->address  = $request->pool_address ?? $request->address;
+
             if ($request->latitude && $request->longitude) {
-                $pool->latitude = $request->latitude;
+                $pool->latitude  = $request->latitude;
                 $pool->longitude = $request->longitude;
             } elseif ($pool->address) {
                 try {
                     $response = \Illuminate\Support\Facades\Http::withHeaders([
                         'User-Agent' => 'SewaKendaraanApp/1.0'
                     ])->get('https://nominatim.openstreetmap.org/search', [
-                        'q' => $pool->address,
+                        'q'      => $pool->address,
                         'format' => 'json',
-                        'limit' => 1
+                        'limit'  => 1,
                     ]);
 
                     if ($response->successful() && count($response->json()) > 0) {
-                        $data = $response->json()[0];
-                        $pool->latitude = $data['lat'];
+                        $data            = $response->json()[0];
+                        $pool->latitude  = $data['lat'];
                         $pool->longitude = $data['lon'];
                     }
                 } catch (\Exception $e) {
-                    // Log or handle error quietly, maybe notify user later
+                    // silent fail
                 }
             }
 
             if ($pool->latitude && $pool->longitude) {
                 $pool->save();
-                $user->pool_id = $pool->id;
             }
+
+            if ($request->password) {
+                $user->password = Hash::make($request->password);
+            }
+            $user->save();
+
+            return back()->with('success', 'Profil berhasil diperbarui!');
+        }
+
+        // ── Customer Profile ─────────────────────────────────────────
+        /** @var Customer $user */
+        $user = auth('customer')->user();
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:customers,email,' . $user->id,
+            'phone'    => 'nullable|string|max:20',
+            'address'  => 'nullable|string',
+            'password' => 'nullable|min:8|confirmed',
+        ]);
+
+        $user->name    = $request->name;
+        $user->email   = $request->email;
+        $user->phone   = $request->phone;
+        $user->address = $request->address;
+
+        if ($request->hasFile('ktp_photo')) {
+            $user->ktp_photo = $request->file('ktp_photo')
+                ->store('customer/ktp', 'public');
+        }
+
+        if ($request->hasFile('sim_photo')) {
+            $user->sim_photo = $request->file('sim_photo')
+                ->store('customer/sim', 'public');
         }
 
         if ($request->password) {

@@ -3,18 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Mitra;
 use Illuminate\Http\Request;
 
 class MitraController extends Controller
 {
     public function index()
     {
-        $mitras = User::where('role', 'mitra')->latest()->get();
+        $mitras = Mitra::withCount(['vehicles', 'drivers'])->latest()->get();
         return view('admin.mitra.index', compact('mitras'));
     }
 
-    public function update(Request $request, User $mitra)
+    public function show(Mitra $mitra)
+    {
+        $mitra->load(['vehicles', 'pools', 'drivers']);
+        return view('admin.mitra.show', compact('mitra'));
+    }
+
+    public function update(Request $request, Mitra $mitra)
     {
         $request->validate([
             'is_verified' => 'required|boolean',
@@ -25,7 +31,7 @@ class MitraController extends Controller
         return redirect()->back()->with('success', 'Status verifikasi mitra berhasil diperbarui!');
     }
 
-    public function destroy(User $mitra)
+    public function destroy(Mitra $mitra)
     {
         $mitra->delete();
         return redirect()->back()->with('success', 'Data mitra berhasil dihapus!');

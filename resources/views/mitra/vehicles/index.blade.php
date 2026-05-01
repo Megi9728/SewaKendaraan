@@ -173,7 +173,7 @@
                     </select>
                 </div>
                 <div class="sm:col-span-2">
-                    @if(!Auth::user()->pool_id)
+                    @if(!auth('mitra')->user()->pool_id)
                     <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
                         <i class="fas fa-exclamation-triangle text-amber-500"></i>
                         <p class="text-xs text-amber-700 font-medium">Anda belum menyetel lokasi pool. <a href="{{ route('mitra.profile') }}" class="font-bold underline">Set lokasi sekarang</a> agar armada dapat dipesan.</p>
@@ -183,7 +183,7 @@
                         <i class="fas fa-map-marker-alt text-[#0A174E]/80"></i>
                         <div>
                             <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Lokasi Pool Aktif</p>
-                            <p class="text-xs text-blue-700 font-medium truncate max-w-[400px]">{{ Auth::user()->pool->address ?? 'Lokasi Terdaftar' }}</p>
+                            <p class="text-xs text-blue-700 font-medium truncate max-w-[400px]">{{ auth('mitra')->user()->pool->address ?? 'Lokasi Terdaftar' }}</p>
                         </div>
                     </div>
                     @endif

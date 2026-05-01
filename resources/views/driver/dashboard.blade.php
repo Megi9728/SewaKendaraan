@@ -62,7 +62,7 @@
                                 <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider mt-1">{{ $b->vehicle->name }}</p>
                             </td>
                             <td class="px-8 py-5">
-                                <p class="text-sm font-bold text-slate-700">{{ $b->user->name }}</p>
+                                <p class="text-sm font-bold text-slate-700">{{ $b->customer->name }}</p>
                                 <p class="text-[10px] text-slate-400 font-medium italic">{{ $b->days }} Hari Sewa</p>
                             </td>
                             <td class="px-8 py-5">
