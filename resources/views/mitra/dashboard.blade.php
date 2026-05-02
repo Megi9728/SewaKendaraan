@@ -6,73 +6,79 @@
 @section('content')
 <div class="px-4 py-6">
     {{-- Grid Statistik --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-        {{-- Total Armada --}}
-        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
-                <i class="fas fa-car text-lg"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Armada</p>
-                <p class="text-xl font-black text-slate-900">{{ $stats['total_mobil'] }}</p>
-            </div>
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-title-md2 font-bold text-black dark:text-white text-2xl">Dashboard Ringkasan</h2>
+        <p class="text-sm text-body dark:text-bodydark mt-1">Statistik penyewaan armada Anda</p>
+    </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+    {{-- Total Armada --}}
+    <div class="rounded-2xl border border-stroke bg-white py-6 px-7 shadow-sm dark:border-white/10 dark:bg-boxdark flex items-center justify-between gap-4">
+        <div>
+            <p class="text-sm font-medium text-body dark:text-bodydark mt-1">Armada</p>
+            <h4 class="text-title-md font-bold text-black dark:text-white mt-2">{{ $stats['total_mobil'] }}</h4>
         </div>
-
-        {{-- Total Pesanan --}}
-        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-slate-50 text-slate-900 rounded-2xl flex items-center justify-center">
-                <i class="fas fa-list text-lg"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Transaksi</p>
-                <p class="text-xl font-black text-slate-900">{{ $stats['total_booking'] }}</p>
-            </div>
-        </div>
-
-        {{-- Pending --}}
-        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
-                <i class="fas fa-clock text-lg"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Pending</p>
-                <p class="text-xl font-black text-slate-900">{{ $stats['pending'] }}</p>
-            </div>
-        </div>
-
-        {{-- Sedang Disewa --}}
-        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center">
-                <i class="fas fa-car-side text-lg"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Disewa</p>
-                <p class="text-xl font-black text-slate-900">{{ $stats['active'] }}</p>
-            </div>
-        </div>
-
-        {{-- Total Pendapatan --}}
-        <div class="bg-blue-600 p-5 rounded-[2rem] shadow-xl border border-blue-500 flex items-center gap-4">
-            <div class="w-12 h-12 bg-white/20 text-white rounded-2xl flex items-center justify-center shadow-inner">
-                <i class="fas fa-wallet text-lg"></i>
-            </div>
-            <div class="min-w-0">
-                <p class="text-[9px] font-black text-blue-100 uppercase tracking-widest leading-none mb-1.5">Pendapatan</p>
-                <p class="text-lg font-black text-white truncate">Rp{{ number_format($stats['revenue'], 0, ',', '.') }}</p>
-            </div>
+        <div class="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+            <i class="fas fa-car text-lg"></i>
         </div>
     </div>
 
+    {{-- Total Pesanan --}}
+    <div class="rounded-2xl border border-stroke bg-white py-6 px-7 shadow-sm dark:border-white/10 dark:bg-boxdark flex items-center justify-between gap-4">
+        <div>
+            <p class="text-sm font-medium text-body dark:text-bodydark mt-1">Transaksi</p>
+            <h4 class="text-title-md font-bold text-black dark:text-white mt-2">{{ $stats['total_booking'] }}</h4>
+        </div>
+        <div class="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+            <i class="fas fa-list text-lg"></i>
+        </div>
+    </div>
+
+    {{-- Pending --}}
+    <div class="rounded-2xl border border-stroke bg-white py-6 px-7 shadow-sm dark:border-white/10 dark:bg-boxdark flex items-center justify-between gap-4">
+        <div>
+            <p class="text-sm font-medium text-body dark:text-bodydark mt-1">Pending</p>
+            <h4 class="text-title-md font-bold text-black dark:text-white mt-2">{{ $stats['pending'] }}</h4>
+        </div>
+        <div class="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+            <i class="fas fa-clock text-lg"></i>
+        </div>
+    </div>
+
+    {{-- Sedang Disewa --}}
+    <div class="rounded-2xl border border-stroke bg-white py-6 px-7 shadow-sm dark:border-white/10 dark:bg-boxdark flex items-center justify-between gap-4">
+        <div>
+            <p class="text-sm font-medium text-body dark:text-bodydark mt-1">Disewa</p>
+            <h4 class="text-title-md font-bold text-black dark:text-white mt-2">{{ $stats['active'] }}</h4>
+        </div>
+        <div class="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+            <i class="fas fa-car-side text-lg"></i>
+        </div>
+    </div>
+
+    {{-- Total Pendapatan --}}
+    <div class="rounded-2xl border border-primary bg-primary py-6 px-7 shadow-sm dark:border-white/10 dark:bg-primary flex items-center justify-between gap-4">
+        <div class="min-w-0">
+            <p class="text-sm font-medium text-blue-100 mt-1">Pendapatan</p>
+            <h4 class="text-title-md font-bold text-white mt-2 truncate">Rp{{ number_format($stats['revenue'], 0, ',', '.') }}</h4>
+        </div>
+        <div class="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-white/20 text-white">
+            <i class="fas fa-wallet text-lg"></i>
+        </div>
+    </div>
+</div>
+
     {{-- Grafik Statistik --}}
-    <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 mb-8">
+    <div class="rounded-2xl border border-stroke bg-white p-7.5 shadow-sm dark:border-white/10 dark:bg-boxdark mb-8">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
-                <h3 class="text-xl font-black text-slate-900 italic">Tren Penyewaan</h3>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Laporan Pesanan 6 Bulan Terakhir</p>
+                <h3 class="text-xl font-bold text-black dark:text-white">Tren Penyewaan</h3>
+                <p class="text-sm font-medium text-body dark:text-bodydark mt-1">Laporan Pesanan 6 Bulan Terakhir</p>
             </div>
-            <div class="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
+            <div class="flex items-center gap-2 bg-slate-50 dark:bg-white/5 px-4 py-2 rounded border border-stroke dark:border-white/10">
                 <div class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></div>
-                <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Live Report</span>
+                <span class="text-xs font-bold text-body dark:text-bodydark uppercase tracking-widest">Live Report</span>
             </div>
         </div>
         <div class="h-[350px]">

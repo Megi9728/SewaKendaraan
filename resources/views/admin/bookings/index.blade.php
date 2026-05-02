@@ -66,31 +66,67 @@
             </div>
         @endif
 
+                {{-- Breadcrumb / Header area --}}
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-title-md2 font-bold text-black dark:text-white text-2xl">
+                    Monitor Penyewaan
+                </h2>
+                <p class="text-sm text-body dark:text-bodydark mt-1">Pantau, konfirmasi, dan kelola status pemesanan</p>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div class="flex gap-3 flex-wrap w-full sm:w-auto">
+                <div class="relative w-full sm:w-auto">
+                    <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none z-30">
+                        <i class="fas fa-search text-body dark:text-bodydark text-sm"></i>
+                    </div>
+                    <input type="text" id="search-booking" placeholder="Cari TRX / Nama..." 
+                           class="relative z-20 pl-10 pr-4 py-2.5 w-full sm:w-64 rounded-lg border border-stroke bg-transparent text-sm font-medium outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-black dark:text-white transition-all">
+                </div>
+
+                <div class="relative z-20 bg-transparent w-full sm:w-auto">
+                    <select id="filter-status" class="relative z-20 w-full sm:w-40 appearance-none rounded-lg border border-stroke bg-transparent py-2.5 px-4 pr-10 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input text-black dark:text-white text-sm font-medium">
+                        <option value="">Semua Status</option>
+                        <option value="pending">Pending (Menunggu)</option>
+                        <option value="confirmed">Disetujui (Confirmed)</option>
+                        <option value="active">Aktif (Sedang Disewa)</option>
+                        <option value="completed">Selesai</option>
+                        <option value="rejected">Ditolak / Batal</option>
+                    </select>
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none z-30">
+                        <i class="fas fa-chevron-down text-body dark:text-bodydark text-xs"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {{-- Table --}}
-        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-white/10 dark:bg-[#24303F] overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50/50 border-b border-slate-50">
-                            <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Transaksi
+                        <tr class="bg-slate-50 dark:bg-white/5 border-b border-stroke dark:border-white/10">
+                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Transaksi
                             </th>
-                            <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pelanggan
+                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Pelanggan
                             </th>
-                            <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kendaraan
+                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Kendaraan
                                 & Berkas</th>
-                            <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Waktu &
+                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Waktu &
                                 Harga</th>
-                            <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status &
+                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Status &
                                 Bayar</th>
-                            <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Aksi</th>
+                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-50">
+                    <tbody class="divide-y divide-stroke dark:divide-white/10 text-sm" id="booking-table-body">
                         @forelse($bookings as $booking)
-                            <tr class="hover:bg-slate-50/30 transition-colors">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors booking-row" data-search="{{ strtolower('#TRX-' . $booking->id . ' ' . $booking->user->name) }}" data-status="{{ strtolower($booking->status) }}">
                                 <td class="px-6 py-5">
-                                    <span class="text-xs font-bold text-slate-900">#TRX-{{ $booking->id }}</span>
-                                    <p class="text-[10px] text-slate-400 mt-0.5">
+                                    <span class="text-xs font-bold text-black dark:text-white">#TRX-{{ $booking->id }}</span>
+                                    <p class="text-[10px] text-body dark:text-bodydark mt-0.5">
                                         {{ $booking->created_at->format('d/m/Y H:i') }}</p>
                                 </td>
                                 <td class="px-6 py-5">
@@ -100,14 +136,14 @@
                                             {{ substr($booking->user->name, 0, 1) }}
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="text-sm font-bold text-slate-800 truncate">{{ $booking->user->name }}
+                                            <p class="text-sm font-bold text-black dark:text-white truncate">{{ $booking->user->name }}
                                             </p>
-                                            <p class="text-[10px] text-slate-400 truncate">{{ $booking->user->email }}</p>
+                                            <p class="text-[10px] text-body dark:text-bodydark truncate">{{ $booking->user->email }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
-                                    <p class="font-bold text-slate-700 text-sm mb-2">{{ $booking->vehicle->name }}</p>
+                                    <p class="font-bold text-black dark:text-white text-sm mb-2">{{ $booking->vehicle->name }}</p>
                                     <div class="flex gap-2">
                                         @if ($booking->status !== 'Completed')
                                             @if ($booking->ktp_photo)
@@ -127,7 +163,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
-                                    <p class="text-xs text-slate-600 mb-1">
+                                    <p class="text-xs text-body dark:text-bodydark mb-1">
                                         {{ \Carbon\Carbon::parse($booking->start_date)->format('d/m') }} -
                                         {{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}
                                         <span class="font-bold text-slate-400">({{ $booking->days }}x)</span>
@@ -250,14 +286,14 @@
     {{-- Modal Tolak --}}
     <div id="modal-reject" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeRejectModal()"></div>
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md z-10 overflow-hidden text-center p-8">
-            <h3 class="text-xl font-black text-slate-900 mb-2">Tolak Pesanan</h3>
+        <div class="bg-white dark:bg-[#1c2434] rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden text-center p-8 border border-stroke dark:border-white/10">
+            <h3 class="text-xl font-bold text-black dark:text-white mb-2">Tolak Pesanan</h3>
             <p class="text-slate-500 text-sm mb-6">Berikan alasan mengapa pesanan ini ditolak.</p>
             <form id="form-reject" action="" method="POST">
                 @csrf @method('PUT')
                 <input type="hidden" name="status" value="Rejected">
                 <textarea name="rejection_reason" required rows="3"
-                    class="w-full bg-slate-50 text-slate-900 border border-slate-200 rounded-xl p-4 text-sm focus:outline-none focus:border-red-500 mb-6"
+                    class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-black dark:text-white resize-none mb-6"
                     placeholder="Contoh: Foto KTP buram, tidak dapat dibaca..."></textarea>
                 <div class="flex gap-3">
                     <button type="button" onclick="closeRejectModal()"
@@ -332,7 +368,36 @@
                 closeRejectModal();
             }
         });
-    </script>
+    
+    // ====== SEARCH & FILTER FUNCTIONALITY ======
+    function applyFilters() {
+        const searchInput = document.getElementById('search-booking');
+        const statusFilter = document.getElementById('filter-status');
+        
+        if (!searchInput || !statusFilter) return;
+
+        const searchObj = searchInput.value.toLowerCase();
+        const statusObj = statusFilter.value.toLowerCase();
+        const rows = document.querySelectorAll('.booking-row');
+
+        rows.forEach(row => {
+            const dataSearch = row.getAttribute('data-search') || '';
+            const dataStatus = row.getAttribute('data-status') || '';
+            
+            const matchesSearch = dataSearch.includes(searchObj);
+            const matchesStatus = statusObj === '' || dataStatus === statusObj;
+            
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    document.getElementById('search-booking')?.addEventListener('input', applyFilters);
+    document.getElementById('filter-status')?.addEventListener('change', applyFilters);
+</script>
     <style>
         .animate-fade-in {
             animation: fadeIn 0.2s ease-out;

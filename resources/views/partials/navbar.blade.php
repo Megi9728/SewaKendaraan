@@ -50,7 +50,7 @@
 
                     <!-- Dropdown Akun -->
                     <div id="auth-dropdown"
-                        class="hidden absolute top-[calc(100%+1rem)] right-0 w-56 bg-white border border-[#EBEBDF] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.1)] rounded-2xl py-2 z-[60]">
+                        class="hidden opacity-0 translate-y-2 transition-all duration-300 absolute top-[calc(100%+1rem)] right-0 w-56 bg-white border border-[#EBEBDF] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.1)] rounded-2xl py-2 z-[60]">
                         <div class="px-5 py-3 border-b border-[#EBEBDF]/50 flex items-center gap-3">
                             <div
                                 class="h-8 w-8 bg-[#EBEBDF] rounded-full flex items-center justify-center text-[#0A174E] font-bold text-xs">

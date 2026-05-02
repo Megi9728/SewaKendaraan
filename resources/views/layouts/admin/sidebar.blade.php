@@ -1,109 +1,120 @@
-{{-- ===== SIDEBAR ===== --}}
-<aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-80 bg-slate-900 flex flex-col shadow-2xl">
+<!-- Sidebar Backdrop -->
+<div class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+     x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false" x-cloak>
+</div>
 
-    {{-- Logo Section --}}
-    <div class="p-8 mb-4">
-        <a href="{{ route('home') }}" class="flex flex-col gap-3" target="_blank">
-            <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class=" w-auto">
-            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] block">Administrative Hub</span>
+<!-- Sidebar Layout TailAdmin -->
+<aside class="absolute left-0 top-0 z-50 flex h-screen w-72 flex-col overflow-y-hidden bg-[#1c2434] duration-300 ease-linear lg:static lg:translate-x-0"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+    
+    <!-- Sidebar Header -->
+    <div class="flex items-center justify-between gap-2 px-6 py-5 lg:py-6">
+        <a href="{{ route('home') }}" class="flex items-center gap-3">
+            <div class="bg-white rounded-lg p-1.5 shadow-sm">
+                <img src="{{ asset('logo.png') }}" alt="Logo" class="w-8 h-auto">
+            </div>
+            <span class="text-white text-xl font-bold tracking-wide">Jatara<span class="text-primary align-top text-sm font-black text-rose-500">.</span></span>
         </a>
+        
+        <button @click="sidebarOpen = !sidebarOpen" class="block lg:hidden text-bodydark hover:text-white">
+            <i class="fas fa-arrow-left text-xl"></i>
+        </button>
     </div>
 
-    {{-- Navigation Area --}}
-    <nav class="flex-1 overflow-y-auto px-6 custom-scrollbar space-y-8">
-        {{-- Group 1 --}}
-        <div>
-            <p class="px-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Navigasi</p>
-            <div class="space-y-1">
+    <!-- Sidebar Menus -->
+    <div class="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+        <nav class="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
+            
+            <h3 class="mb-4 ml-4 text-sm font-semibold text-bodydark2 uppercase tracking-wider">Menu Utama</h3>
+            
+            <ul class="mb-6 flex flex-col gap-1.5">
                 @if (Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin')
-                    <a href="{{ route('admin.dashboard') }}"
-                        class="sidebar-link {{ Request::routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <i class="icon fas fa-chart-line"></i>
-                        <span>Dashboard Admin</span>
-                    </a>
-                    <a href="{{ route('admin.mitra.index') }}"
-                        class="sidebar-link {{ Request::routeIs('admin.mitra.index') ? 'active' : '' }}">
-                        <i class="icon fas fa-store"></i>
-                        <span>Kelola Mitra</span>
-                    </a>
-                    <a href="{{ route('admin.kendaraan.index') }}"
-                        class="sidebar-link {{ Request::routeIs('admin.kendaraan.*') ? 'active' : '' }}">
-                        <i class="icon fas fa-car"></i>
-                        <span>Semua Armada</span>
-                    </a>
-                    <a href="{{ route('admin.booking.monitor') }}"
-                        class="sidebar-link {{ Request::routeIs('admin.booking.monitor') ? 'active' : '' }}">
-                        <i class="icon fas fa-calendar-check"></i>
-                        <span class="flex-1">Monitor Booking</span>
-                        @php $pendingCount = \App\Models\Booking::where('status', 'Pending')->count(); @endphp
-                        @if ($pendingCount > 0)
-                            <span
-                                class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full ring-4 ring-slate-900">{{ $pendingCount }}</span>
-                        @endif
-                    </a>
+                    <li>
+                        <a href="{{ route('admin.dashboard') }}"
+                           class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::routeIs('admin.dashboard') ? 'bg-white/10 text-white' : '' }}">
+                            <i class="fas fa-chart-pie w-5 text-center {{ Request::routeIs('admin.dashboard') ? 'text-white' : 'text-bodydark2' }}"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.mitra.index') }}"
+                           class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::routeIs('admin.mitra.index') ? 'bg-white/10 text-white' : '' }}">
+                            <i class="fas fa-users-gear w-5 text-center {{ Request::routeIs('admin.mitra.index') ? 'text-white' : 'text-bodydark2' }}"></i>
+                            Kelola Mitra
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.kendaraan.index') }}"
+                           class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::routeIs('admin.kendaraan.*') ? 'bg-white/10 text-white' : '' }}">
+                            <i class="fas fa-car-side w-5 text-center {{ Request::routeIs('admin.kendaraan.*') ? 'text-white' : 'text-bodydark2' }}"></i>
+                            Semua Armada
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.booking.monitor') }}"
+                           class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::routeIs('admin.booking.monitor') ? 'bg-white/10 text-white' : '' }}">
+                            <i class="fas fa-list-check w-5 text-center {{ Request::routeIs('admin.booking.monitor') ? 'text-white' : 'text-bodydark2' }}"></i>
+                            Monitor Booking
+                            @php $pendingCount = \App\Models\Booking::where('status', 'Pending')->count(); @endphp
+                            @if ($pendingCount > 0)
+                                <span class="absolute right-4 block rounded bg-primary px-2 py-0.5 text-xs font-medium text-white">{{ $pendingCount }}</span>
+                            @endif
+                        </a>
+                    </li>
                 @elseif(Auth::user()->role === 'mitra')
-                    <a href="{{ route('mitra.dashboard') }}"
-                        class="sidebar-link {{ Request::routeIs('mitra.dashboard') ? 'active' : '' }}">
-                        <i class="icon fas fa-chart-line"></i>
-                        <span>Dashboard Mitra</span>
-                    </a>
-                    <a href="{{ route('mitra.monitoring') }}"
-                        class="sidebar-link {{ Request::get('monitoring') || Request::routeIs('mitra.monitoring') ? 'active' : '' }}">
-                        <i class="icon fas fa-location-dot"></i>
-                        <span>Monitoring GPS</span>
-                    </a>
-                    <a href="{{ route('mitra.vehicles.index') }}"
-                        class="sidebar-link {{ Request::routeIs('mitra.vehicles.index') ? 'active' : '' }}">
-                        <i class="icon fas fa-car"></i>
-                        <span>Armada Saya</span>
-                    </a>
-
-                    <a href="{{ route('mitra.booking.index') }}"
-                        class="sidebar-link {{ Request::routeIs('mitra.booking.index') ? 'active' : '' }}">
-                        <i class="icon fas fa-calendar-check"></i>
-                        <span>Kelola Booking</span>
-                    </a>
+                    <li>
+                        <a href="{{ route('mitra.dashboard') }}"
+                           class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::routeIs('mitra.dashboard') ? 'bg-white/10 text-white' : '' }}">
+                            <i class="fas fa-desktop w-5 text-center {{ Request::routeIs('mitra.dashboard') ? 'text-white' : 'text-bodydark2' }}"></i>
+                            Dashboard Mitra
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('mitra.monitoring') }}"
+                           class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::get('monitoring') || Request::routeIs('mitra.monitoring') ? 'bg-white/10 text-white' : '' }}">
+                            <i class="fas fa-map-location-dot w-5 text-center {{ Request::get('monitoring') || Request::routeIs('mitra.monitoring') ? 'text-white' : 'text-bodydark2' }}"></i>
+                            Monitoring GPS
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('mitra.vehicles.index') }}"
+                           class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::routeIs('mitra.vehicles.index') ? 'bg-white/10 text-white' : '' }}">
+                            <i class="fas fa-car w-5 text-center {{ Request::routeIs('mitra.vehicles.index') ? 'text-white' : 'text-bodydark2' }}"></i>
+                            Armada Saya
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('mitra.booking.index') }}"
+                           class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::routeIs('mitra.booking.index') ? 'bg-white/10 text-white' : '' }}">
+                            <i class="fas fa-clipboard-list w-5 text-center {{ Request::routeIs('mitra.booking.index') ? 'text-white' : 'text-bodydark2' }}"></i>
+                            Kelola Booking
+                        </a>
+                    </li>
                 @endif
-            </div>
-        </div>
+            </ul>
 
-        {{-- Group 2 --}}
-        <div>
-            <p class="px-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Konfigurasi</p>
-            <div class="space-y-1">
+            <h3 class="mb-4 ml-4 text-sm font-semibold text-bodydark2 uppercase tracking-wider mt-10">Konfigurasi</h3>
+            
+            <ul class="mb-6 flex flex-col gap-1.5">
                 @php
                     $profileRoute = Auth::user()->role === 'admin' ? 'admin.profile' : 'mitra.profile';
                 @endphp
-                <a href="{{ route($profileRoute) }}"
-                    class="sidebar-link {{ Request::routeIs($profileRoute) ? 'active' : '' }}">
-                    <i class="icon fas fa-user-gear"></i>
-                    <span>Profil Saya</span>
-                </a>
-                <a href="{{ route('home') }}" target="_blank" class="sidebar-link">
-                    <i class="icon fas fa-globe"></i>
-                    <span>Lihat Website</span>
-                </a>
-            </div>
-        </div>
-    </nav>
+                <li>
+                    <a href="{{ route($profileRoute) }}"
+                       class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10 {{ Request::routeIs($profileRoute) ? 'bg-white/10 text-white' : '' }}">
+                        <i class="fas fa-user-circle w-5 text-center {{ Request::routeIs($profileRoute) ? 'text-white' : 'text-bodydark2' }}"></i>
+                        Profil Saya
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('home') }}" target="_blank"
+                       class="group relative flex items-center gap-3 rounded-md px-4 py-2.5 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-white/10">
+                        <i class="fas fa-globe w-5 text-center text-bodydark2 group-hover:text-white"></i>
+                        Lihat Website
+                    </a>
+                </li>
+            </ul>
 
-    {{-- User Section at Bottom --}}
-    <div class="p-4 border-t border-white/5 mx-2 mb-2">
-        <div class="flex items-center gap-3 p-4 bg-white/5 rounded-3xl group">
-            <div
-                class="w-10 h-10 bg-blue-600/20 text-blue-500 flex items-center justify-center text-sm font-black rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all">
-                {{ substr(Auth::user()->name, 0, 1) }}
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-xs font-bold text-white truncate">{{ Auth::user()->name }}</p>
-                <p class="text-[10px] text-slate-500 truncate">{{ Auth::user()->email }}</p>
-            </div>
-            <form id="logout-sidebar" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
-            <button onclick="document.getElementById('logout-sidebar').submit()"
-                class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-red-500 transition-colors"
-                title="Keluar">
-                <i class="fas fa-power-off text-sm"></i>
-            </button>
-        </div>
+        </nav>
     </div>
 </aside>
