@@ -113,7 +113,7 @@
                 </div>
                 <div class="text-right">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-12">Authorized by Jatara Administration</p>
-                    <div class="font-black text-slate-900 text-xl italic border-b-2 border-slate-900 pb-1 mb-1">Rental Administrator</div>
+                    <div class="font-black text-slate-900 text-xl italic border-b-2 border-slate-900 pb-1 mb-1">Jatara Administrator</div>
                     <p class="text-[10px] font-bold text-slate-400">Dicetak pada: {{ now()->format('d M Y H:i') }}</p>
                 </div>
             </div>
