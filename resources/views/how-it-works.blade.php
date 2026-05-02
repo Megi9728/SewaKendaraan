@@ -262,8 +262,8 @@
 
                 <h2 class="relative z-10 text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">Siap
                     Menghidupkan<br>Mesin Perjalanan Anda?</h2>
-                <p class="relative z-10 text-lg text-[#EBEBDF] font-medium mb-12 max-w-2xl mx-auto">Gabung dengan ribuan
-                    pengguna lain yang telah membuktikan kemudahan mobilitas tanpa batas bersama Jatara.</p>
+                <p class="relative z-10 text-lg text-[#EBEBDF] font-medium mb-12 max-w-2xl mx-auto">Gabung dengan
+                    pengguna lainnya yang telah membuktikan kemudahan mobilitas tanpa batas bersama Jatara.</p>
                 <div class="relative z-10 flex flex-col sm:flex-row justify-center gap-6">
                     <a href="{{ route('browse') }}"
                         class="bg-[#F5D042] text-[#0A174E] border border-transparent font-extrabold px-10 py-5 rounded-2xl hover:bg-transparent hover:border-[#F5D042] hover:text-[#F5D042] transition-colors shadow-lg">Telusuri

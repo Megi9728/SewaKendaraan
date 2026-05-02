@@ -277,56 +277,54 @@
             </div>
         </section>
 
-        <!-- Kategori Sewa (Baru) -->
-        <section class="max-w-[1400px] mx-auto px-4 md:px-8 mt-24">
-            <div class="flex flex-col md:flex-row items-start md:items-center gap-10">
-                <div class="md:w-1/4">
-                    <h2 class="text-3xl md:text-4xl font-bold text-[#0A174E] leading-tight">Kategori<br>Pilihan</h2>
+        <!-- Running Text Slogan -->
+        <section class="mt-24 mb-10 overflow-hidden bg-[#0A174E] py-8 select-none">
+            <div class="flex whitespace-nowrap animate-marquee">
+                <div class="flex items-center gap-12 text-white/90 text-2xl md:text-4xl font-bold uppercase tracking-tighter mx-4">
+                    <span>Sewa Kendaraan Jatara</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Unit Prima & Terawat</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Booking Mudah & Cepat</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Harga Terjangkau</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Layanan 24/7</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Sewa Kendaraan Jatara</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
                 </div>
-                <div class="md:w-3/4 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
-                    <!-- Kategori 1 -->
-                    <div
-                        class="bg-[#F9F9F5] rounded-3xl p-4 md:p-6 text-center group hover:bg-[#EBEBDF] transition cursor-pointer">
-                        <div class="aspect-square rounded-full overflow-hidden mb-4 border-4 border-white shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=400&q=80"
-                                alt="Bisnis"
-                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        </div>
-                        <h4 class="font-bold text-[#0A174E]">Bisnis</h4>
-                    </div>
-                    <!-- Kategori 2 -->
-                    <div
-                        class="bg-[#F9F9F5] rounded-3xl p-4 md:p-6 text-center group hover:bg-[#EBEBDF] transition cursor-pointer">
-                        <div class="aspect-square rounded-full overflow-hidden mb-4 border-4 border-white shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80"
-                                alt="Keluarga"
-                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        </div>
-                        <h4 class="font-bold text-[#0A174E]">Keluarga</h4>
-                    </div>
-                    <!-- Kategori 3 -->
-                    <div
-                        class="bg-[#F9F9F5] rounded-3xl p-4 md:p-6 text-center group hover:bg-[#EBEBDF] transition cursor-pointer">
-                        <div class="aspect-square rounded-full overflow-hidden mb-4 border-4 border-white shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=400&q=80"
-                                alt="Petualangan"
-                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        </div>
-                        <h4 class="font-bold text-[#0A174E]">Petualangan</h4>
-                    </div>
-                    <!-- Kategori 4 -->
-                    <div
-                        class="bg-[#F9F9F5] rounded-3xl p-4 md:p-6 text-center group hover:bg-[#EBEBDF] transition cursor-pointer">
-                        <div class="aspect-square rounded-full overflow-hidden mb-4 border-4 border-white shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1519671482749-fd098f392a56?auto=format&fit=crop&w=400&q=80"
-                                alt="Pernikahan"
-                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        </div>
-                        <h4 class="font-bold text-[#0A174E]">Komersial</h4>
-                    </div>
+                <!-- Duplicate for seamless loop -->
+                <div class="flex items-center gap-12 text-white/90 text-2xl md:text-4xl font-bold uppercase tracking-tighter mx-4">
+                    <span>Sewa Kendaraan Jatara</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Unit Prima & Terawat</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Booking Mudah & Cepat</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Harga Terjangkau</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Layanan 24/7</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
+                    <span>Sewa Kendaraan Jatara</span>
+                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
                 </div>
             </div>
         </section>
+
+        @push('styles')
+        <style>
+            @keyframes marquee {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+            }
+            .animate-marquee {
+                display: flex;
+                width: max-content;
+                animation: marquee 30s linear infinite;
+            }
+        </style>
+        @endpush
 
         <section class="max-w-[1400px] mx-auto px-4 md:px-8 mt-24 mb-16 relative">
             <div
@@ -450,16 +448,14 @@
                         </a>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-8 mt-24">
+                    <div class="grid grid-cols-2 gap-6 md:gap-10 mt-20">
                         <div>
-                            <h3 class="text-5xl md:text-[4rem] font-bold text-[#0A174E] mb-3 tracking-tighter">5K+</h3>
-                            <p class="text-gray-500 font-medium leading-relaxed pr-4">Pelanggan ceria yang telah
-                                mempercayai kami</p>
+                            <h3 class="text-2xl md:text-3xl font-extrabold text-[#0A174E] mb-3 tracking-tight uppercase">Terpercaya</h3>
+                            <p class="text-gray-500 font-medium text-sm md:text-base leading-relaxed pr-2">Partner mobilitas andalan dengan ribuan ulasan positif</p>
                         </div>
                         <div>
-                            <h3 class="text-5xl md:text-[4rem] font-bold text-[#0A174E] mb-3 tracking-tighter">99%</h3>
-                            <p class="text-gray-500 font-medium leading-relaxed pr-4">Pelanggan setuju dengan penawaran
-                                layanan kami</p>
+                            <h3 class="text-2xl md:text-3xl font-extrabold text-[#0A174E] mb-3 tracking-tight uppercase">Premium</h3>
+                            <p class="text-gray-500 font-medium text-sm md:text-base leading-relaxed pr-2">Standar armada terbaik untuk kenyamanan perjalanan Anda</p>
                         </div>
                     </div>
                 </div>

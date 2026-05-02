@@ -1,33 +1,36 @@
 @extends('layouts.admin')
 
-@section('title', 'Kelola Armada Kendaraan')
-@section('page-title', 'Kelola Armada')
-@section('page-subtitle', 'Tambah, edit, dan hapus unit kendaraan mitra')
-
-@push('styles')
-<style>
-    .modal-overlay { backdrop-filter: blur(4px); }
-    #vehicle-form::-webkit-scrollbar { width: 6px; }
-    #vehicle-form::-webkit-scrollbar-track { background: transparent; }
-    #vehicle-form::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-    #vehicle-form::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
-</style>
-@endpush
+@section('title', 'Manajemen Armada')
 
 @section('content')
 
+{{-- Header Area --}}
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight">
+            Armada Kendaraan
+        </h2>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Kelola unit kendaraan yang Anda sewakan.</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <button id="btn-tambah" class="bg-brand-500 hover:bg-brand-600 text-white font-bold px-5 py-2.5 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-500/20 flex items-center gap-2 text-[10px] uppercase tracking-widest">
+            <i class="fas fa-plus-circle"></i> TAMBAH UNIT
+        </button>
+    </div>
+</div>
+
 @if(session('success'))
-<div class="mb-6 p-4 bg-green-50 border border-green-100 text-green-700 rounded-2xl flex items-center gap-3">
+<div class="mb-8 bg-success-50 dark:bg-success-500/10 border border-success-500/10 text-success-600 dark:text-success-400 px-6 py-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
     <i class="fas fa-check-circle"></i>
-    <p class="text-sm font-semibold">{{ session('success') }}</p>
+    <p class="font-bold text-sm">{{ session('success') }}</p>
 </div>
 @endif
 
 @if($errors->any())
-<div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-700 rounded-2xl">
+<div class="mb-8 bg-error-50 dark:bg-error-500/10 border border-error-500/10 text-error-600 dark:text-error-400 px-6 py-4 rounded-2xl">
     <div class="flex items-center gap-3 mb-2">
-        <i class="fas fa-exclamation-circle text-red-600"></i>
-        <p class="text-sm font-bold">Terjadi Kesalahan:</p>
+        <i class="fas fa-exclamation-circle"></i>
+        <p class="font-bold text-sm">Terjadi Kesalahan:</p>
     </div>
     <ul class="list-disc list-inside text-xs font-medium space-y-1 ml-6">
         @foreach($errors->all() as $error)
@@ -37,99 +40,102 @@
 </div>
 @endif
 
-
 {{-- ===== TOOLBAR ===== --}}
-<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-    <div class="flex gap-3 flex-wrap">
-        {{-- Search --}}
-        <div class="relative">
-            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <i class="fas fa-search text-[#8F8F7E] text-sm"></i>
-            </div>
-            <input type="text" id="search-vehicle" placeholder="Cari kendaraan..." class="pl-10 pr-4 py-2.5 bg-white border border-[#D4D4C3] rounded-xl text-sm font-medium text-[#0A174E]/80 focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:border-[#0A174E] w-56">
-        </div>
-
-        {{-- Filter Status --}}
-        <select id="filter-status" class="bg-white border border-[#D4D4C3] text-sm font-medium text-[#0A174E]/70 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30">
+<div class="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-2xl p-3 mb-6 flex flex-col lg:flex-row gap-3 items-center">
+    <div class="relative flex-1 w-full">
+        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+        <input type="text" id="search-vehicle" placeholder="Cari nama armada atau tipe..." 
+               class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-xl text-xs font-medium focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none">
+    </div>
+    <div class="flex items-center gap-3 w-full lg:w-auto">
+        <select id="filter-status" 
+                class="flex-1 lg:w-44 bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 px-4 py-2.5 rounded-xl text-[10px] font-bold text-gray-500 uppercase tracking-wider outline-none cursor-pointer hover:border-brand-500/50 transition-all">
             <option value="">Semua Status</option>
             <option value="tersedia">Tersedia</option>
-            <option value="disewa">Disewa</option>
+            <option value="disewa">Sedang Sewa</option>
             <option value="perawatan">Perawatan</option>
         </select>
+        <div class="w-px h-8 bg-gray-100 dark:bg-gray-800 hidden lg:block mx-1"></div>
+        <div class="text-right hidden sm:block">
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-0.5">Total</p>
+            <p class="text-base font-black text-gray-800 dark:text-white leading-none">{{ $vehicles->count() }}</p>
+        </div>
     </div>
-
-    <button id="btn-tambah" class="flex items-center gap-2 bg-[#F5D042] hover:opacity-90 text-[#0A174E] font-semibold px-5 py-2.5 rounded-xl transition-all active:scale-95 shadow-sm text-sm flex-shrink-0">
-        <i class="fas fa-plus"></i> Tambah Kendaraan
-    </button>
 </div>
 
 {{-- ===== TABLE ===== --}}
-<div class="bg-white rounded-2xl border border-[#EBEBDF] shadow-sm overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="bg-[#0A174E] border-b border-[#EBEBDF]">
+<div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left whitespace-nowrap">
+            <thead class="bg-gray-50 dark:bg-white/[0.02] border-b border-gray-100 dark:border-gray-800">
                 <tr>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Kendaraan</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Domisili</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Jenis</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Transmisi</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">BBM & CC</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Harga/Hari</th>
-                    <th class="text-left px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Status</th>
-                    <th class="text-right px-6 py-4 text-xs font-bold text-[#EBEBDF] uppercase tracking-wider">Aksi</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Kendaraan</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Domisili</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-center">Spesifikasi</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Harga/Hari</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-center">Status</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-right">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-[#F9F9F5]" id="vehicle-table-body">
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                 @foreach($vehicles as $v)
-                <tr class="hover:bg-[#F9F9F5]/70 transition-colors vehicle-row"
+                <tr class="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-colors vehicle-row"
                     data-name="{{ strtolower($v->name) }}"
-                    data-status="{{ strtolower($v->status) }}"
-                    data-jenis="{{ strtolower($v->type) }}">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#EBEBDF] flex-shrink-0">
-                                <img src="{{ $v->image ? asset('storage/' . $v->image) : 'https://placehold.co/600x400?text=No+Image' }}" class="w-full h-full object-cover" alt="{{ $v->name }}">
+                    data-status="{{ strtolower($v->status) }}">
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 border border-gray-100 dark:border-gray-700 shadow-sm">
+                                <img src="{{ $v->image ? asset('storage/' . $v->image) : 'https://placehold.co/600x400?text=No+Image' }}" class="w-full h-full object-cover transition-transform hover:scale-110" alt="{{ $v->name }}">
                             </div>
                             <div>
-                                <div class="flex items-center gap-2">
-                                    <p class="font-semibold text-[#0A174E]">{{ $v->name }}</p>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <p class="text-sm font-bold text-gray-800 dark:text-white tracking-tight leading-tight">{{ $v->name }}</p>
                                     @if($v->units->first() && $v->units->first()->plate_number)
-                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#EBEBDF] text-[#0A174E]/60 border border-[#D4D4C3]">{{ $v->units->first()->plate_number }}</span>
+                                        <span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-gray-900 text-white dark:bg-white dark:text-black tracking-tighter leading-none">{{ $v->units->first()->plate_number }}</span>
                                     @endif
                                 </div>
-                                <p class="text-xs text-[#8F8F7E] font-medium">Rating: {{ $v->rating }} ({{ $v->reviews_count }} Ulasan)</p>
+                                <p class="text-[9px] font-bold text-brand-500 uppercase tracking-widest leading-none">{{ $v->type }} • {{ $v->transmission }}</p>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 font-bold text-[#0A174E]/70"><i class="fas fa-map-marker-alt text-red-500 mr-1"></i> {{ $v->domicile ?? 'Jakarta' }}</td>
-                    <td class="px-6 py-4 text-[#0A174E]/60 font-medium">{{ $v->type }}</td>
-                    <td class="px-6 py-4 text-[#0A174E]/60">{{ $v->transmission }}</td>
-                    <td class="px-6 py-4">
-                        <p class="text-xs font-bold text-[#0A174E]/80">{{ $v->fuel_type ?? 'Bensin' }}</p>
-                        <p class="text-[10px] text-[#8F8F7E] uppercase tracking-wider">{{ $v->engine_capacity ?? '1500' }} CC</p>
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-error-500 text-[9px]"></i>
+                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-none">{{ $v->domicile ?? 'Jakarta' }}</span>
+                        </div>
                     </td>
-                    <td class="px-6 py-4 font-bold text-[#0A174E]">Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</td>
-                    <td class="px-6 py-4">
+                    <td class="py-4 px-6 text-center">
+                        <div class="flex flex-col gap-0.5 items-center">
+                            <span class="text-[9px] font-bold text-gray-800 dark:text-white uppercase tracking-widest leading-none">{{ $v->fuel_type ?? 'Bensin' }}</span>
+                            <span class="text-[8px] font-medium text-gray-400 uppercase leading-none">{{ $v->engine_capacity ?? '1500' }} CC</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="text-xs font-bold text-gray-800 dark:text-white tracking-tight">
+                            <span class="text-[9px] font-medium opacity-60">Rp</span> {{ number_format($v->price_per_day, 0, ',', '.') }}
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-center">
                         @php
-                            $statusClass = [
-                                'Tersedia' => 'bg-green-100 text-green-700',
-                                'Disewa' => 'bg-blue-100 text-blue-700',
-                                'Perawatan' => 'bg-orange-100 text-orange-700'
-                            ][$v->status] ?? 'bg-[#EBEBDF] text-[#0A174E]/80';
+                            $statusClasses = [
+                                'Tersedia' => 'bg-success-50 text-success-600 border-success-500/20 dark:bg-success-500/10 dark:text-success-400',
+                                'Disewa' => 'bg-brand-50 text-brand-600 border-brand-500/20 dark:bg-brand-500/10 dark:text-brand-400',
+                                'Perawatan' => 'bg-warning-50 text-warning-600 border-warning-500/20 dark:bg-warning-500/10 dark:text-warning-400'
+                            ];
                         @endphp
-                        <span class="text-[10px] font-bold px-3 py-1.5 rounded-lg {{ $statusClass }} uppercase">{{ $v->status }}</span>
+                        <span class="inline-flex rounded-md px-2 py-1 text-[8px] font-bold uppercase tracking-widest border {{ $statusClasses[$v->status] ?? 'bg-gray-100' }}">
+                            {{ $v->status }}
+                        </span>
                     </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2">
+                    <td class="py-4 px-6 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
                             <button onclick="openEditModal({{ json_encode($v->load(['images', 'units'])) }})"
-                                class="w-8 h-8 flex items-center justify-center bg-[#EBEBDF] text-[#0A174E] hover:bg-[#D4D4C3] rounded-lg transition-colors"
-                                title="Edit">
-                                <i class="fas fa-edit text-xs"></i>
+                                class="w-8 h-8 flex items-center justify-center bg-gray-50 dark:bg-white/5 text-gray-400 hover:text-brand-500 transition-all border border-gray-100 dark:border-gray-800 rounded-lg">
+                                <i class="fas fa-edit text-[10px]"></i>
                             </button>
                             <button onclick="openDeleteModal({{ $v->id }}, '{{ $v->name }}')"
-                                class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-50 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
-                                title="Hapus">
-                                <i class="fas fa-trash text-xs"></i>
+                                class="w-8 h-8 flex items-center justify-center bg-gray-50 dark:bg-white/5 text-gray-400 hover:text-error-500 transition-all border border-gray-100 dark:border-gray-800 rounded-lg">
+                                <i class="fas fa-trash text-[10px]"></i>
                             </button>
                         </div>
                     </td>
@@ -138,156 +144,148 @@
             </tbody>
         </table>
     </div>
-
-    {{-- Table Footer --}}
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 py-4 border-t border-[#EBEBDF] bg-[#F9F9F5]/50">
-        <p class="text-sm text-[#0A174E]/60">Total Kendaraan: <span class="font-semibold text-[#0A174E]">{{ $vehicles->count() }}</span> unit</p>
-    </div>
 </div>
 
 {{-- ===== MODAL TAMBAH/EDIT ===== --}}
 <div id="modal-form" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 bg-[#0A174E]/60 modal-overlay" onclick="closeModal('modal-form')"></div>
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden flex flex-col">
-        <div class="flex justify-between items-center px-7 py-5 border-b border-[#EBEBDF]">
-            <h2 id="modal-title" class="text-lg font-bold text-[#0A174E]">Tambah Kendaraan Baru</h2>
-            <button onclick="closeModal('modal-form')" class="w-9 h-9 flex items-center justify-center rounded-xl text-[#8F8F7E] hover:bg-[#EBEBDF] hover:text-[#0A174E]/70 transition-all">
+    <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-md" onclick="closeModal('modal-form')"></div>
+    <div class="bg-white dark:bg-[#121212] rounded-[3rem] shadow-2xl w-full max-w-3xl z-10 overflow-hidden flex flex-col border border-white/10 animate-in zoom-in duration-300">
+        <div class="flex justify-between items-center px-10 py-8 border-b border-gray-100 dark:border-gray-800/50">
+            <div>
+                <h2 id="modal-title" class="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Tambah Armada</h2>
+                <p class="text-xs font-bold text-brand-500 uppercase tracking-widest mt-1">Detail Informasi Kendaraan</p>
+            </div>
+            <button onclick="closeModal('modal-form')" class="w-12 h-12 flex items-center justify-center rounded-2xl text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-all border border-gray-100 dark:border-gray-800">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <form id="vehicle-form" class="p-7 space-y-5 max-h-[75vh] overflow-y-auto" action="{{ route('mitra.vehicles.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="vehicle-form" class="p-10 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar" action="{{ route('mitra.vehicles.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div id="method-field"></div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Nama Kendaraan</label>
-                    <input type="text" name="name" id="f-name" required placeholder="cth: Toyota Innova Zenix" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Domisili Cabang</label>
-                    <select name="domicile" id="f-domicile" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
-                        @foreach(['Jakarta', 'Bogor', 'Depok', 'Tangerang', 'Bekasi', 'Bandung', 'Bali'] as $city)
-                            <option value="{{ $city }}">{{ $city }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="sm:col-span-2">
-                    @if(!auth('mitra')->user()->pool_id)
-                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
-                        <i class="fas fa-exclamation-triangle text-amber-500"></i>
-                        <p class="text-xs text-amber-700 font-medium">Anda belum menyetel lokasi pool. <a href="{{ route('mitra.profile') }}" class="font-bold underline">Set lokasi sekarang</a> agar armada dapat dipesan.</p>
+            
+            @if(!auth('mitra')->user()->pool_id)
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
+                <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                <p class="text-xs text-amber-700 font-medium">Anda belum menyetel lokasi pool. <a href="{{ route('mitra.profile') }}" class="font-bold underline">Set lokasi sekarang</a> agar armada dapat dipesan.</p>
+            </div>
+            @endif
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {{-- Main Info --}}
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Nama Armada</label>
+                        <input type="text" name="name" id="f-name" required placeholder="cth: Toyota Innova Zenix" 
+                               class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all">
                     </div>
-                    @else
-                    <div class="bg-[#EBEBDF] border border-[#EBEBDF] rounded-2xl p-4 flex items-center gap-3">
-                        <i class="fas fa-map-marker-alt text-[#0A174E]/80"></i>
+                    
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Lokasi Pool Aktif</p>
-                            <p class="text-xs text-blue-700 font-medium truncate max-w-[400px]">{{ auth('mitra')->user()->pool->address ?? 'Lokasi Terdaftar' }}</p>
+                            <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Tipe</label>
+                            <select name="type" id="f-type" class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none cursor-pointer hover:border-brand-500/50 transition-all">
+                                <option value="Mobil">Mobil</option>
+                                <option value="Motor">Motor</option>
+                                <option value="SUV">SUV</option>
+                                <option value="MPV">MPV</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Domisili</label>
+                            <select name="domicile" id="f-domicile" class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none cursor-pointer hover:border-brand-500/50 transition-all">
+                                @foreach(['Jakarta', 'Bogor', 'Depok', 'Tangerang', 'Bekasi', 'Bandung', 'Bali'] as $city)
+                                    <option value="{{ $city }}">{{ $city }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-                    @endif
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Jenis</label>
-                    <select name="type" id="f-type" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
-                        <option value="Mobil">Mobil</option>
-                        <option value="Motor">Motor</option>
-                        <option value="Minibus">Minibus</option>
-                        <option value="SUV">SUV</option>
-                        <option value="MPV">MPV</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Transmisi</label>
-                    <select name="transmission" id="f-transmission" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
-                        <option value="Matic">Matic</option>
-                        <option value="Manual">Manual</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Kapasitas (Kursi)</label>
-                    <input type="number" name="seats" id="f-seats" required placeholder="cth: 7" min="1" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Bahan Bakar</label>
-                    <select name="fuel_type" id="f-fuel" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
-                        <option value="Bensin">Bensin</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="Hybrid">Hybrid</option>
-                        <option value="Elektrik">Elektrik</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Kapasitas Mesin (CC)</label>
-                    <input type="number" name="engine_capacity" id="f-cc" required placeholder="cth: 1500" min="0" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Nomor Plat (Opsional)</label>
-                    <input type="text" name="plate_number" id="f-plate" placeholder="cth: B 1234 ABC" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all uppercase">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Harga / Hari (Rp)</label>
-                    <input type="number" name="price_per_day" id="f-price" required placeholder="cth: 650000" min="0" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Bahan Bakar</label>
+                            <select name="fuel_type" id="f-fuel" class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none cursor-pointer transition-all">
+                                <option value="Bensin">Bensin</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="Elektrik">Elektrik</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Transmisi</label>
+                            <select name="transmission" id="f-transmission" class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none cursor-pointer transition-all">
+                                <option value="Matic">Matic</option>
+                                <option value="Manual">Manual</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Status</label>
-                    <select name="status" id="f-status" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all">
-                        <option value="Tersedia">Tersedia</option>
-                        <option value="Disewa">Disewa</option>
-                        <option value="Perawatan">Perawatan</option>
-                    </select>
-                </div>
-                {{-- Main Photo Section --}}
-                <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Foto Utama (Thumbnail)</label>
-                    <div id="main-preview-area" class="w-full h-40 rounded-2xl border-2 border-dashed border-[#D4D4C3] bg-[#F9F9F5] flex items-center justify-center overflow-hidden relative cursor-pointer hover:bg-[#EBEBDF] transition-all group">
+                {{-- Image Info --}}
+                <div class="space-y-6">
+                    <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Foto Utama</label>
+                    <div id="main-preview-area" class="w-full h-64 rounded-3xl border-2 border-dashed border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center overflow-hidden relative group cursor-pointer hover:border-brand-500/50 transition-all">
                         <input type="file" name="image" id="f-image" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewMainImage(this)">
-                        <div id="main-preview-placeholder" class="text-center group-hover:scale-110 transition-transform">
-                            <i class="fas fa-camera text-[#BDBDAC] text-3xl mb-2"></i>
-                            <p class="text-[10px] font-bold text-[#8F8F7E] uppercase">Klik untuk unggah</p>
+                        <div id="main-preview-placeholder" class="text-center group-hover:scale-110 transition-transform duration-500">
+                            <div class="w-16 h-16 bg-brand-50 dark:bg-brand-500/10 rounded-2xl flex items-center justify-center text-brand-500 mx-auto mb-4">
+                                <i class="fas fa-camera text-2xl"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Pilih Foto Thumbnail</p>
                         </div>
-                        <img id="main-preview-img" class="absolute inset-0 w-full h-full object-cover hidden">
-                        <button type="button" id="btn-remove-main" onclick="removeMainImage(event)" class="absolute top-4 right-4 w-9 h-9 bg-red-500/90 text-white rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 hidden shadow-lg hover:bg-red-600">
-                            <i class="fas fa-trash-alt text-xs"></i>
+                        <img id="main-preview-img" class="absolute inset-0 w-full h-full object-cover hidden group-hover:scale-105 transition-transform duration-700">
+                        <button type="button" id="btn-remove-main" onclick="removeMainImage(event)" class="absolute top-5 right-5 w-10 h-10 bg-error-500 text-white rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 hidden shadow-xl active:scale-90">
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                         <input type="hidden" name="remove_main_image" id="remove-main-image-input" value="0">
                     </div>
                 </div>
+            </div>
 
-                {{-- Gallery Section --}}
-                <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-3">Galeri Foto (Banyak)</label>
-                    <div class="grid grid-cols-4 sm:grid-cols-6 gap-3" id="gallery-management">
-                        {{-- Existing Images (from server) --}}
-                        <div id="gallery-existing" class="contents"></div>
-                        
-                        {{-- New Preview Items (client-side) --}}
-                        <div id="gallery-new" class="contents"></div>
-
-                        {{-- Add Button --}}
-                        <div onclick="document.getElementById('f-gallery').click()" class="aspect-square rounded-xl border-2 border-dashed border-[#D4D4C3] bg-[#F9F9F5] flex flex-col items-center justify-center cursor-pointer hover:bg-[#EBEBDF] hover:border-slate-300 transition-all group">
-                            <i class="fas fa-plus text-[#BDBDAC] text-lg group-hover:scale-110 transition-transform"></i>
-                            <span class="text-[8px] font-bold text-[#8F8F7E] uppercase mt-1">Tambah</span>
-                            <input type="file" id="f-gallery" multiple accept="image/*" class="hidden" onchange="previewGalleryImages(this)">
-                        </div>
-                    </div>
-                    {{-- Hidden file inputs for new gallery items --}}
-                    <div id="gallery-input-container" class="hidden"></div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Plat Nomor</label>
+                    <input type="text" name="plate_number" id="f-plate" placeholder="B 1234 ABC" 
+                           class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none transition-all uppercase">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Harga/Hari</label>
+                    <input type="number" name="price_per_day" id="f-price" required placeholder="650000" 
+                           class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Kursi</label>
+                    <input type="number" name="seats" id="f-seats" required placeholder="5" 
+                           class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none transition-all text-center">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Mesin (CC)</label>
+                    <input type="number" name="engine_capacity" id="f-cc" required placeholder="1500" 
+                           class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none transition-all text-center">
                 </div>
             </div>
+
             <div>
-                <label class="block text-xs font-bold text-[#0A174E]/60 uppercase tracking-wider mb-2">Deskripsi</label>
-                <textarea name="description" id="f-desc" rows="3" placeholder="Deskripsi singkat kendaraan..." class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-medium text-[#0A174E] focus:outline-none focus:ring-2 focus:ring-[#0A174E]/30 focus:bg-white transition-all resize-none"></textarea>
+                <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Galeri Foto Armada</label>
+                <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4" id="gallery-management">
+                    <div id="gallery-existing" class="contents"></div>
+                    <div id="gallery-new" class="contents"></div>
+                    <div onclick="document.getElementById('f-gallery').click()" class="aspect-square rounded-2xl border-2 border-dashed border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-white/[0.02] flex flex-col items-center justify-center cursor-pointer hover:border-brand-500/50 hover:bg-brand-50/10 transition-all group">
+                        <i class="fas fa-plus text-gray-300 dark:text-gray-600 group-hover:scale-125 transition-transform"></i>
+                        <input type="file" id="f-gallery" multiple accept="image/*" class="hidden" onchange="previewGalleryImages(this)">
+                    </div>
+                </div>
+                <div id="gallery-input-container" class="hidden"></div>
             </div>
 
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="closeModal('modal-form')" class="flex-1 border border-[#D4D4C3] hover:bg-[#F9F9F5] text-[#0A174E]/70 font-semibold py-3 rounded-xl transition-all text-sm">
-                    Batal
-                </button>
-                <button type="submit" class="flex-1 bg-[#0A174E] hover:bg-[#0A174E]/90 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-sm shadow-md">
-                    <i class="fas fa-save mr-2"></i>Simpan
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Deskripsi Armada</label>
+                <textarea name="description" id="f-desc" rows="4" placeholder="Jelaskan kondisi unit, fitur unggulan, atau catatan khusus..." 
+                          class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-[2rem] px-6 py-5 text-sm font-medium text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all resize-none"></textarea>
+            </div>
+
+            <div class="flex gap-4 pt-6 pb-2">
+                <button type="button" onclick="closeModal('modal-form')" class="flex-1 font-bold py-5 rounded-2xl transition-all text-sm bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 active:scale-95">Batal</button>
+                <button type="submit" class="flex-[2] bg-brand-500 hover:bg-brand-600 text-white font-black py-5 rounded-2xl transition-all active:scale-95 text-sm shadow-xl shadow-brand-500/25 uppercase tracking-widest">
+                    Simpan Perubahan
                 </button>
             </div>
         </form>
@@ -296,21 +294,19 @@
 
 {{-- ===== MODAL HAPUS ===== --}}
 <div id="modal-delete" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 bg-[#0A174E]/60 modal-overlay" onclick="closeModal('modal-delete')"></div>
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm z-10 p-8 text-center">
-        <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <i class="fas fa-trash-alt text-red-500 text-2xl"></i>
+    <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeModal('modal-delete')"></div>
+    <div class="bg-white dark:bg-[#121212] rounded-[3rem] shadow-2xl w-full max-w-sm z-10 p-12 text-center border border-white/10 animate-in zoom-in duration-300">
+        <div class="w-24 h-24 bg-error-50 dark:bg-error-500/10 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8">
+            <i class="fas fa-trash-alt text-error-500 text-4xl"></i>
         </div>
-        <h3 class="text-xl font-black text-[#0A174E] mb-2">Hapus Kendaraan?</h3>
-        <p class="text-[#0A174E]/60 text-sm mb-6">Anda akan menghapus <span id="delete-name" class="font-bold text-[#0A174E]"></span>. Tindakan ini tidak dapat dibatalkan.</p>
+        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3 tracking-tight">Hapus Unit?</h3>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mb-10 leading-relaxed">Anda akan menghapus <span id="delete-name" class="font-black text-gray-800 dark:text-white underline decoration-error-500/30"></span>.</p>
         
-        <form id="delete-form" action="" method="POST">
+        <form id="delete-form" action="" method="POST" class="flex flex-col gap-4">
             @csrf
             @method('DELETE')
-            <div class="flex gap-3">
-                <button type="button" onclick="closeModal('modal-delete')" class="flex-1 border border-[#D4D4C3] hover:bg-[#F9F9F5] text-[#0A174E]/70 font-semibold py-3 rounded-xl transition-all text-sm">Batalkan</button>
-                <button type="submit" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-sm">Ya, Hapus!</button>
-            </div>
+            <button type="submit" class="w-full bg-error-500 hover:bg-error-600 text-white font-black py-5 rounded-2xl transition-all active:scale-95 text-sm shadow-xl shadow-error-500/25">Hapus Sekarang</button>
+            <button type="button" onclick="closeModal('modal-delete')" class="w-full font-bold py-4 rounded-2xl transition-all text-sm bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400">Batal</button>
         </form>
     </div>
 </div>
@@ -319,7 +315,7 @@
 
 @push('scripts')
 <script>
-    // ====== MODAL ======
+    // ====== MODAL LOGIC ======
     function openModal(id) {
         document.getElementById(id).classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -329,13 +325,17 @@
         document.body.style.overflow = '';
     }
 
-    // Tambah Kendaraan
-    document.getElementById('btn-tambah').addEventListener('click', function() {
-        document.getElementById('modal-title').textContent = 'Tambah Kendaraan Baru';
+    // Reset Form
+    function resetVehicleForm() {
+        document.getElementById('modal-title').textContent = 'Tambah Armada';
         document.getElementById('vehicle-form').action = "{{ route('mitra.vehicles.store') }}";
         document.getElementById('method-field').innerHTML = '';
         document.getElementById('vehicle-form').reset();
         resetImagePreviews();
+    }
+
+    document.getElementById('btn-tambah').addEventListener('click', function() {
+        resetVehicleForm();
         openModal('modal-form');
     });
 
@@ -353,7 +353,7 @@
         galleryFilesSelected = []; 
     }
 
-    // Main Image Preview
+    // Main Image Logic
     window.previewMainImage = function(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -380,7 +380,7 @@
         document.getElementById('remove-main-image-input').value = "1";
     }
 
-    // Multi Gallery Previews
+    // Gallery Logic
     let galleryFilesSelected = []; 
 
     window.previewGalleryImages = function(input) {
@@ -393,11 +393,11 @@
                 reader.onload = e => {
                     const div = document.createElement('div');
                     div.id = previewId;
-                    div.className = 'aspect-square rounded-xl overflow-hidden border border-[#D4D4C3] relative group animate-in fade-in zoom-in duration-300';
+                    div.className = 'aspect-square rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 relative group animate-in fade-in zoom-in duration-300 shadow-sm';
                     div.innerHTML = `
-                        <img src="${e.target.result}" class="w-full h-full object-cover">
-                        <button type="button" onclick="removeNewGalleryImage('${previewId}', '${file.name}')" class="absolute inset-0 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fas fa-trash-alt text-[10px]"></i>
+                        <img src="${e.target.result}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                        <button type="button" onclick="removeNewGalleryImage('${previewId}', '${file.name}')" class="absolute inset-0 bg-error-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     `;
                     container.appendChild(div);
@@ -425,13 +425,12 @@
         syncGalleryInput();
     }
 
-    // Edit Kendaraan
+    // Edit Logic
     function openEditModal(vehicle) {
-        document.getElementById('modal-title').textContent = 'Edit Kendaraan: ' + vehicle.name;
+        resetVehicleForm();
+        document.getElementById('modal-title').textContent = 'Edit Armada';
         document.getElementById('vehicle-form').action = `/mitra/vehicles/${vehicle.id}`;
-        document.getElementById('method-field').innerHTML = '@method("PUT")';
-        document.getElementById('vehicle-form').reset();
-        resetImagePreviews();
+        document.getElementById('method-field').innerHTML = '<input type="hidden" name="_method" value="PUT">';
 
         document.getElementById('f-name').value = vehicle.name;
         document.getElementById('f-domicile').value = vehicle.domicile || 'Jakarta';
@@ -442,7 +441,6 @@
         document.getElementById('f-cc').value = vehicle.engine_capacity || 1500;
         document.getElementById('f-plate').value = (vehicle.units && vehicle.units.length > 0) ? vehicle.units[0].plate_number : '';
         document.getElementById('f-price').value = vehicle.price_per_day;
-
         document.getElementById('f-desc').value = vehicle.description || '';
         
         if (vehicle.image) {
@@ -457,11 +455,11 @@
         if (vehicle.images && vehicle.images.length > 0) {
             vehicle.images.forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'aspect-square rounded-xl overflow-hidden border border-[#D4D4C3] relative group';
+                div.className = 'aspect-square rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 relative group shadow-sm';
                 div.innerHTML = `
-                    <img src="/storage/${img.image_path}" class="w-full h-full object-cover">
-                    <button type="button" onclick="deleteGalleryImage(${img.id})" class="absolute inset-0 bg-red-500/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                        <i class="fas fa-trash-alt text-[10px]"></i>
+                    <img src="/storage/${img.image_path}" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                    <button type="button" onclick="deleteGalleryImage(${img.id})" class="absolute inset-0 bg-error-500/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 `;
                 galleryExisting.appendChild(div);
@@ -474,30 +472,28 @@
         if (confirm('Hapus gambar ini dari galeri?')) {
             const form = document.createElement('form');
             form.method = 'POST'; form.action = `/mitra/vehicles/image/${id}`;
-            form.innerHTML = `@csrf @method("DELETE")`;
+            form.innerHTML = `<input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE">`;
             document.body.appendChild(form); form.submit();
         }
     }
 
-    // Delete Kendaraan
+    // Delete Logic
     function openDeleteModal(id, name) {
         document.getElementById('delete-name').textContent = name;
         document.getElementById('delete-form').action = `/mitra/vehicles/${id}`;
         openModal('modal-delete');
     }
 
-    // ====== SEARCH & FILTER ======
+    // Filter Logic
     function applyFilters() {
-        const search  = document.getElementById('search-vehicle').value.toLowerCase();
-        const status  = document.getElementById('filter-status').value.toLowerCase();
+        const search = document.getElementById('search-vehicle').value.toLowerCase();
+        const status = document.getElementById('filter-status').value.toLowerCase();
 
         document.querySelectorAll('.vehicle-row').forEach(row => {
-            const name    = row.dataset.name;
+            const name = row.dataset.name;
             const rowStat = row.dataset.status;
-
             const matchSearch = !search || name.includes(search);
             const matchStatus = !status || rowStat.includes(status);
-
             row.style.display = (matchSearch && matchStatus) ? '' : 'none';
         });
     }
