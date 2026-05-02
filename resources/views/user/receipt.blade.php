@@ -8,7 +8,7 @@
         {{-- Header Bukti --}}
         <div class="bg-slate-900 p-8 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-                <h1 class="text-3xl font-black mb-1 italic tracking-tight">Jatara<span class="text-blue-500">Rent</span></h1>
+                <h1 class="text-3xl font-black mb-1 italic tracking-tight">Jatara<span class="text-blue-500">.</span></h1>
                 <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Bukti Pembayaran & Pesanan Resmi</p>
             </div>
             <div class="text-right">
