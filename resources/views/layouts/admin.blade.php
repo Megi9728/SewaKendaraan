@@ -17,15 +17,56 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#3C50E0',
-                        dark: '#1c2434',
-                        stroke: '#E2E8F0',
-                        whiten: '#F1F5F9',
-                        body: '#64748B',
-                        bodydark: '#AEB7C0',
+                        primary: '#465fff',
+                        brand: {
+                            50: '#ecf3ff',
+                            100: '#dde9ff',
+                            200: '#c2d6ff',
+                            300: '#9cb9ff',
+                            400: '#7592ff',
+                            500: '#465fff',
+                            600: '#3641f5',
+                            700: '#2a31d8',
+                            800: '#252dae',
+                            900: '#262e89',
+                        },
+                        gray: {
+                            25: '#fcfcfd',
+                            50: '#f9fafb',
+                            100: '#f2f4f7',
+                            200: '#e4e7ec',
+                            300: '#d0d5dd',
+                            400: '#98a2b3',
+                            500: '#667085',
+                            600: '#475467',
+                            700: '#344054',
+                            800: '#1d2939',
+                            900: '#101828',
+                        },
+                        success: {
+                            50: '#ecfdf3',
+                            500: '#12b76a',
+                            600: '#039855',
+                        },
+                        error: {
+                            50: '#fef3f2',
+                            500: '#f04438',
+                            600: '#d92d20',
+                        },
+                        warning: {
+                            50: '#fffaeb',
+                            500: '#f79009',
+                            600: '#dc6803',
+                        },
+                        dark: '#101828',
+                        boxdark: '#1D2939',
+                        stroke: '#e4e7ec',
+                        whiten: '#F9FAFB',
+                        body: '#475467',
+                        bodydark: '#98A2B3',
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Outfit', 'Inter', 'sans-serif'],
                     }
                 }
             }
@@ -45,6 +86,9 @@
         ::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
         .dark ::-webkit-scrollbar-thumb { background: #333A48; }
         
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
         [x-cloak] { display: none !important; }
     </style>
     @stack('styles')
@@ -64,7 +108,7 @@
 
         <!-- Main Content -->
         <main>
-            <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            <div class="mx-auto max-w-screen-2xl p-4 md:p-6">
                 @yield('content')
             </div>
         </main>

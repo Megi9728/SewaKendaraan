@@ -13,7 +13,7 @@
         </div>
 
         <div class="hidden sm:block">
-            <h1 class="text-xl font-bold text-black dark:text-white drop-shadow-sm">Welcome, {{ Auth::user()->name }}</h1>
+            <h1 class="text-lg font-bold text-black dark:text-white drop-shadow-sm">Welcome, {{ Auth::user()->name }}</h1>
         </div>
 
         <div class="flex items-center gap-3 space-x-3 sm:space-x-5 lg:gap-5">

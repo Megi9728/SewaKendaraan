@@ -1,374 +1,324 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Manajemen Pemesanan')
-@section('page-subtitle', 'Daftar semua transaksi penyewaan kendaraan')
+@section('title', 'Manajemen Pemesanan')
 
 @section('content')
-    <div class="px-4 py-6">
-        {{-- Stats Mini --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            @php
-                $stats = [
-                    [
-                        'label' => 'Total Pesanan',
-                        'value' => $bookings->count(),
-                        'icon' => 'fas fa-list',
-                        'color' => 'blue',
-                    ],
-                    [
-                        'label' => 'Pending',
-                        'value' => $bookings->where('status', 'Pending')->count(),
-                        'icon' => 'fas fa-clock',
-                        'color' => 'orange',
-                    ],
-                    [
-                        'label' => 'Terjadwal',
-                        'value' => $bookings->where('status', 'Confirmed')->count(),
-                        'icon' => 'fas fa-calendar-check',
-                        'color' => 'blue',
-                    ],
-                    [
-                        'label' => 'Disewa',
-                        'value' => $bookings->whereIn('status', ['Active', 'Picked_Up'])->count(),
-                        'icon' => 'fas fa-car',
-                        'color' => 'green',
-                    ],
-                    [
-                        'label' => 'Selesai',
-                        'value' => $bookings->where('status', 'Completed')->count(),
-                        'icon' => 'fas fa-check-double',
-                        'color' => 'slate',
-                    ],
-                ];
-            @endphp
-            @foreach ($stats as $s)
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-10 h-10 rounded-xl bg-{{ $s['color'] }}-50 text-{{ $s['color'] }}-600 flex items-center justify-center">
-                            <i class="{{ $s['icon'] }}"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ $s['label'] }}
-                            </h4>
-                            <p class="text-xl font-black text-slate-900">{{ $s['value'] }}</p>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+
+{{-- Header Area --}}
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight">
+            Monitor Penyewaan
+        </h2>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Pantau, konfirmasi, dan kelola semua status pemesanan kendaraan.</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <div class="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 px-4 py-2 rounded-xl flex items-center gap-3 shadow-sm">
+            <div class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></div>
+            <span class="text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Total: {{ $bookings->count() }} Transaksi</span>
         </div>
+    </div>
+</div>
 
-        @if (session('success'))
-            <div
-                class="mb-6 bg-green-50 border border-green-100 text-green-700 px-6 py-4 rounded-xl flex items-center gap-3">
-                <i class="fas fa-check-circle"></i>
-                <p class="font-bold text-sm">{{ session('success') }}</p>
+{{-- Stats Grid --}}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+    @php
+        $stats = [
+            [
+                'label' => 'Pending',
+                'value' => $bookings->where('status', 'Pending')->count(),
+                'icon' => 'fas fa-clock',
+                'color' => 'warning',
+            ],
+            [
+                'label' => 'Terjadwal',
+                'value' => $bookings->where('status', 'Confirmed')->count(),
+                'icon' => 'fas fa-calendar-check',
+                'color' => 'brand',
+            ],
+            [
+                'label' => 'Disewa',
+                'value' => $bookings->whereIn('status', ['Active', 'Picked_Up'])->count(),
+                'icon' => 'fas fa-car',
+                'color' => 'success',
+            ],
+            [
+                'label' => 'Selesai',
+                'value' => $bookings->where('status', 'Completed')->count(),
+                'icon' => 'fas fa-check-double',
+                'color' => 'gray',
+            ],
+            [
+                'label' => 'Batal/Tolak',
+                'value' => $bookings->whereIn('status', ['Cancelled', 'Rejected'])->count(),
+                'icon' => 'fas fa-times-circle',
+                'color' => 'error',
+            ],
+        ];
+    @endphp
+    @foreach ($stats as $s)
+        <div class="bg-white dark:bg-white/[0.03] p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md group">
+            <div class="flex items-center justify-between mb-2">
+                <div class="w-9 h-9 rounded-lg bg-{{ $s['color'] }}-500/10 text-{{ $s['color'] }}-600 dark:text-{{ $s['color'] }}-400 flex items-center justify-center transition-transform group-hover:scale-110">
+                    <i class="{{ $s['icon'] }} text-base"></i>
+                </div>
             </div>
-        @endif
-
-                {{-- Breadcrumb / Header area --}}
-        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h2 class="text-title-md2 font-bold text-black dark:text-white text-2xl">
-                    Monitor Penyewaan
-                </h2>
-                <p class="text-sm text-body dark:text-bodydark mt-1">Pantau, konfirmasi, dan kelola status pemesanan</p>
+                <h4 class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">{{ $s['label'] }}</h4>
+                <p class="text-xl font-bold text-gray-800 dark:text-white">{{ $s['value'] }}</p>
             </div>
         </div>
+    @endforeach
+</div>
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div class="flex gap-3 flex-wrap w-full sm:w-auto">
-                <div class="relative w-full sm:w-auto">
-                    <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none z-30">
-                        <i class="fas fa-search text-body dark:text-bodydark text-sm"></i>
-                    </div>
-                    <input type="text" id="search-booking" placeholder="Cari TRX / Nama..." 
-                           class="relative z-20 pl-10 pr-4 py-2.5 w-full sm:w-64 rounded-lg border border-stroke bg-transparent text-sm font-medium outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-black dark:text-white transition-all">
-                </div>
+@if (session('success'))
+    <div class="mb-8 bg-success-50 dark:bg-success-500/10 border border-success-500/10 text-success-600 dark:text-success-400 px-6 py-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
+        <i class="fas fa-check-circle"></i>
+        <p class="font-bold text-sm">{{ session('success') }}</p>
+    </div>
+@endif
 
-                <div class="relative z-20 bg-transparent w-full sm:w-auto">
-                    <select id="filter-status" class="relative z-20 w-full sm:w-40 appearance-none rounded-lg border border-stroke bg-transparent py-2.5 px-4 pr-10 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input text-black dark:text-white text-sm font-medium">
-                        <option value="">Semua Status</option>
-                        <option value="pending">Pending (Menunggu)</option>
-                        <option value="confirmed">Disetujui (Confirmed)</option>
-                        <option value="active">Aktif (Sedang Disewa)</option>
-                        <option value="completed">Selesai</option>
-                        <option value="rejected">Ditolak / Batal</option>
-                    </select>
-                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none z-30">
-                        <i class="fas fa-chevron-down text-body dark:text-bodydark text-xs"></i>
-                    </div>
-                </div>
+{{-- ===== TOOLBAR ===== --}}
+<div class="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200 dark:border-gray-800 p-3 mb-6 flex flex-col lg:flex-row gap-3 items-center">
+    <div class="relative w-full lg:flex-1">
+        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            <i class="fas fa-search text-gray-400 text-xs"></i>
+        </div>
+        <input type="text" id="search-booking" placeholder="Cari kode TRX atau nama pelanggan..." 
+               class="pl-10 pr-4 py-2.5 w-full rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-white/[0.03] text-xs font-medium outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 dark:text-white transition-all">
+    </div>
+
+    <div class="flex gap-3 w-full lg:w-auto">
+        <div class="relative w-full sm:w-48">
+            <select id="filter-status" class="w-full appearance-none rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-white/[0.03] py-2.5 pl-4 pr-10 outline-none transition focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 dark:text-white text-[10px] font-bold uppercase tracking-wider">
+                <option value="">Semua Status</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <i class="fas fa-chevron-down text-[9px]"></i>
             </div>
         </div>
+    </div>
+</div>
 
-        {{-- Table --}}
-        <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-white/10 dark:bg-[#24303F] overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50 dark:bg-white/5 border-b border-stroke dark:border-white/10">
-                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Transaksi
-                            </th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Pelanggan
-                            </th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Kendaraan
-                                & Berkas</th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Waktu &
-                                Harga</th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Status &
-                                Bayar</th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-body dark:text-bodydark uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-stroke dark:divide-white/10 text-sm" id="booking-table-body">
-                        @forelse($bookings as $booking)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors booking-row" data-search="{{ strtolower('#TRX-' . $booking->id . ' ' . $booking->user->name) }}" data-status="{{ strtolower($booking->status) }}">
-                                <td class="px-6 py-5">
-                                    <span class="text-xs font-bold text-black dark:text-white">#TRX-{{ $booking->id }}</span>
-                                    <p class="text-[10px] text-body dark:text-bodydark mt-0.5">
-                                        {{ $booking->created_at->format('d/m/Y H:i') }}</p>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px] font-black uppercase">
-                                            {{ substr($booking->user->name, 0, 1) }}
-                                        </div>
-                                        <div class="min-w-0">
-                                            <p class="text-sm font-bold text-black dark:text-white truncate">{{ $booking->user->name }}
-                                            </p>
-                                            <p class="text-[10px] text-body dark:text-bodydark truncate">{{ $booking->user->email }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <p class="font-bold text-black dark:text-white text-sm mb-2">{{ $booking->vehicle->name }}</p>
-                                    <div class="flex gap-2">
-                                        @if ($booking->status !== 'Completed')
-                                            @if ($booking->ktp_photo)
-                                                <button type="button"
-                                                    onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP - {{ $booking->user->name }}')"
-                                                    class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">KTP</button>
-                                            @endif
-                                            @if ($booking->sim_photo)
-                                                <button type="button"
-                                                    onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM - {{ $booking->user->name }}')"
-                                                    class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100">SIM</button>
-                                            @endif
-                                        @else
-                                            <span class="text-[9px] font-bold text-slate-400 italic"><i
-                                                    class="fas fa-lock mr-1"></i> Data Terkunci</span>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <p class="text-xs text-body dark:text-bodydark mb-1">
-                                        {{ \Carbon\Carbon::parse($booking->start_date)->format('d/m') }} -
-                                        {{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}
-                                        <span class="font-bold text-slate-400">({{ $booking->days }}x)</span>
-                                    </p>
-                                    <p class="text-sm font-black text-blue-600">Rp
-                                        {{ number_format($booking->total_price, 0, ',', '.') }}</p>
-                                </td>
-                                <td class="px-6 py-5">
-                                    @php
-                                        $colors = [
-                                            'Pending' => 'bg-orange-100 text-orange-600',
-                                            'Confirmed' => 'bg-blue-100 text-blue-600',
-                                            'Active' => 'bg-indigo-100 text-indigo-600',
-                                            'Picked_Up' => 'bg-indigo-100 text-indigo-600',
-                                            'Returning' => 'bg-indigo-100 text-indigo-600',
-                                            'Completed' => 'bg-green-100 text-green-600',
-                                            'Cancelled' => 'bg-red-100 text-red-600',
-                                            'Rejected' => 'bg-slate-100 text-slate-600',
-                                        ];
-                                        $payColors = [
-                                            'unpaid' => 'bg-red-50 text-red-600',
-                                            'dp_paid' => 'bg-orange-50 text-orange-600',
-                                            'fully_paid' => 'bg-green-50 text-green-600',
-                                        ];
-                                        $payLabels = [
-                                            'unpaid' => 'Belum Bayar',
-                                            'dp_paid' => 'DP Terbayar',
-                                            'fully_paid' => 'Lunas',
-                                        ];
-                                    @endphp
-                                    <div class="flex flex-col gap-2 items-start">
-                                        <span
-                                            class="text-[10px] font-bold px-2 py-1 rounded {{ $colors[$booking->status] ?? 'bg-slate-100' }} uppercase tracking-wider">
-                                            {{ $booking->status }}
-                                        </span>
-                                        <span
-                                            class="text-[10px] font-bold px-2 py-1 rounded {{ $payColors[$booking->payment_status] ?? 'bg-slate-100' }} uppercase tracking-wider">
-                                            {{ $payLabels[$booking->payment_status] ?? 'Unknown' }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        @if ($booking->status === 'Pending')
-                                            <form action="{{ route('admin.pemesanan.update', $booking->id) }}"
-                                                method="POST">
-                                                @csrf @method('PUT')
-                                                <input type="hidden" name="status" value="Confirmed">
-                                                <button type="submit"
-                                                    class="text-[10px] font-bold px-3 py-1.5 rounded bg-green-50 text-green-600 hover:bg-green-100 transition shadow-sm border border-green-200">
-                                                    VERIFIKASI
-                                                </button>
-                                            </form>
-                                            <button type="button" onclick="openRejectModal({{ $booking->id }})"
-                                                class="text-[10px] font-bold px-3 py-1.5 rounded bg-red-50 text-red-600 hover:bg-red-100 transition shadow-sm border border-red-200">
-                                                TOLAK
+{{-- ===== TABLE ===== --}}
+<div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left whitespace-nowrap">
+            <thead class="bg-gray-50 dark:bg-white/[0.02] border-b border-gray-100 dark:border-gray-800">
+                <tr>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Transaksi</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Pelanggan</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Unit & Berkas</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Waktu & Biaya</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-center">Status & Bayar</th>
+                    <th class="py-3.5 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-right">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-800" id="booking-table-body">
+                @forelse($bookings as $booking)
+                    <tr class="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-colors booking-row" 
+                        data-search="{{ strtolower('#TRX-' . $booking->id . ' ' . $booking->user->name) }}" 
+                        data-status="{{ strtolower($booking->status) }}">
+                        <td class="py-4 px-6">
+                            <div class="flex flex-col gap-0.5">
+                                <span class="text-xs font-bold text-gray-800 dark:text-white tracking-tight">#TRX-{{ $booking->id }}</span>
+                                <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                                    {{ $booking->created_at->format('d M, H:i') }}
+                                </p>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-[10px] font-bold border border-brand-500/20 uppercase">
+                                    {{ substr($booking->user->name, 0, 1) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-gray-800 dark:text-white truncate tracking-tight">{{ $booking->user->name }}</p>
+                                    <p class="text-[10px] font-medium text-gray-400 dark:text-gray-500 truncate leading-none">{{ substr($booking->user->phone ?? '-', 0, 13) }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6">
+                            <div class="flex flex-col gap-1.5">
+                                <p class="text-xs font-bold text-gray-800 dark:text-white tracking-tight leading-tight truncate max-w-[120px]">{{ $booking->vehicle->name }}</p>
+                                <div class="flex gap-1.5">
+                                    @if ($booking->ktp_photo)
+                                        <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->ktp_photo) }}', 'KTP')"
+                                            class="text-[8px] font-bold uppercase tracking-widest bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded-md hover:bg-brand-500 hover:text-white dark:bg-white/5 transition-all border border-gray-100 dark:border-gray-800">KTP</button>
+                                    @endif
+                                    @if ($booking->sim_photo)
+                                        <button type="button" onclick="openPreviewModal('{{ asset('storage/' . $booking->sim_photo) }}', 'SIM')"
+                                            class="text-[8px] font-bold uppercase tracking-widest bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded-md hover:bg-brand-500 hover:text-white dark:bg-white/5 transition-all border border-gray-100 dark:border-gray-800">SIM</button>
+                                    @endif
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6">
+                            <div class="flex flex-col gap-0.5">
+                                <div class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                                    {{ \Carbon\Carbon::parse($booking->start_date)->format('d/m') }}-{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m') }}
+                                    <span class="text-brand-500 ml-0.5">({{ $booking->days }}d)</span>
+                                </div>
+                                <div class="text-xs font-bold text-gray-800 dark:text-white">
+                                    <span class="text-[9px] font-normal opacity-60">Rp</span> {{ number_format($booking->total_price, 0, ',', '.') }}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 text-center">
+                            @php
+                                $statusMap = [
+                                    'Pending'   => 'bg-warning-50 text-warning-600 border-warning-500/20 dark:bg-warning-500/10 dark:text-warning-400',
+                                    'Confirmed' => 'bg-indigo-50 text-indigo-600 border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-400',
+                                    'Active'    => 'bg-success-50 text-success-600 border-success-500/20 dark:bg-success-500/10 dark:text-success-400',
+                                    'Picked_Up' => 'bg-success-50 text-success-600 border-success-500/20 dark:bg-success-500/10 dark:text-success-400',
+                                    'Returning' => 'bg-brand-50 text-brand-600 border-brand-500/20 dark:bg-brand-500/10 dark:text-brand-400',
+                                    'Completed' => 'bg-gray-50 text-gray-500 border-gray-200 dark:bg-white/10 dark:text-gray-400',
+                                    'Cancelled' => 'bg-error-50 text-error-600 border-error-500/20 dark:bg-error-500/10 dark:text-error-400',
+                                    'Rejected'  => 'bg-gray-100 text-gray-400 border-gray-200 dark:bg-white/5 dark:text-gray-600',
+                                ];
+                                $payLabels = ['unpaid' => 'Unpaid', 'dp_paid' => 'DP', 'fully_paid' => 'Full'];
+                            @endphp
+                            <div class="flex flex-col gap-1 items-center">
+                                <span class="inline-flex rounded-md px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest border {{ $statusMap[$booking->status] ?? 'bg-gray-100' }}">
+                                    {{ $booking->status }}
+                                </span>
+                                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">{{ $payLabels[$booking->payment_status] ?? '-' }}</span>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 text-right">
+                            <div class="flex items-center justify-end gap-1.5">
+                                @if ($booking->status === 'Pending')
+                                    <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST" class="inline">
+                                        @csrf @method('PUT')
+                                        <input type="hidden" name="status" value="Confirmed">
+                                        <button type="submit" class="w-8 h-8 rounded-lg bg-success-50 dark:bg-success-500/10 text-success-600 dark:text-success-400 hover:bg-success-500 hover:text-white transition-all border border-success-500/20" title="Verifikasi">
+                                            <i class="fas fa-check text-[10px]"></i>
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if ($booking->status === 'Confirmed')
+                                    @if($booking->payment_status === 'fully_paid')
+                                        <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                            @csrf @method('PUT')
+                                            <input type="hidden" name="status" value="Picked_Up">
+                                            <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white text-[9px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-lg shadow-brand-500/20 transition-all active:scale-95 uppercase tracking-widest">
+                                                PICK UP
                                             </button>
-                                        @endif
+                                        </form>
+                                    @else
+                                        <span class="text-[8px] font-bold text-warning-500 uppercase animate-pulse">Wait Payment</span>
+                                    @endif
+                                @endif
 
-                                        @if ($booking->status === 'Confirmed')
-                                            @if ($booking->payment_status === 'unpaid')
-                                                <span class="text-[10px] font-bold text-blue-400 italic">Menunggu Bayar
-                                                    DP...</span>
-                                            @elseif($booking->payment_status === 'dp_paid')
-                                                <span class="text-[10px] font-bold text-orange-500 italic">Menunggu
-                                                    Pelunasan...</span>
-                                            @elseif($booking->payment_status === 'fully_paid')
-                                                <form action="{{ route('admin.pemesanan.update', $booking->id) }}"
-                                                    method="POST">
-                                                    @csrf @method('PUT')
-                                                    <input type="hidden" name="status" value="Picked_Up">
-                                                    <button type="submit"
-                                                        class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
-                                                        <i class="fas fa-key"></i> KONFIRMASI DIAMBIL
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        @endif
+                                @if (in_array($booking->status, ['Active', 'Picked_Up']))
+                                    <form action="{{ route('admin.pemesanan.update', $booking->id) }}" method="POST">
+                                        @csrf @method('PUT')
+                                        <input type="hidden" name="status" value="Completed">
+                                        <button type="submit" class="bg-success-500 hover:bg-success-600 text-white text-[9px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-lg shadow-success-500/20 transition-all active:scale-95 uppercase tracking-widest">
+                                            DONE
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="py-20 text-center bg-gray-50/20 dark:bg-white/[0.01]">
+                            <div class="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border-2 border-dashed border-gray-200 dark:border-gray-800">
+                                <i class="fas fa-calendar-minus text-gray-300 dark:text-gray-700 text-3xl"></i>
+                            </div>
+                            <p class="text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest text-[10px]">Tidak ada transaksi masuk</p>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
 
-                                        @if (in_array($booking->status, ['Active', 'Picked_Up', 'Returning']))
-                                            <form action="{{ route('admin.pemesanan.update', $booking->id) }}"
-                                                method="POST">
-                                                @csrf @method('PUT')
-                                                <input type="hidden" name="status" value="Completed">
-                                                <button type="submit"
-                                                    class="bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition">
-                                                    <i class="fas fa-check-double"></i> KONFIRMASI KEMBALI
-                                                </button>
-                                            </form>
-                                        @endif
-
-                                        @if (in_array($booking->status, ['Completed', 'Cancelled', 'Rejected']))
-                                            <span
-                                                class="text-[9px] font-black text-slate-400 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 italic uppercase tracking-widest">
-                                                SELESAI
-                                            </span>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <div
-                                        class="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i class="fas fa-calendar-minus text-2xl"></i>
-                                    </div>
-                                    <p class="text-sm font-bold text-slate-400">Tidak ada pemesanan masuk.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+{{-- Modal Preview Dokumen --}}
+<div id="modal-preview" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-md transition-opacity" onclick="closePreviewModal()"></div>
+    <div class="bg-white dark:bg-[#121212] rounded-[3rem] shadow-2xl w-full max-w-4xl z-10 overflow-hidden relative border border-white/10 animate-in zoom-in duration-300">
+        <button onclick="closePreviewModal()" class="absolute top-8 right-8 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-2xl flex items-center justify-center backdrop-blur-md transition-all z-20 border border-white/10">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+        <div class="p-4 bg-gray-900 flex items-center justify-center min-h-[400px]">
+            <img id="preview-img" src="" class="w-full h-auto max-h-[70vh] object-contain rounded-2xl shadow-2xl">
+        </div>
+        <div class="px-12 py-10 flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-[#121212] gap-6">
+            <div>
+                <h3 id="preview-title" class="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Preview Dokumen</h3>
+                <p class="text-xs font-bold text-brand-500 uppercase tracking-widest mt-1">Verifikasi Identitas Pelanggan</p>
             </div>
+            <a id="preview-download" href="" download class="bg-gray-900 dark:bg-brand-500 hover:scale-105 text-white text-xs font-bold py-4 px-10 rounded-2xl transition-all shadow-2xl flex items-center gap-3 uppercase tracking-widest">
+                <i class="fas fa-download"></i> Unduh Berkas
+            </a>
         </div>
     </div>
+</div>
 
-
-
-    {{-- Modal Tolak --}}
-    <div id="modal-reject" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeRejectModal()"></div>
-        <div class="bg-white dark:bg-[#1c2434] rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden text-center p-8 border border-stroke dark:border-white/10">
-            <h3 class="text-xl font-bold text-black dark:text-white mb-2">Tolak Pesanan</h3>
-            <p class="text-slate-500 text-sm mb-6">Berikan alasan mengapa pesanan ini ditolak.</p>
-            <form id="form-reject" action="" method="POST">
-                @csrf @method('PUT')
-                <input type="hidden" name="status" value="Rejected">
-                <textarea name="rejection_reason" required rows="3"
-                    class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-black dark:text-white resize-none mb-6"
-                    placeholder="Contoh: Foto KTP buram, tidak dapat dibaca..."></textarea>
-                <div class="flex gap-3">
-                    <button type="button" onclick="closeRejectModal()"
-                        class="flex-1 font-semibold py-3 rounded-xl transition-all text-sm border border-slate-200 text-slate-600 hover:bg-slate-50">Batal</button>
-                    <button type="submit"
-                        class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-sm">Ya,
-                        Tolak</button>
-                </div>
-            </form>
+{{-- Modal Reject --}}
+<div id="modal-reject" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeRejectModal()"></div>
+    <div class="bg-white dark:bg-[#121212] rounded-[2.5rem] shadow-2xl w-full max-w-md z-10 overflow-hidden text-center p-10 border border-white/10 animate-in zoom-in duration-300">
+        <div class="w-20 h-20 bg-error-50 dark:bg-error-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-times-circle text-error-500 text-3xl"></i>
         </div>
-    </div>
-
-    {{-- Modal Preview Dokumen --}}
-    <div id="modal-preview" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden animate-fade-in">
-        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onclick="closePreviewModal()"></div>
-        <div
-            class="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl z-10 overflow-hidden relative border border-white/20">
-            <button onclick="closePreviewModal()"
-                class="absolute top-6 right-6 w-12 h-12 bg-slate-900/10 hover:bg-slate-900/20 text-slate-900 rounded-full flex items-center justify-center backdrop-blur-md transition-all z-20">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-            <div class="p-3 bg-slate-100">
-                <div
-                    class="bg-white rounded-2xl overflow-hidden shadow-inner flex items-center justify-center min-h-[300px]">
-                    <img id="preview-img" src="" class="w-full h-auto max-h-[75vh] object-contain">
-                </div>
+        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2 tracking-tight">Tolak Pesanan</h3>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed">Berikan alasan logis mengapa pesanan ini harus ditolak.</p>
+        
+        <form id="form-reject" action="" method="POST" class="space-y-6">
+            @csrf @method('PUT')
+            <input type="hidden" name="status" value="Rejected">
+            <textarea name="rejection_reason" required rows="3"
+                class="w-full bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-medium text-gray-800 dark:text-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all resize-none"
+                placeholder="Contoh: Foto dokumen buram, identitas tidak valid..."></textarea>
+            
+            <div class="flex gap-3">
+                <button type="button" onclick="closeRejectModal()"
+                    class="flex-1 font-bold py-4 rounded-2xl transition-all text-sm bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 active:scale-95">Batal</button>
+                <button type="submit"
+                    class="flex-[2] bg-error-500 hover:bg-error-600 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 text-sm shadow-lg shadow-error-500/20">Ya, Tolak Sekarang</button>
             </div>
-            <div class="px-10 py-6 flex justify-between items-center bg-white">
-                <div>
-                    <h3 id="preview-title" class="font-black text-slate-900 text-lg">Preview Dokumen</h3>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Verifikasi Identitas
-                        Pelanggan</p>
-                </div>
-                <a id="preview-download" href="" download
-                    class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black py-4 px-8 rounded-2xl transition-all shadow-xl shadow-slate-200 flex items-center gap-3">
-                    <i class="fas fa-download"></i> UNDUH BERKAS
-                </a>
-            </div>
-        </div>
+        </form>
     </div>
+</div>
 
-@endsection
+
 
 @push('scripts')
-    <script>
-        function openRejectModal(id) {
-            let form = document.getElementById('form-reject');
-            form.action = '/admin/pemesanan/' + id;
-            document.getElementById('modal-reject').classList.remove('hidden');
-        }
+<script>
+    function openRejectModal(id) {
+        let form = document.getElementById('form-reject');
+        form.action = '/admin/pemesanan/' + id;
+        document.getElementById('modal-reject').classList.remove('hidden');
+    }
 
-        function closeRejectModal() {
-            document.getElementById('modal-reject').classList.add('hidden');
-        }
+    function closeRejectModal() {
+        document.getElementById('modal-reject').classList.add('hidden');
+    }
 
-        function openPreviewModal(url, title) {
-            document.getElementById('preview-img').src = url;
-            document.getElementById('preview-title').textContent = title;
-            document.getElementById('preview-download').href = url;
-            document.getElementById('modal-preview').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
+    function openPreviewModal(url, title) {
+        document.getElementById('preview-img').src = url;
+        document.getElementById('preview-title').textContent = title;
+        document.getElementById('preview-download').href = url;
+        document.getElementById('modal-preview').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 
-        function closePreviewModal() {
-            document.getElementById('modal-preview').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
+    function closePreviewModal() {
+        document.getElementById('modal-preview').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closePreviewModal();
-                closeRejectModal();
-            }
-        });
-    
     // ====== SEARCH & FILTER FUNCTIONALITY ======
     function applyFilters() {
         const searchInput = document.getElementById('search-booking');
@@ -387,32 +337,20 @@
             const matchesSearch = dataSearch.includes(searchObj);
             const matchesStatus = statusObj === '' || dataStatus === statusObj;
             
-            if (matchesSearch && matchesStatus) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+            row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
         });
     }
 
     document.getElementById('search-booking')?.addEventListener('input', applyFilters);
     document.getElementById('filter-status')?.addEventListener('change', applyFilters);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closePreviewModal();
+            closeRejectModal();
+        }
+    });
 </script>
-    <style>
-        .animate-fade-in {
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-    </style>
 @endpush
+
+@endsection
