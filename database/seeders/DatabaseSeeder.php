@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         // ── 1. ADMIN ──────────────────────────────────────────────────
         Admin::create([
-            'name'     => 'Admin RentDrive',
+            'name'     => 'Admin Jatara',
             'email'    => 'admin@gmail.com',
             'phone'    => '08100000001',
             'password' => Hash::make('password123'),

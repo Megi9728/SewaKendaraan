@@ -1,86 +1,122 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" class="antialiased" x-data="{ sidebarOpen: false, darkMode: false }" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin') - Jatara Admin Panel</title>
     <link rel="icon" href="data:,">
+    
+    <!-- AlpineJS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#465fff',
+                        brand: {
+                            50: '#ecf3ff',
+                            100: '#dde9ff',
+                            200: '#c2d6ff',
+                            300: '#9cb9ff',
+                            400: '#7592ff',
+                            500: '#465fff',
+                            600: '#3641f5',
+                            700: '#2a31d8',
+                            800: '#252dae',
+                            900: '#262e89',
+                        },
+                        gray: {
+                            25: '#fcfcfd',
+                            50: '#f9fafb',
+                            100: '#f2f4f7',
+                            200: '#e4e7ec',
+                            300: '#d0d5dd',
+                            400: '#98a2b3',
+                            500: '#667085',
+                            600: '#475467',
+                            700: '#344054',
+                            800: '#1d2939',
+                            900: '#101828',
+                        },
+                        success: {
+                            50: '#ecfdf3',
+                            500: '#12b76a',
+                            600: '#039855',
+                        },
+                        error: {
+                            50: '#fef3f2',
+                            500: '#f04438',
+                            600: '#d92d20',
+                        },
+                        warning: {
+                            50: '#fffaeb',
+                            500: '#f79009',
+                            600: '#dc6803',
+                        },
+                        dark: '#101828',
+                        boxdark: '#1D2939',
+                        stroke: '#e4e7ec',
+                        whiten: '#F9FAFB',
+                        body: '#475467',
+                        bodydark: '#98A2B3',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    <style type="text/tailwindcss">
-        @layer components {
-            .sidebar { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); @apply -translate-x-full; }
-            .sidebar-link { @apply flex items-center gap-3 px-5 py-3.5 rounded-2xl text-slate-400 hover:bg-white/10 hover:text-white transition-all text-sm font-medium border border-transparent; }
-            .sidebar-link.active { @apply bg-blue-600 text-white font-bold shadow-lg shadow-blue-600/20 border-blue-500; }
-            .sidebar-link .icon { @apply w-5 text-center text-lg; }
-            
-            .main-content { transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1); @apply pl-0; }
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #333A48; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-            /* State: OPEN */
-            body.sidebar-open .sidebar { @apply translate-x-0; }
-            body.sidebar-open #sidebar-backdrop { @apply block lg:hidden pb-10; }
-            
-            @media (min-width: 1024px) {
-                body.sidebar-open .main-content { @apply pl-80; }
-            }
-
-            .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-            .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-            .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-        }
+        [x-cloak] { display: none !important; }
     </style>
     @stack('styles')
 </head>
-<body class="bg-slate-100 text-slate-900 antialiased overflow-x-hidden sidebar-open">
+<body class="bg-whiten dark:bg-dark text-body dark:text-bodydark overflow-hidden">
 
-<div class="flex h-screen overflow-hidden relative">
+<div class="flex h-screen overflow-hidden">
 
-    {{-- Backdrop for mobile --}}
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/60 z-40 hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebarMenu()"></div>
-
+    <!-- Sidebar -->
     @include('layouts.admin.sidebar')
 
-    {{-- ===== MAIN AREA ===== --}}
-    <div id="main-content" class="main-content flex-1 flex flex-col min-w-0 bg-slate-100">
+    <!-- Content Area -->
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
         
+        <!-- Header -->
         @include('layouts.admin.header')
 
-        {{-- Content Area --}}
-        <main class="flex-1 overflow-y-auto px-6 py-8 lg:px-10 lg:py-10">
-            <div class="max-w-7xl mx-auto">
+        <!-- Main Content -->
+        <main>
+            <div class="mx-auto max-w-screen-2xl p-4 md:p-6">
                 @yield('content')
             </div>
         </main>
+        
     </div>
+
 </div>
 
-<script>
-    function toggleSidebarMenu() {
-        document.body.classList.toggle('sidebar-open');
-        
-        // Handle overflow-hidden on mobile to prevent scroll
-        if (window.innerWidth < 1024) {
-            if (document.body.classList.contains('sidebar-open')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        }
-    }
-
-    // Ensure state is clean on resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth >= 1024) {
-            document.body.style.overflow = '';
-        } else if (document.body.classList.contains('sidebar-open')) {
-            document.body.style.overflow = 'hidden';
-        }
-    });
-</script>
 @stack('scripts')
 </body>
 </html>

@@ -1,140 +1,190 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Dashboard Ringkasan')
-@section('page-subtitle', 'Statistik penyewaan armada Anda')
+@section('title', 'Dashboard Ringkasan')
 
 @section('content')
-<div class="px-4 py-6">
-    {{-- Grid Statistik --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-        {{-- Total Armada --}}
-        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+
+{{-- Header Area --}}
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight leading-tight">
+            Dashboard Mitra
+        </h2>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Pantau performa penyewaan armada Anda secara real-time.</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <div class="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 px-6 py-2.5 rounded-2xl flex items-center gap-3 shadow-sm">
+            <div class="w-2.5 h-2.5 rounded-full bg-success-500 animate-pulse"></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Live Status: Aktif</span>
+        </div>
+    </div>
+</div>
+
+{{-- Stats Grid --}}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
+    {{-- Total Armada --}}
+    <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] transition-all hover:shadow-md group">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center transition-transform group-hover:scale-110">
                 <i class="fas fa-car text-lg"></i>
             </div>
-            <div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Armada</p>
-                <p class="text-xl font-black text-slate-900">{{ $stats['total_mobil'] }}</p>
-            </div>
+            <span class="text-[9px] font-bold text-success-500 bg-success-50 dark:bg-success-500/10 px-2 py-0.5 rounded-md uppercase">Aktif</span>
         </div>
-
-        {{-- Total Pesanan --}}
-        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-slate-50 text-slate-900 rounded-2xl flex items-center justify-center">
-                <i class="fas fa-list text-lg"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Transaksi</p>
-                <p class="text-xl font-black text-slate-900">{{ $stats['total_booking'] }}</p>
-            </div>
-        </div>
-
-        {{-- Pending --}}
-        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
-                <i class="fas fa-clock text-lg"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Pending</p>
-                <p class="text-xl font-black text-slate-900">{{ $stats['pending'] }}</p>
-            </div>
-        </div>
-
-        {{-- Sedang Disewa --}}
-        <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center">
-                <i class="fas fa-car-side text-lg"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Disewa</p>
-                <p class="text-xl font-black text-slate-900">{{ $stats['active'] }}</p>
-            </div>
-        </div>
-
-        {{-- Total Pendapatan --}}
-        <div class="bg-blue-600 p-5 rounded-[2rem] shadow-xl border border-blue-500 flex items-center gap-4">
-            <div class="w-12 h-12 bg-white/20 text-white rounded-2xl flex items-center justify-center shadow-inner">
-                <i class="fas fa-wallet text-lg"></i>
-            </div>
-            <div class="min-w-0">
-                <p class="text-[9px] font-black text-blue-100 uppercase tracking-widest leading-none mb-1.5">Pendapatan</p>
-                <p class="text-lg font-black text-white truncate">Rp{{ number_format($stats['revenue'], 0, ',', '.') }}</p>
-            </div>
+        <div>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Armada</p>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-white">{{ $stats['total_mobil'] }} <span class="text-[10px] font-medium text-gray-400">Unit</span></h4>
         </div>
     </div>
 
-    {{-- Grafik Statistik --}}
-    <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-            <div>
-                <h3 class="text-xl font-black text-slate-900 italic">Tren Penyewaan</h3>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Laporan Pesanan 6 Bulan Terakhir</p>
-            </div>
-            <div class="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
-                <div class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></div>
-                <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Live Report</span>
+    {{-- Total Transaksi --}}
+    <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] transition-all hover:shadow-md group">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-warning-500/10 text-warning-600 dark:text-warning-400 flex items-center justify-center transition-transform group-hover:scale-110">
+                <i class="fas fa-shopping-cart text-lg"></i>
             </div>
         </div>
-        <div class="h-[350px]">
-            <canvas id="rentalChart"></canvas>
+        <div>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Transaksi</p>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-white">{{ $stats['total_booking'] }} <span class="text-[10px] font-medium text-gray-400">Order</span></h4>
         </div>
+    </div>
+
+    {{-- Pending --}}
+    <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] transition-all hover:shadow-md group">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-error-500/10 text-error-600 dark:text-error-400 flex items-center justify-center transition-transform group-hover:scale-110">
+                <i class="fas fa-clock text-lg"></i>
+            </div>
+        </div>
+        <div>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Pending</p>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-white">{{ $stats['pending'] }} <span class="text-[10px] font-medium text-gray-400">Unit</span></h4>
+        </div>
+    </div>
+
+    {{-- Sedang Disewa --}}
+    <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] transition-all hover:shadow-md group">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-success-500/10 text-success-600 dark:text-success-400 flex items-center justify-center transition-transform group-hover:scale-110">
+                <i class="fas fa-car-side text-lg"></i>
+            </div>
+        </div>
+        <div>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Sedang Disewa</p>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-white">{{ $stats['active'] }} <span class="text-[10px] font-medium text-gray-400">Unit</span></h4>
+        </div>
+    </div>
+
+    {{-- Total Pendapatan --}}
+    <div class="rounded-2xl border border-brand-500 bg-brand-500 p-5 shadow-lg shadow-brand-500/20 transition-all hover:scale-[1.02] group">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center transition-transform group-hover:rotate-12">
+                <i class="fas fa-wallet text-lg"></i>
+            </div>
+        </div>
+        <div>
+            <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest mb-1">Pendapatan</p>
+            <h4 class="text-lg font-bold text-white truncate tracking-tight">Rp{{ number_format($stats['revenue'], 0, ',', '.') }}</h4>
+        </div>
+    </div>
+</div>
+
+{{-- Chart Section --}}
+<div class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+            <div class="flex items-center gap-3 mb-1">
+                <div class="w-1.5 h-6 bg-brand-500 rounded-full"></div>
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white tracking-tight">Analitik Penyewaan</h3>
+            </div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Tren pemesanan armada dalam 6 bulan terakhir.</p>
+        </div>
+        <div class="flex items-center gap-2 bg-gray-50 dark:bg-white/5 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
+            <button class="px-3 py-1.5 rounded-lg bg-white dark:bg-white/10 text-[10px] font-bold text-brand-600 dark:text-brand-400 shadow-sm transition-all uppercase tracking-widest">Bulanan</button>
+            <button class="px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all uppercase tracking-widest">Mingguan</button>
+        </div>
+    </div>
+    
+    <div class="h-[350px] w-full">
+        <canvas id="rentalChart"></canvas>
     </div>
 </div>
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('rentalChart').getContext('2d');
-    
-    // Gradien Warna
-    const blueGradient = ctx.createLinearGradient(0, 0, 0, 400);
-    blueGradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
-    blueGradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('rentalChart').getContext('2d');
+        
+        // Gradient for the chart
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(70, 128, 255, 0.25)');
+        gradient.addColorStop(1, 'rgba(70, 128, 255, 0)');
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: @json($chartLabels),
-            datasets: [{
-                label: 'Jumlah Pesanan',
-                data: @json($chartData),
-                borderColor: '#2563eb',
-                borderWidth: 4,
-                backgroundColor: blueGradient,
-                fill: true,
-                tension: 0.4, // Membuat garis melengkung halus
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#2563eb',
-                pointBorderWidth: 3,
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @json($chartLabels),
+                datasets: [{
+                    label: 'Jumlah Pesanan',
+                    data: @json($chartData),
+                    borderColor: '#4680FF',
+                    borderWidth: 4,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.45,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#4680FF',
+                    pointBorderWidth: 4,
+                    pointRadius: 6,
+                    pointHoverRadius: 9,
+                    pointHoverBorderWidth: 4,
+                    pointHoverBackgroundColor: '#fff'
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        font: { size: 10, weight: 'bold' },
-                        color: '#94a3b8'
-                    },
-                    grid: { color: '#f1f5f9' }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
                 },
-                x: {
-                    ticks: {
-                        font: { size: 10, weight: 'bold' },
-                        color: '#94a3b8'
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 12,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: { size: 11, weight: '600' },
+                            color: '#94a3b8',
+                            padding: 10
+                        },
+                        grid: { 
+                            color: 'rgba(241, 245, 249, 0.5)',
+                            drawBorder: false 
+                        }
                     },
-                    grid: { display: false }
+                    x: {
+                        ticks: {
+                            font: { size: 11, weight: '600' },
+                            color: '#94a3b8',
+                            padding: 10
+                        },
+                        grid: { display: false }
+                    }
                 }
             }
-        }
+        });
     });
 </script>
 @endpush

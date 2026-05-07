@@ -90,15 +90,15 @@
                 Jelajahi dan sewa armada kendaraan terbaik dengan layanan kelas satu. Pilihan nomor satu untuk mobilitas Anda.
             </p>
 
-            <div class="flex gap-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 inline-flex">
+            <div class="flex gap-10 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 inline-flex">
                 <div>
-                    <h3 class="text-4xl font-extrabold text-white">500+</h3>
-                    <p class="text-sm font-semibold text-jatara-yellow mt-1">Armada Eksklusif</p>
+                    <h3 class="text-2xl font-extrabold text-white uppercase tracking-tight">Eksklusif</h3>
+                    <p class="text-[10px] font-bold text-jatara-yellow mt-1 uppercase tracking-widest">Armada Pilihan</p>
                 </div>
                 <div class="w-px bg-white/20"></div>
                 <div>
-                    <h3 class="text-4xl font-extrabold text-white">24/7</h3>
-                    <p class="text-sm font-semibold text-jatara-yellow mt-1">Dukungan Mitra</p>
+                    <h3 class="text-2xl font-extrabold text-white uppercase tracking-tight">Terpercaya</h3>
+                    <p class="text-[10px] font-bold text-jatara-yellow mt-1 uppercase tracking-widest">Layanan 24/7</p>
                 </div>
             </div>
         </div>
