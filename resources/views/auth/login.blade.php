@@ -22,12 +22,12 @@
 
                 {{-- OAUTH PLACEHOLDERS --}}
                 <div class="grid grid-cols-1 gap-3 mb-6">
-                    <button type="button"
+                    <a href="{{ route('auth.google') }}"
                         class="w-full flex items-center justify-center gap-3 py-3 border border-[#EBEBDF] rounded-xl text-[#0A174E] font-bold hover:bg-[#F9F9F5] transition-all active:scale-[0.98] shadow-sm relative overflow-hidden group">
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 relative z-10"
                             alt="Google">
                         <span class="relative z-10">Lanjutkan dengan Google</span>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="relative flex items-center gap-6 py-2 mb-6">
@@ -116,12 +116,12 @@
                 </div>
 
                 <div class="grid grid-cols-1 gap-3 mb-6">
-                    <button type="button"
+                    <a href="{{ route('auth.google') }}"
                         class="w-full flex items-center justify-center gap-3 py-3 border border-[#EBEBDF] rounded-xl text-[#0A174E] font-bold hover:bg-[#F9F9F5] transition-all active:scale-[0.98] shadow-sm relative overflow-hidden group">
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 relative z-10"
                             alt="Google">
                         <span class="relative z-10">Daftar dengan Google</span>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="relative flex items-center gap-6 py-2 mb-6">

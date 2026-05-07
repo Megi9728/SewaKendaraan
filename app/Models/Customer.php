@@ -19,6 +19,8 @@ class Customer extends Authenticatable
         'ktp_photo',
         'sim_photo',
         'profile_photo',
+        'google_id',
+        'avatar',
     ];
 
     protected $hidden = [

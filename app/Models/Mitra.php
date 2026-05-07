@@ -19,6 +19,8 @@ class Mitra extends Authenticatable
         'ktp_photo',
         'mitra_photo',
         'is_verified',
+        'google_id',
+        'avatar',
     ];
 
     protected $hidden = [

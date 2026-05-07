@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\VehicleTrackingController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\MitraController;
@@ -89,6 +90,10 @@ Route::get('/register/mitra', [AuthController::class, 'showRegisterMitra'])->nam
 Route::post('/register/mitra', [AuthController::class, 'doRegisterMitra'])->name('register.mitra.post');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Google OAuth
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 // ============================================================
 // AREA CUSTOMER (guard: customer)

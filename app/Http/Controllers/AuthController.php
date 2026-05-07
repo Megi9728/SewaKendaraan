@@ -75,7 +75,7 @@ class AuthController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:customers,email',
             'phone'    => 'required|string|max:20',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
         ]);
 
         $customer = Customer::create([
@@ -105,7 +105,7 @@ class AuthController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:mitras,email',
             'phone'    => 'required|string|max:20',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'address'  => 'required|string',
             'ktp_photo'=> 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
