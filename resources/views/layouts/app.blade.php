@@ -60,6 +60,9 @@
     </style>
 
     @stack('styles')
+
+    {{-- Alpine.js --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body class="bg-white text-[#0A174E] antialiased">
@@ -155,14 +158,13 @@
     </footer>
 
     {{-- ===== VANILLA JS ===== --}}
-                <script>
+    <script>
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
 
-        // Export functions to global scope so inline onclick works
         window.openMobileMenu = function() {
             if (mobileMenu && mobileMenuOverlay) {
-                mobileMenuOverlay.classList.remove('pointer-events-none');      
+                mobileMenuOverlay.classList.remove('pointer-events-none');
                 setTimeout(() => {
                     mobileMenuOverlay.classList.remove('opacity-0');
                     mobileMenu.classList.remove('-translate-y-full');
@@ -175,34 +177,12 @@
             if (mobileMenu && mobileMenuOverlay) {
                 mobileMenuOverlay.classList.add('opacity-0');
                 mobileMenu.classList.add('-translate-y-full');
-
                 setTimeout(() => {
-                    mobileMenuOverlay.classList.add('pointer-events-none');     
-                }, 500); 
-
+                    mobileMenuOverlay.classList.add('pointer-events-none');
+                }, 500);
                 document.body.classList.remove('overflow-hidden');
             }
         };
-
-        // Desktop Auth Dropdown
-        const authDropdownToggle = document.getElementById('auth-dropdown-toggle');
-        const authDropdown = document.getElementById('auth-dropdown');
-        if (authDropdownToggle) {
-            authDropdownToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                authDropdown.classList.toggle('hidden');
-                authDropdown.classList.toggle('opacity-0');
-                authDropdown.classList.toggle('translate-y-2');
-            });
-        }
-
-        document.addEventListener('click', (e) => {
-            if (authDropdown && !authDropdown.classList.contains('hidden') && !authDropdownToggle.contains(e.target) && !authDropdown.contains(e.target)) {     
-                authDropdown.classList.add('hidden');
-                authDropdown.classList.add('opacity-0');
-                authDropdown.classList.add('translate-y-2');
-            }
-        });
     </script>
 
     @stack('scripts')
