@@ -91,7 +91,7 @@
                     {{-- Submit --}}
                     <button type="submit"
                         class="w-full btn-jatara-primary font-extrabold mt-2 hover:shadow-[0_12px_24px_rgba(10,23,78,0.2)]">
-                        Masuk Ke Panel
+                        Masuk
                     </button>
                 </form>
 

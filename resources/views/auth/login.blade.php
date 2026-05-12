@@ -90,7 +90,7 @@
                     {{-- Submit --}}
                     <button type="submit"
                         class="w-full btn-jatara-primary font-extrabold mt-2 hover:shadow-[0_12px_24px_rgba(10,23,78,0.2)]">
-                        Masuk Ke Panel
+                        Masuk
                     </button>
                 </form>
 
@@ -191,10 +191,9 @@
                 </form>
 
                 <p class="text-center text-sm font-semibold text-[#8F8F7E] mt-6">
-                    Sudah terdaftar?
+                    Sudah Memiliki Akun?
                     <button type="button" onclick="switchTab('login')"
-                        class="text-[#0A174E] hover:text-[#F5D042] transition-colors font-bold px-1 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-[#0A174E] hover:after:bg-[#F5D042] after:transition-colors">Masuk
-                        Sini</button>
+                        class="text-[#0A174E] hover:text-[#F5D042] transition-colors font-bold px-1 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-[#0A174E] hover:after:bg-[#F5D042] after:transition-colors">Masuk</button>
                 </p>
 
                 <div class="mt-8 pt-6 border-t border-[#EBEBDF] text-center">
