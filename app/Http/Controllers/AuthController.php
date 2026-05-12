@@ -55,8 +55,20 @@ class AuthController extends Controller
                 ->with('success', 'Selamat datang kembali!');
         }
 
+        // Jika gagal login, cek apakah email sebenarnya ada di database
+        $email = $credentials['email'];
+        $emailExists = Admin::where('email', $email)->exists() ||
+                       Mitra::where('email', $email)->exists() ||
+                       Customer::where('email', $email)->exists();
+
+        if ($emailExists) {
+            return back()->withErrors([
+                'password' => 'Password yang Anda masukkan salah.',
+            ])->onlyInput('email');
+        }
+
         return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
+            'email' => 'Email yang Anda masukkan tidak terdaftar.',
         ])->onlyInput('email');
     }
 
@@ -71,12 +83,16 @@ class AuthController extends Controller
 
     public function doRegister(Request $request)
     {
+        $messages = [
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
+        ];
+
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:customers,email',
             'phone'    => 'required|string|max:20',
-            'password' => 'required|string|min:8',
-        ]);
+            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
+        ], $messages);
 
         $customer = Customer::create([
             'name'     => $request->name,
@@ -101,14 +117,18 @@ class AuthController extends Controller
 
     public function doRegisterMitra(Request $request)
     {
+        $messages = [
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
+        ];
+
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:mitras,email',
             'phone'    => 'required|string|max:20',
-            'password' => 'required|string|min:8',
+            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
             'address'  => 'required|string',
             'ktp_photo'=> 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+        ], $messages);
 
         $ktpPath = $request->hasFile('ktp_photo')
             ? $request->file('ktp_photo')->store('mitra/ktp', 'public')
@@ -159,7 +179,7 @@ class AuthController extends Controller
 
         if (auth('mitra')->check()) {
             $user = auth('mitra')->user();
-            return view('mitra.profile', compact('user'));
+            return view('admin.profile', compact('user'));
         }
 
         $user = auth('customer')->user();
@@ -172,12 +192,16 @@ class AuthController extends Controller
         if (auth('admin')->check()) {
             /** @var Admin $user */
             $user = auth('admin')->user();
+            $messages = [
+                'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
+            ];
+
             $request->validate([
                 'name'     => 'required|string|max:255',
                 'email'    => 'required|email|unique:admins,email,' . $user->id,
                 'phone'    => 'nullable|string|max:20',
-                'password' => 'nullable|min:8|confirmed',
-            ]);
+                'password' => ['nullable', 'confirmed', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
+            ], $messages);
 
             $user->name  = $request->name;
             $user->email = $request->email;
@@ -200,6 +224,10 @@ class AuthController extends Controller
         if (auth('mitra')->check()) {
             /** @var Mitra $user */
             $user = auth('mitra')->user();
+            $messages = [
+                'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
+            ];
+
             $request->validate([
                 'name'         => 'required|string|max:255',
                 'email'        => 'required|email|unique:mitras,email,' . $user->id,
@@ -208,8 +236,8 @@ class AuthController extends Controller
                 'latitude'     => 'nullable|numeric',
                 'longitude'    => 'nullable|numeric',
                 'pool_address' => 'nullable|string',
-                'password'     => 'nullable|min:8|confirmed',
-            ]);
+                'password'     => ['nullable', 'confirmed', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
+            ], $messages);
 
             $user->name    = $request->name;
             $user->email   = $request->email;
@@ -270,13 +298,17 @@ class AuthController extends Controller
         // ── Customer Profile ─────────────────────────────────────────
         /** @var Customer $user */
         $user = auth('customer')->user();
+        $messages = [
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
+        ];
+
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:customers,email,' . $user->id,
             'phone'    => 'nullable|string|max:20',
             'address'  => 'nullable|string',
-            'password' => 'nullable|min:8|confirmed',
-        ]);
+            'password' => ['nullable', 'confirmed', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
+        ], $messages);
 
         $user->name    = $request->name;
         $user->email   = $request->email;
@@ -300,5 +332,27 @@ class AuthController extends Controller
         $user->save();
 
         return back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    public function destroyProfile(Request $request)
+    {
+        if (auth('admin')->check()) {
+            $user = auth('admin')->user();
+            auth('admin')->logout();
+            $user->delete();
+        } elseif (auth('mitra')->check()) {
+            $user = auth('mitra')->user();
+            auth('mitra')->logout();
+            $user->delete();
+        } elseif (auth('customer')->check()) {
+            $user = auth('customer')->user();
+            auth('customer')->logout();
+            $user->delete();
+        }
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Akun Anda telah berhasil dihapus.');
     }
 }

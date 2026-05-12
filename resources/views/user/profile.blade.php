@@ -108,6 +108,19 @@
                 </div>
             </div>
         </div>
+
+        {{-- Danger Zone: Hapus Akun --}}
+        <div class="mt-8 bg-white rounded-3xl border border-red-100 shadow-sm overflow-hidden p-8 flex items-center justify-center gap-6">
+           
+            <form action="{{ route('profile.destroy') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun secara permanen? Semua data pemesanan akan hilang dan tidak dapat dipulihkan.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-bold px-6 py-3 rounded-2xl transition-all border border-red-200 hover:border-red-600 flex items-center gap-2 center">
+                    <i class="fas fa-trash-alt"></i> Hapus Akun Saya
+                </button>
+            </form>
+        </div>
+
     </div>
 </div>
 @endsection

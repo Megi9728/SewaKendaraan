@@ -173,8 +173,7 @@
 
                     <div class="space-y-1.5 group">
                         <label for="reg-password"
-                            class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-[0.2em] block pl-1">Sandi
-                            Baru</label>
+                            class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-[0.2em] block pl-1">Password</label>
                         <div class="relative">
                             <input type="password" id="reg-password" name="password" required
                                 class="input-jatara pr-12 group-hover:border-[#0A174E]/30">
@@ -192,15 +191,14 @@
                 </form>
 
                 <p class="text-center text-sm font-semibold text-[#8F8F7E] mt-6">
-                    Sudah terdaftar?
+                    Sudah Memiliki Akun?
                     <button type="button" onclick="switchTab('login')"
-                        class="text-[#0A174E] hover:text-[#F5D042] transition-colors font-bold px-1 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-[#0A174E] hover:after:bg-[#F5D042] after:transition-colors">Masuk
-                        Sini</button>
+                        class="text-[#0A174E] hover:text-[#F5D042] transition-colors font-bold px-1 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-[#0A174E] hover:after:bg-[#F5D042] after:transition-colors">Masuk</button>
                 </p>
 
                 <div class="mt-8 pt-6 border-t border-[#EBEBDF] text-center">
                     <p class="text-[13px] font-medium text-[#8F8F7E]">
-                        Punya armada mobil nganggur? <br class="sm:hidden">
+                        <br class="sm:hidden">
                         <a href="{{ route('register.mitra') }}"
                             class="text-[#0A174E] hover:text-[#F5D042] font-bold transition-colors inline-block mt-1 sm:mt-0 sm:ml-1">Daftar
                             Menjadi Mitra Jatara <i class="fas fa-arrow-right ml-1 text-[10px]"></i></a>

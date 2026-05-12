@@ -111,7 +111,6 @@
                             <li><a href="{{ route('how.it.works') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('how.it.works') ? 'text-[#F5D042]' : '' }}">Tentang</a></li>
                             <li><a href="{{ route('browse') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('browse') ? 'text-[#F5D042]' : '' }}">Kendaraan</a></li>
                             <li><a href="#" class="hover:text-[#F5D042] transition-colors">Kontak</a></li>
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Blog</a></li>
                         </ul>
                     </div>
                     
@@ -121,27 +120,17 @@
                         <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
                             <li><a href="#" class="hover:text-[#F5D042] transition-colors">Syarat & Ketentuan</a></li>
                             <li><a href="{{ route('help') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('help') ? 'text-[#F5D042]' : '' }}">Bantuan</a></li>
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Lisensi</a></li>
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Kebijakan Privasi</a></li>
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Link in Bio</a></li>
+
                         </ul>
                     </div>
 
-                    <!-- Kolom 3 -->
-                    <div>
-                        <h4 class="text-white text-lg font-bold mb-6">Lainnya</h4>
-                        <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Segera Hadir</a></li>
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Dilindungi Sandi</a></li>
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Error 404</a></li>
-                        </ul>
-                    </div>
+                  
                 </div>
             </div>
 
             <!-- Footer Bottom -->
             <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
-                <p class="text-sm font-medium text-[#EBEBDF]/60">Dibuat oleh <a href="#" class="text-[#F5D042] hover:underline">SewaKendaraan</a>. Didukung oleh <a href="https://laravel.com" target="_blank" class="text-[#F5D042] hover:underline">Laravel</a></p>
+                <p class="text-sm font-medium text-[#EBEBDF]/60">Dibuat oleh <a href="#" class="text-[#F5D042] hover:underline">Tim JATARA</a>. Didukung oleh <a href="https://laravel.com" target="_blank" class="text-[#F5D042] hover:underline">Laravel</a></p>
                 <div class="flex gap-4">
                     <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-[#F5D042] hover:text-[#0A174E] transition-all duration-300">
                         <i class="fab fa-facebook-f"></i>

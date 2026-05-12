@@ -102,6 +102,7 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->
 Route::middleware(['auth.role:customer'])->group(function () {
     Route::get('/profil', [AuthController::class, 'profile'])->name('profile');
     Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::delete('/profil', [AuthController::class, 'destroyProfile'])->name('profile.destroy');
 
     // Booking
     Route::get('/pesan/{vehicle}/checkout', [BookingController::class, 'checkout'])->name('checkout');
@@ -145,6 +146,7 @@ Route::middleware(['auth.role:admin'])->prefix('admin')->name('admin.')->group(f
 
     Route::get('/profil', [AuthController::class, 'profile'])->name('profile');
     Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::delete('/profil', [AuthController::class, 'destroyProfile'])->name('profile.destroy');
 
     Route::resource('kendaraan', VehicleController::class)->parameters(['kendaraan' => 'vehicle']);
     Route::delete('/kendaraan/image/{image}', [VehicleController::class, 'destroyImage'])->name('kendaraan.destroyImage');
@@ -197,6 +199,7 @@ Route::middleware(['auth.role:mitra'])->prefix('mitra')->name('mitra.')->group(f
     // Profil
     Route::get('/profil', [AuthController::class, 'profile'])->name('profile');
     Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::delete('/profil', [AuthController::class, 'destroyProfile'])->name('profile.destroy');
 
     // GPS Monitoring
     Route::get('/monitoring', [VehicleTrackingController::class, 'monitor'])->name('monitoring');

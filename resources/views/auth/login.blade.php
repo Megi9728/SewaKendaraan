@@ -52,11 +52,10 @@
                     {{-- Email --}}
                     <div class="space-y-1.5">
                         <label for="login-email"
-                            class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-[0.2em] block pl-1">Alamat
-                            Email</label>
+                            class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-[0.2em] block pl-1">Email</label>
                         <div class="relative group">
                             <input type="email" id="login-email" name="email"
-                                value="{{ old('_tab') != 'register' ? old('email') : '' }}" placeholder="nama@email.com"
+                                value="{{ old('_tab') != 'register' ? old('email') : '' }}" placeholder="Alamat email"
                                 required class="input-jatara group-hover:border-[#0A174E]/30">
                         </div>
                     </div>
@@ -65,12 +64,12 @@
                     <div class="space-y-1.5">
                         <div class="flex justify-between items-center pl-1">
                             <label for="login-password"
-                                class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-[0.2em] block">Sandi</label>
+                                class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-[0.2em] block">Password</label>
                             <a href="#"
                                 class="text-[10px] text-[#0A174E] hover:text-[#F5D042] font-bold uppercase tracking-widest transition-colors">Lupa?</a>
                         </div>
                         <div class="relative group">
-                            <input type="password" id="login-password" name="password" placeholder="••••••••" required
+                            <input type="password" id="login-password" name="password" placeholder="Password" required
                                 class="input-jatara pr-12 group-hover:border-[#0A174E]/30">
                             <button type="button" onclick="togglePwd('login-password', 'eye-login')"
                                 class="absolute inset-y-0 right-5 flex items-center text-[#8F8F7E] hover:text-[#0A174E] transition-colors focus:outline-none">
@@ -96,7 +95,7 @@
                 </form>
 
                 <p class="text-center text-sm font-semibold text-[#8F8F7E] mt-6">
-                    Belum punya akun?
+                    Belum Memiliki Akun?
                     <button type="button" onclick="switchTab('register')"
                         class="text-[#0A174E] hover:text-[#F5D042] transition-colors font-bold px-1 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-[#0A174E] hover:after:bg-[#F5D042] after:transition-colors">Daftar
                         Baru</button>
@@ -200,7 +199,7 @@
 
                 <div class="mt-8 pt-6 border-t border-[#EBEBDF] text-center">
                     <p class="text-[13px] font-medium text-[#8F8F7E]">
-                        Punya armada mobil nganggur? <br class="sm:hidden">
+                        <br class="sm:hidden">
                         <a href="{{ route('register.mitra') }}"
                             class="text-[#0A174E] hover:text-[#F5D042] font-bold transition-colors inline-block mt-1 sm:mt-0 sm:ml-1">Daftar
                             Menjadi Mitra Jatara <i class="fas fa-arrow-right ml-1 text-[10px]"></i></a>

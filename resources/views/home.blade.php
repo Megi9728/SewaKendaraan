@@ -112,7 +112,7 @@
                         Sewa kendaraan cepat <br class="hidden md:block">dan terjangkau
                     </h1>
                     <p class="text-[#EBEBDF] text-lg md:text-xl font-medium mb-12 max-w-[600px] mx-auto">
-                        Make every customer interaction better, faster, and more consistent with the optimization platform for human and AI agents.
+                 Jelajahi berbagai pilihan kendaraan yang tersedia dan temukan yang sesuai dengan kebutuhanmu.
                     </p>
                     
                 </div>
