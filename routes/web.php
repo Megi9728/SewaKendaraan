@@ -73,7 +73,7 @@ Route::get('/mobil/{vehicle}', function (\App\Models\Vehicle $vehicle) {
     return view('vehicle-detail', compact('vehicle'));
 })->name('vehicle.detail');
 
-Route::get('/cara-kerja', fn() => view('how-it-works'))->name('how.it.works');
+Route::get('/faq', fn() => view('how-it-works'))->name('how.it.works');
 Route::get('/bantuan', fn() => view('help'))->name('help');
 
 // ============================================================

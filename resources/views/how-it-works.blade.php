@@ -12,7 +12,7 @@
                 Mobilitas Premium, <br><span class="text-[#F5D042]">Sederhana & Mudah.</span>
             </h1>
             <p class="text-lg text-[#8F8F7E] max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
-                Menghadirkan standar kelas satu dalam menyewa kendaraan. Dari proses booking digital kilat, pilihan armada
+                Sewa kendaraan jadi lebih mudah, cepat, dan aman untuk setiap kebutuhan perjalanan Anda. Dari proses pemesanan online yang praktis, pilihan armada
                 eksklusif, hingga asuransi perjalanan lengkap.
             </p>
             <a href="{{ route('browse') }}"
@@ -43,8 +43,7 @@
                     </div>
                     <h3 class="text-2xl font-extrabold text-[#0A174E] mb-4 tracking-tight">Armada Terpilih</h3>
                     <p class="text-[#8F8F7E] leading-relaxed font-medium">
-                        Setiap unit kendaraan melalui inspeksi ketat (multipoint-check). Eksterior mengkilap, kabin wangi
-                        bebas asap rokok, dan performa mesin selalu optimal.
+                        Setiap kendaraan dirawat secara rutin dan melalui pemeriksaan sebelum disewakan untuk memastikan kenyamanan dan keamanan pelanggan.
                     </p>
                 </div>
 
@@ -57,8 +56,7 @@
                     </div>
                     <h3 class="text-2xl font-extrabold text-[#0A174E] mb-4 tracking-tight">Harga Transparan</h3>
                     <p class="text-[#8F8F7E] leading-relaxed font-medium">
-                        Tidak ada biaya siluman atau kejutan di akhir. Apa yang Anda lihat di aplikasi adalah total final
-                        yang sudah mencakup asuransi komprehensif.
+                        Tidak ada biaya tersembunyi. Harga yang ditampilkan merupakan harga yang harus Anda bayarkan sesuai detail pemesanan.
                     </p>
                 </div>
 
@@ -71,8 +69,7 @@
                     </div>
                     <h3 class="text-2xl font-extrabold text-[#0A174E] mb-4 tracking-tight">Layanan Prioritas</h3>
                     <p class="text-[#8F8F7E] leading-relaxed font-medium">
-                        Tim dukungan kami beroperasi 24 jam x 7 hari. Siap membantu mulai dari kendala reservasi hingga
-                        layanan bantuan darurat (Roadside Assistance) di jalan.
+                        Tim kami siap membantu selama jam operasional untuk menjawab pertanyaan dan membantu proses penyewaan.
                     </p>
                 </div>
             </div>
@@ -134,7 +131,7 @@
                                         'icon' => 'fa-search',
                                         'title' => '1. Temukan Kendaraan',
                                         'desc' =>
-                                            'Pilih mobil idaman Anda dari ratusan pilihan armada berkualitas di sekitar Anda.',
+                                            'Pilih kendaraan yang tersedia sesuai kebutuhan dan lokasi Anda.',
                                     ],
                                     [
                                         'icon' => 'fa-calendar-check',
@@ -146,13 +143,13 @@
                                         'icon' => 'fa-id-card',
                                         'title' => '3. Verifikasi Data',
                                         'desc' =>
-                                            'Unggah foto KTP dan SIM. Proses verifikasi AI kami dienkripsi secara aman ratusan lapis.',
+                                            'Unggah foto KTP dan SIM untuk proses verifikasi data sebelum melakukan penyewaan kendaraan.',
                                     ],
                                     [
                                         'icon' => 'fa-key',
                                         'title' => '4. Ambil Kunci',
                                         'desc' =>
-                                            'Lakukan pembayaran yang aman, lalu ambil kendaraan Anda atau minta diantarkan.',
+                                            'Setelah pembayaran berhasil dikonfirmasi, Anda dapat mengambil kendaraan atau menunggu kendaraan diantar sesuai pilihan layanan.',
                                     ],
                                 ];
                             @endphp
@@ -204,9 +201,7 @@
                             <h4 class="font-extrabold text-[#0A174E] text-xl mb-3">Apakah harga sewa sudah termasuk
                                 asuransi?</h4>
                             <p class="text-[#8F8F7E] text-lg font-medium leading-relaxed">
-                                Secara default, setiap unit di Jatara sudah dilindungi asuransi kecelakaan dasar (Basic
-                                Coverage). Jika Anda memerlukan perlindungan Zero-Risk, harap tanyakan perluasan polis ke
-                                kontak Mitra di halaman detail armada.
+                                Ketersediaan asuransi bergantung pada kebijakan masing-masing mitra rental. Untuk nformasi lengkap dapat menghubungi mitra terkait.
                             </p>
                         </div>
                     </div>
@@ -235,9 +230,7 @@
                         <div>
                             <h4 class="font-extrabold text-[#0A174E] text-xl mb-3">Bagaimana metode lepas kuncinya?</h4>
                             <p class="text-[#8F8F7E] text-lg font-medium leading-relaxed">
-                                Kami memfokuskan layanan pada *"Lepas Kunci" (Self-Drive)*. Akun penyewa Anda yang telah
-                                lolos sistem verifikasi keamanan biometrik dari kami memperbolehkan Anda menjemput langsung
-                                mobil di lokasi pool mitra kami.
+                                Setelah akun dan data Anda berhasil diverifikasi, Anda dapat mengambil kendaraan sesuai lokasi yang ditentukan oleh mitra rental.
                             </p>
                         </div>
                     </div>
@@ -262,8 +255,7 @@
 
                 <h2 class="relative z-10 text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">Siap
                     Menghidupkan<br>Mesin Perjalanan Anda?</h2>
-                <p class="relative z-10 text-lg text-[#EBEBDF] font-medium mb-12 max-w-2xl mx-auto">Gabung dengan
-                    pengguna lainnya yang telah membuktikan kemudahan mobilitas tanpa batas bersama Jatara.</p>
+                <p class="relative z-10 text-lg text-[#EBEBDF] font-medium mb-12 max-w-2xl mx-auto">Temukan kendaraan yang sesuai dengan kebutuhan Anda dan lakukan pemesanan dengan mudah melalui Jatara.</p>
                 <div class="relative z-10 flex flex-col sm:flex-row justify-center gap-6">
                     <a href="{{ route('browse') }}"
                         class="bg-[#F5D042] text-[#0A174E] border border-transparent font-extrabold px-10 py-5 rounded-2xl hover:bg-transparent hover:border-[#F5D042] hover:text-[#F5D042] transition-colors shadow-lg">Telusuri

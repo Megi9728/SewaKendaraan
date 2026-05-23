@@ -102,10 +102,25 @@
 @section('content')
     <div class="home-shell">
         <section class="px-2 md:px-4 pt-0 pb-0 absolute inset-x-0 top-[1rem] md:top-[1.25rem] z-0">
-        <div class="jt-hero relative h-[700px] md:h-[800px] lg:h-[850px] rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden bg-[#0A174E]">
-            <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1800&q=80"
-                alt="Hero kendaraan Jatara" class="absolute inset-0 h-full w-full object-cover">
-            <div class="absolute inset-0 bg-[#0A174E]/60 md:bg-[#0A174E]/40"></div>
+        <div class="jt-hero relative h-[700px] md:h-[800px] lg:h-[850px] rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden bg-[#0A174E]"
+            x-data="{ 
+                activeSlide: 0, 
+                slides: [
+                    'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1800&q=80',
+                    'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1800&q=80',
+                    'https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=1800&q=80',
+                    'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1800&q=80'
+                ] 
+            }"
+            x-init="setInterval(() => activeSlide = activeSlide === slides.length - 1 ? 0 : activeSlide + 1, 5000)">
+            
+            <template x-for="(slide, index) in slides" :key="index">
+                <img :src="slide" alt="Hero kendaraan Jatara" 
+                    class="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
+                    :class="activeSlide === index ? 'opacity-100 z-0' : 'opacity-0 -z-10'">
+            </template>
+            
+            <div class="absolute inset-0 bg-[#0A174E]/60 md:bg-[#0A174E]/40 z-10"></div>
             <div class="relative z-10 p-6 md:p-14 lg:p-20 h-full flex flex-col justify-center items-center text-center mt-12 md:mt-16">      
                 <div class="max-w-[800px]">
                     <h1 class="text-white text-5xl md:text-[72px] lg:text-[84px] leading-[1.05] font-bold mb-6 tracking-tight">
@@ -190,8 +205,8 @@
                         <i class="fas fa-laptop text-[22px] text-[#0A174E] mb-0"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#0A174E]">Booking Mudah</h3>
-                    <p class="text-gray-600 leading-relaxed font-medium">Cukup beberapa klik, Anda langsung terhubung ke
-                        katalog dan jadwal secara real-time.</p>
+                    <p class="text-gray-600 leading-relaxed font-medium">
+                        Cukup beberapa langkah untuk melihat kendaraan yang tersedia dan melakukan pemesanan.</p>
                 </article>
                 <article
                     class="jt-feature group p-6 rounded-2xl hover:bg-[#EBEBDF]/30 transition border border-transparent hover:border-[#EBEBDF]">
@@ -199,8 +214,7 @@
                         <i class="fas fa-tags text-[22px] text-[#0A174E] mb-0"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#0A174E]">Harga Terjangkau</h3>
-                    <p class="text-gray-600 leading-relaxed font-medium">Tarif transparan dan sangat kompetitif, tanpa biaya
-                        tersembunyi di checkout.</p>
+                    <p class="text-gray-600 leading-relaxed font-medium">Harga ditampilkan secara jelas tanpa biaya tambahan yang tidak diinformasikan sebelumnya.</p>
                 </article>
                 <article
                     class="jt-feature group p-6 rounded-2xl hover:bg-[#EBEBDF]/30 transition border border-transparent hover:border-[#EBEBDF]">
@@ -208,8 +222,7 @@
                         <i class="fas fa-headset text-[22px] text-[#0A174E] mb-0"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#0A174E]">Dukungan 24/7</h3>
-                    <p class="text-gray-600 leading-relaxed font-medium">Tim support ramah kami siap membantu kapan pun Anda
-                        membutuhkan bantuan di jalan.</p>
+                    <p class="text-gray-600 leading-relaxed font-medium">Tim kami siap membantu selama jam operasional apabila Anda mengalami kendala saat proses penyewaan.</p>
                 </article>
             </div>
         </section>
@@ -281,32 +294,24 @@
         <section class="mt-24 mb-10 overflow-hidden bg-[#0A174E] py-8 select-none">
             <div class="flex whitespace-nowrap animate-marquee">
                 <div class="flex items-center gap-12 text-white/90 text-2xl md:text-4xl font-bold uppercase tracking-tighter mx-4">
-                    <span>Sewa Kendaraan Jatara</span>
+                    <span>Verifikasi Mudah</span>
                     <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Unit Prima & Terawat</span>
+                    <span>Proses Cepat</span>
                     <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Booking Mudah & Cepat</span>
+                    <span>Banyak Pilihan Kendaraan</span>
                     <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Harga Terjangkau</span>
-                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Layanan 24/7</span>
-                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Sewa Kendaraan Jatara</span>
+                    <span>Harga Transparan</span>
                     <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
                 </div>
                 <!-- Duplicate for seamless loop -->
                 <div class="flex items-center gap-12 text-white/90 text-2xl md:text-4xl font-bold uppercase tracking-tighter mx-4">
-                    <span>Sewa Kendaraan Jatara</span>
+                    <span>Verifikasi Mudah</span>
                     <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Unit Prima & Terawat</span>
+                    <span>Proses Cepat</span>
                     <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Booking Mudah & Cepat</span>
+                    <span>Banyak Pilihan Kendaraan</span>
                     <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Harga Terjangkau</span>
-                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Layanan 24/7</span>
-                    <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
-                    <span>Sewa Kendaraan Jatara</span>
+                    <span>Harga Transparan</span>
                     <span class="w-3 h-3 rounded-full bg-[#F5D042]"></span>
                 </div>
             </div>
@@ -362,8 +367,7 @@
                                 03</div>
                             <div>
                                 <h3 class="text-white text-xl font-bold mb-2">Ambil & berkendara</h3>
-                                <p class="text-[#EBEBDF]/70 leading-relaxed font-medium">Kunjungi lokasi pengambilan
-                                    terdekat dan ambil kuncinya. Nikmati perjalanan yang lancar melintasi kota dengan
+                                <p class="text-[#EBEBDF]/70 leading-relaxed font-medium">Ambil kendaraan sesuai lokasi yang ditentukan. Nikmati perjalanan yang lancar melintasi kota dengan
                                     kendaraan kami yang andal dan terawat.</p>
                             </div>
                         </div>
@@ -386,9 +390,7 @@
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
                             class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Saya membutuhkan sewa dadakan untuk liburan
-                        keluarga, dan layanan ini memudahkannya! Proses pemesanan lancar, mobil dalam kondisi prima, dan
-                        harga sangat terjangkau. Sangat direkomendasikan!"</p>
+                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Proses pemesanan mudah dan mobil yang saya terima sesuai dengan deskripsi. Pengalamannya memuaskan."</p>
                     <div class="flex items-center gap-4">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User"
                             class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm">
@@ -401,9 +403,7 @@
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
                             class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Sebagai orang yang sering bepergian untuk
-                        urusan dinas, saya sangat mengandalkan sewa kendaraan. Perusahaan ini selalu menjadi pilihan utama
-                        karena armada yang terawat dengan baik dan layanan pelanggan yang memuaskan!"</p>
+                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Kendaraan yang tersedia cukup beragam dan proses sewanya tidak ribet. Cocok untuk kebutuhan perjalanan kerja."</p>
                     <div class="flex items-center gap-4">
                         <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User"
                             class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm">
@@ -416,9 +416,7 @@
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
                             class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                     </div>
-                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Mobil sangat irit bahan bakar dan ramah
-                        lingkungan. Saya suka karena perusahaan ini menawarkan opsi berkelanjutan bagi pelancong modern.
-                        Tarif sewa sangat kompetitif."</p>
+                    <p class="text-gray-600 font-medium leading-relaxed mb-8">"Kondisi kendaraan bersih dan nyaman digunakan. Harga sewanya juga sesuai dengan fasilitas yang diberikan."</p>
                     <div class="flex items-center gap-4">
                         <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="User"
                             class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm">
@@ -434,14 +432,13 @@
                 <div class="lg:w-[45%] flex flex-col justify-between py-6">
                     <div>
                         <h2 class="text-4xl md:text-[3.5rem] font-bold text-[#0A174E] leading-[1.1] mb-6 tracking-tight">
-                            Mendorong keunggulan dalam layanan sewa mobil</h2>
+                            Mengapa Harus JATARA?</h2>
                         <p class="text-gray-600 font-medium text-lg leading-relaxed mb-10 max-w-md">Dengan armada kendaraan
-                            yang beragam dan komitmen terhadap kepuasan pelanggan, kami berusaha membuat perjalanan Anda
-                            mulus dan menyenangkan.</p>
+                            yang beragam dan komitmen terhadap kepuasan pelanggan, Kami menyediakan berbagai pilihan kendaraan yang dapat disesuaikan dengan kebutuhan perjalanan pribadi maupun bisnis.</p>
 
                         <a href="{{ route('how.it.works') }}"
                             class="inline-flex items-center p-1.5 pl-6 text-base font-bold bg-[#F5D042] text-[#0A174E] rounded-xl hover:shadow-[0_10px_20px_rgba(245,208,66,0.3)] transition-all hover:-translate-y-1">
-                            <span class="mr-4">Cari tahu tentang kami</span>
+                            <span class="mr-4">Pelajari Selengkapnya</span>
                             <div class="bg-[#0A174E] text-white p-3 rounded-lg flex items-center justify-center">
                                 <i class="fas fa-arrow-right text-sm"></i>
                             </div>
@@ -451,11 +448,11 @@
                     <div class="grid grid-cols-2 gap-6 md:gap-10 mt-20">
                         <div>
                             <h3 class="text-2xl md:text-3xl font-extrabold text-[#0A174E] mb-3 tracking-tight uppercase">Terpercaya</h3>
-                            <p class="text-gray-500 font-medium text-sm md:text-base leading-relaxed pr-2">Partner mobilitas andalan dengan ribuan ulasan positif</p>
+                            <p class="text-gray-500 font-medium text-sm md:text-base leading-relaxed pr-2">Berkomitmen memberikan layanan penyewaan kendaraan yang aman dan mudah digunakan.</p>
                         </div>
                         <div>
                             <h3 class="text-2xl md:text-3xl font-extrabold text-[#0A174E] mb-3 tracking-tight uppercase">Premium</h3>
-                            <p class="text-gray-500 font-medium text-sm md:text-base leading-relaxed pr-2">Standar armada terbaik untuk kenyamanan perjalanan Anda</p>
+                            <p class="text-gray-500 font-medium text-sm md:text-base leading-relaxed pr-2">Kendaraan yang dirawat secara berkala untuk menjaga kenyamanan dan keamanan perjalanan.</p>
                         </div>
                     </div>
                 </div>

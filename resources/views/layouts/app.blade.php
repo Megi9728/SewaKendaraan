@@ -83,21 +83,15 @@
                 <!-- Sisi Kiri: Logo & Newsletter -->
                 <div class="lg:col-span-5 flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center gap-3 mb-10">
+                        <div class="flex items-center gap-3 mb-6">
                             <!-- Logo Box Putih Kecil untuk Kontras -->
                             <div class="bg-white p-2 rounded-xl">
-                                <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-8 w-auto">
+                                <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-10 w-auto">
                             </div>
-                            <span class="text-white text-3xl font-bold tracking-tight font-sans">Jatara</span>
                         </div>
-                        
-                        <div class="mb-10 lg:mb-0">
-                            <h4 class="text-white text-xl font-bold mb-4">Berlangganan buletin kami</h4>
-                            <form class="flex flex-col sm:flex-row gap-3">
-                                <input type="email" placeholder="Masukkan alamat email Anda" class="w-full sm:flex-1 bg-white/10 border border-white/10 text-white placeholder-gray-400 px-5 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F5D042] transition">
-                                <button type="submit" class="bg-[#F5D042] hover:bg-[#ebc532] text-[#0A174E] font-bold px-7 py-3.5 rounded-xl transition duration-300 whitespace-nowrap">Berlangganan!</button>
-                            </form>
-                        </div>
+                        <p class="text-[#EBEBDF]/70 text-sm leading-relaxed max-w-sm mb-8">
+                            Jatara adalah platform penyewaan kendaraan terpercaya yang memberikan kemudahan, kenyamanan, dan keamanan untuk setiap perjalanan Anda.
+                        </p>
                     </div>
                 </div>
 
@@ -108,9 +102,8 @@
                         <h4 class="text-white text-lg font-bold mb-6">Halaman</h4>
                         <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
                             <li><a href="{{ route('home') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('home') ? 'text-[#F5D042]' : '' }}">Beranda</a></li>
-                            <li><a href="{{ route('how.it.works') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('how.it.works') ? 'text-[#F5D042]' : '' }}">Tentang</a></li>
+                            <li><a href="{{ route('how.it.works') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('how.it.works') ? 'text-[#F5D042]' : '' }}">Layanan & Area</a></li>
                             <li><a href="{{ route('browse') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('browse') ? 'text-[#F5D042]' : '' }}">Kendaraan</a></li>
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Kontak</a></li>
                         </ul>
                     </div>
                     
@@ -119,12 +112,29 @@
                         <h4 class="text-white text-lg font-bold mb-6">Layanan</h4>
                         <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
                             <li><a href="#" class="hover:text-[#F5D042] transition-colors">Syarat & Ketentuan</a></li>
-                            <li><a href="{{ route('help') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('help') ? 'text-[#F5D042]' : '' }}">Bantuan</a></li>
-
+                            <li><a href="{{ route('help') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('help') ? 'text-[#F5D042]' : '' }}">Bantuan Pelanggan</a></li>
+                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Kebijakan Privasi</a></li>
                         </ul>
                     </div>
 
-                  
+                    <!-- Kolom 3 -->
+                    <div>
+                        <h4 class="text-white text-lg font-bold mb-6">Kontak Kami</h4>
+                        <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-map-marker-alt mt-1 text-[#F5D042]"></i>
+                                <span>Jl. Raya Jatara No. 123, Jakarta Selatan, Indonesia</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-phone-alt text-[#F5D042]"></i>
+                                <span>+62 812 3456 7890</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-envelope text-[#F5D042]"></i>
+                                <span>support@jatara.com</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -148,10 +158,9 @@
 
     {{-- ===== VANILLA JS ===== --}}
     <script>
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-
         window.openMobileMenu = function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
             if (mobileMenu && mobileMenuOverlay) {
                 mobileMenuOverlay.classList.remove('pointer-events-none');
                 setTimeout(() => {
@@ -163,6 +172,8 @@
         };
 
         window.closeMobileMenu = function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
             if (mobileMenu && mobileMenuOverlay) {
                 mobileMenuOverlay.classList.add('opacity-0');
                 mobileMenu.classList.add('-translate-y-full');

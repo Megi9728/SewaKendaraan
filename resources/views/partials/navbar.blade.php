@@ -38,8 +38,7 @@
         <!-- 2. CENTER: LOGO (Desktop & Mobile) -->
         <div class="flex-shrink-0 flex items-center lg:justify-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 pl-2 lg:pl-0">
             <a href="{{ route('home') }}" class="flex items-center hover:opacity-80 transition-opacity gap-2">
-                <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-6 md:h-7 w-auto object-contain">
-                <span class="font-bold text-[18px] text-[#0A174E] tracking-tight">Jatara</span>
+                <img src="{{ asset('logo.png') }}" alt="Jatara Logo" class="h-12 md:h-14 w-auto object-contain">
             </a>
         </div>
 
