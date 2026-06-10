@@ -283,18 +283,75 @@
                             </div>
                         </div>
 
+                        <div class="mt-8 mb-8 border-t border-[#EBEBDF] pt-6 text-left">
+                            <h4 class="font-bold text-[#111827] text-sm mb-1">Wajib Dibaca Sebelum Lanjut</h4>
+                            <p class="text-xs text-gray-500 mb-4 leading-relaxed">Sebelum kamu booking, yuk baca info penting berikut agar proses sewa lancar!</p>
+                            
+                            <div class="space-y-0">
+                                <!-- Item 1 -->
+                                <details class="group cursor-pointer border-b border-[#EBEBDF]">
+                                    <summary class="flex justify-between items-center font-semibold text-[13px] text-blue-600 py-4 select-none outline-none pr-2 list-none [&::-webkit-details-marker]:hidden">
+                                        <span class="pr-4 leading-snug">Peraturan Sebelum Melakukan Pemesanan Sewa Kendaraan</span>
+                                        <i class="fas fa-chevron-down text-gray-600 transition-transform duration-300 group-open:rotate-180"></i>
+                                    </summary>
+                                    <div class="pb-4 text-xs text-gray-600 leading-relaxed">
+                                        1. Penyewa wajib memiliki identitas diri yang sah (KTP/SIM).<br>
+                                        2. Melakukan pembayaran penuh sesuai dengan durasi sewa.<br>
+                                        3. Dilarang menggunakan kendaraan untuk tindak kejahatan.
+                                    </div>
+                                </details>
+
+                                <!-- Item 2 -->
+                                <details class="group cursor-pointer border-b border-[#EBEBDF]">
+                                    <summary class="flex justify-between items-center font-semibold text-[13px] text-blue-600 py-4 select-none outline-none pr-2 list-none [&::-webkit-details-marker]:hidden">
+                                        <span class="pr-4 leading-snug">Biaya Overtime</span>
+                                        <i class="fas fa-chevron-down text-gray-600 transition-transform duration-300 group-open:rotate-180"></i>
+                                    </summary>
+                                    <div class="pb-4 text-xs text-gray-600 leading-relaxed">
+                                        Keterlambatan pengembalian kendaraan akan dikenakan denda sesuai dengan ketentuan biaya overtime per jam yang berlaku di tiap armada.
+                                    </div>
+                                </details>
+
+                                <!-- Item 3 -->
+                                <details class="group cursor-pointer border-b border-[#EBEBDF]">
+                                    <summary class="flex justify-between items-center font-semibold text-[13px] text-blue-600 py-4 select-none outline-none pr-2 list-none [&::-webkit-details-marker]:hidden">
+                                        <span class="pr-4 leading-snug">Biaya Kerugian</span>
+                                        <i class="fas fa-chevron-down text-gray-600 transition-transform duration-300 group-open:rotate-180"></i>
+                                    </summary>
+                                    <div class="pb-4 text-xs text-gray-600 leading-relaxed">
+                                        Segala bentuk kerusakan kendaraan (lecet, penyok, kecelakaan) selama masa sewa menjadi tanggung jawab penyewa sepenuhnya.
+                                    </div>
+                                </details>
+
+                                <!-- Item 4 -->
+                                <details class="group cursor-pointer border-b border-[#EBEBDF]">
+                                    <summary class="flex justify-between items-center font-semibold text-[13px] text-blue-600 py-4 select-none outline-none pr-2 list-none [&::-webkit-details-marker]:hidden">
+                                        <span class="pr-4 leading-snug">Pasal 378 KUHP</span>
+                                        <i class="fas fa-chevron-down text-gray-600 transition-transform duration-300 group-open:rotate-180"></i>
+                                    </summary>
+                                    <div class="pb-4 text-xs text-gray-600 leading-relaxed">
+                                        Tindak pidana penipuan. Segala bentuk pemalsuan data diri dan penipuan akan dilaporkan ke pihak berwajib dan diproses hukum sesuai Pasal 378 KUHP.
+                                    </div>
+                                </details>
+                                
+                                <!-- Item 5 -->
+                                <details class="group cursor-pointer border-b border-[#EBEBDF]">
+                                    <summary class="flex justify-between items-center font-semibold text-[13px] text-blue-600 py-4 select-none outline-none pr-2 list-none [&::-webkit-details-marker]:hidden">
+                                        <span class="pr-4 leading-snug">Pasal 378 KUHP (Wanprestasi)</span>
+                                        <i class="fas fa-chevron-down text-gray-600 transition-transform duration-300 group-open:rotate-180"></i>
+                                    </summary>
+                                    <div class="pb-4 text-xs text-gray-600 leading-relaxed">
+                                        Pelanggaran terhadap perjanjian sewa, termasuk kegagalan pembayaran atau penggelapan kendaraan akan ditindaklanjuti secara hukum perdata maupun pidana.
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+
                         <button type="submit" id="submit_booking_btn"
                             class="w-full bg-[#0A174E] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#F5D042] hover:text-[#0A174E] hover:shadow-[0_8px_20px_rgba(245,208,66,0.3)] transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 group">
                             Konfirmasi Pesanan
                             <i class="fas fa-chevron-right text-sm group-hover:translate-x-1 transition-transform"></i>
                         </button>
-
-                        <div class="mt-4 flex justify-center text-[10px] font-semibold text-[#8F8F7E] gap-4">
-                            <span class="flex items-center gap-1.5"><i class="fas fa-lock text-[#0A174E]/30"></i> Enkripsi
-                                Aman</span>
-                            <span class="flex items-center gap-1.5"><i class="fas fa-shield-alt text-[#0A174E]/30"></i>
-                                Transaksi Terlindungi</span>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -343,10 +343,10 @@
                     <div class="space-y-6">
                         <div class="space-y-1">
                             <label class="text-[10px] font-bold text-[#8F8F7E] uppercase tracking-widest block pl-1">Pilih Tanggal</label>
-                            <input type="text" placeholder="Gunakan akun Anda untuk memesan" disabled class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg opacity-50 cursor-not-allowed">
+                            <input type="text" placeholder="Silahkan login untuk memilih tanggal" disabled class="w-full bg-[#F9F9F5] border-0 text-sm font-bold text-[#0A174E] px-4 py-3.5 rounded-lg opacity-50 cursor-not-allowed">
                         </div>
                         <a href="{{ route('login') }}" class="w-full btn-primary py-5 text-center block text-base font-bold shadow-uber">
-                            Login Untuk Pesan
+                            Login
                         </a>
                     </div>
                 @endauth
@@ -380,17 +380,16 @@
          
          <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
             @foreach($related as $r)
-            <div class="group border-0 border-b border-gray-100 pb-8 md:border-0 md:pb-0">
-                <a href="{{ route('vehicle.detail', $r->id) }}" class="block mb-6 relative aspect-video bg-[#F9F9F5] rounded-lg overflow-hidden">
+            <a href="{{ route('vehicle.detail', $r->id) }}" class="group block bg-white border border-gray-200 hover:border-[#0A174E]/30 rounded-2xl p-4 transition-all cursor-pointer shadow-sm hover:shadow-md">
+                <div class="block mb-6 relative aspect-video bg-[#F9F9F5] rounded-lg overflow-hidden">
                     <img src="{{ $r->image ? (strpos($r->image, 'http') === 0 ? $r->image : asset('storage/' . $r->image)) : 'https://placehold.co/600x400?text=' . urlencode($r->name) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $r->name }}">
-                </a>
+                </div>
                 <div class="flex justify-between items-start mb-2">
                     <h3 class="text-xl font-bold text-[#0A174E]">{{ $r->name }}</h3>
                     <span class="font-bold text-[#0A174E]">Rp {{ number_format($r->price_per_day, 0, ',', '.') }}</span>
                 </div>
                 <p class="text-sm font-medium text-[#8F8F7E]">{{ $r->seats }} Kursi • {{ $r->transmission }}</p>
-                <a href="{{ route('vehicle.detail', $r->id) }}" class="mt-4 inline-block text-xs font-bold uppercase tracking-widest text-[#0A174E] hover:underline underline-offset-4">Detail Unit <i class="fas fa-chevron-right text-[8px] ml-1"></i></a>
-            </div>
+            </a>
             @endforeach
          </div>
     </div>

@@ -106,8 +106,8 @@
             x-data="{ 
                 activeSlide: 0, 
                 slides: [
-                    'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1800&q=80',
-                    'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1800&q=80',
+                    '{{ asset('assets/img/banner1.jpeg') }}',
+                    '{{ asset('assets/img/banner2.png') }}',
                     'https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=1800&q=80',
                     'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1800&q=80'
                 ] 
@@ -120,18 +120,7 @@
                     :class="activeSlide === index ? 'opacity-100 z-0' : 'opacity-0 -z-10'">
             </template>
             
-            <div class="absolute inset-0 bg-[#0A174E]/60 md:bg-[#0A174E]/40 z-10"></div>
-            <div class="relative z-10 p-6 md:p-14 lg:p-20 h-full flex flex-col justify-center items-center text-center mt-12 md:mt-16">      
-                <div class="max-w-[800px]">
-                    <h1 class="text-white text-5xl md:text-[72px] lg:text-[84px] leading-[1.05] font-bold mb-6 tracking-tight">
-                        Sewa kendaraan cepat <br class="hidden md:block">dan terjangkau
-                    </h1>
-                    <p class="text-[#EBEBDF] text-lg md:text-xl font-medium mb-12 max-w-[600px] mx-auto">
-                 Jelajahi berbagai pilihan kendaraan yang tersedia dan temukan yang sesuai dengan kebutuhanmu.
-                    </p>
-                    
-                </div>
-            </div>
+            
         </div>
     </section>
     
@@ -240,7 +229,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach ($vehicles as $v)
                     <a href="{{ route('vehicle.detail', $v->id) }}"
-                        class="block bg-[#F9F9F5] rounded-3xl p-6 group hover:-translate-y-1 hover:shadow-xl transition duration-300">
+                        class="block bg-[#F9F9F5] border border-gray-200 rounded-3xl p-6 group hover:-translate-y-1 hover:border-gray-300 hover:shadow-xl transition duration-300">
                         <div class="aspect-[16/10] mb-6 relative">
                             <!-- Using object-cover to match real photos, but styling cleanly -->
                             <img src="{{ $v->image ? (strpos($v->image, 'http') === 0 ? $v->image : asset('storage/' . $v->image)) : 'https://placehold.co/800x500?text=' . urlencode($v->name) }}"
@@ -346,7 +335,7 @@
                             <div>
                                 <h3 class="text-white text-xl font-bold mb-2">Pilih kendaraan Anda</h3>
                                 <p class="text-[#EBEBDF]/70 leading-relaxed font-medium">Jelajahi berbagai pilihan
-                                    kendaraan kami, mulai dari mobil kota yang ringkas hingga SUV yang luas. Pilih kendaraan
+                                    kendaraan kami, mulai dari motor, city car, MPV, hingga SUV. Pilih kendaraan
                                     yang paling sesuai dengan kebutuhan Anda.</p>
                             </div>
                         </div>

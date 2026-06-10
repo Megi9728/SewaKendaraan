@@ -140,7 +140,7 @@
 
             <!-- Footer Bottom -->
             <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
-                <p class="text-sm font-medium text-[#EBEBDF]/60">Dibuat oleh <a href="#" class="text-[#F5D042] hover:underline">Tim JATARA</a>. Didukung oleh <a href="https://laravel.com" target="_blank" class="text-[#F5D042] hover:underline">Laravel</a></p>
+                <p class="text-sm font-medium text-[#EBEBDF]/60">Dibuat oleh <a href="#" class="text-[#F5D042] hover:underline">Tim JATARA</a>.</p>
                 <div class="flex gap-4">
                     <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-[#F5D042] hover:text-[#0A174E] transition-all duration-300">
                         <i class="fab fa-facebook-f"></i>
