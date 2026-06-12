@@ -182,12 +182,19 @@
                             @if(isset($availableDrivers) && $availableDrivers->count() > 0)
                                 <div class="mb-5">
                                     <label class="block text-sm font-semibold text-[#0A174E] mb-3">Pilih Sopir (Opsional)</label>
-                                    <select name="driver_id" id="driver_id" disabled class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-bold text-[#0A174E] focus:border-[#0A174E] focus:ring-1 focus:ring-[#0A174E] outline-none transition-all">
-                                        <option value="">Kami yang akan pilihkan untuk Anda</option>
-                                        @foreach($availableDrivers as $driver)
-                                            <option value="{{ $driver->id }}">{{ $driver->name }} - {{ $driver->phone }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="flex gap-4 items-center">
+                                        <div class="w-14 h-14 rounded-full bg-gray-100 flex-shrink-0 overflow-hidden border border-[#D4D4C3] hidden" id="driver_photo_container">
+                                            <img id="driver_photo_preview" src="" class="w-full h-full object-cover" alt="Foto Sopir">
+                                        </div>
+                                        <div class="flex-1">
+                                            <select name="driver_id" id="driver_id" disabled onchange="updateDriverPhoto(this)" class="w-full bg-[#F9F9F5] border border-[#D4D4C3] rounded-xl px-4 py-3 text-sm font-bold text-[#0A174E] focus:border-[#0A174E] focus:ring-1 focus:ring-[#0A174E] outline-none transition-all">
+                                                <option value="" data-photo="">Kami yang akan pilihkan untuk Anda</option>
+                                                @foreach($availableDrivers as $driver)
+                                                    <option value="{{ $driver->id }}" data-photo="{{ $driver->driver_photo ? asset('storage/' . $driver->driver_photo) : 'https://ui-avatars.com/api/?name='.urlencode($driver->name).'&background=random' }}">{{ $driver->name }} - {{ $driver->phone }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             @else
                                 <div class="mb-5 p-4 bg-yellow-50 text-yellow-700 rounded-xl text-sm font-medium border border-yellow-200">
@@ -467,6 +474,21 @@
                     }
                     reader.readAsDataURL(file);
                 }
+            }
+        }
+
+        // JS for updating driver photo
+        function updateDriverPhoto(select) {
+            const photoContainer = document.getElementById('driver_photo_container');
+            const photoImg = document.getElementById('driver_photo_preview');
+            const selectedOption = select.options[select.selectedIndex];
+            const photoUrl = selectedOption.getAttribute('data-photo');
+            
+            if (photoUrl) {
+                photoImg.src = photoUrl;
+                photoContainer.classList.remove('hidden');
+            } else {
+                photoContainer.classList.add('hidden');
             }
         }
     </script>

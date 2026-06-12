@@ -52,9 +52,23 @@ class BookingController extends Controller
         $subtotal   = $vehicle->price_per_day * $days;
         $totalPrice = $subtotal;
 
-        // Sopir yang tersedia dari mitra kendaraan ini
+        // Check overlapping driver bookings
+        $overlappingDriverIds = Booking::whereNotNull('driver_id')
+            ->whereNotIn('status', ['Cancelled', 'Rejected', 'Completed'])
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                    ->orWhere(function ($q2) use ($request) {
+                        $q2->where('start_date', '<=', $request->start_date)
+                            ->where('end_date', '>=', $request->end_date);
+                    });
+            })
+            ->pluck('driver_id');
+
+        // Sopir yang tersedia dari mitra kendaraan ini (tidak bentrok jadwal)
         $availableDrivers = Driver::where('mitra_id', $vehicle->mitra_id)
-            ->where('status', 'available')
+            ->where('status', '!=', 'off')
+            ->whereNotIn('id', $overlappingDriverIds)
             ->get();
 
         $bookingData = [
@@ -166,11 +180,7 @@ class BookingController extends Controller
             'amount'         => 0,
         ]);
 
-        // Tandai driver sebagai busy jika ada
-        if ($request->driver_id) {
-            Driver::where('id', $request->driver_id)
-                ->update(['status' => 'busy']);
-        }
+        // Tidak perlu ubah status driver ke busy karena kita sudah cek overlapping date
 
         $msg = ($request->driver_id || $request->with_driver == '1')
             ? 'Pesanan berhasil dibuat! Silakan langsung lakukan pembayaran DP.'

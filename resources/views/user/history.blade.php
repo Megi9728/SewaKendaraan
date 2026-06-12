@@ -149,7 +149,7 @@
                         </div>
                         <p class="text-[10px] font-bold text-[#0A174E] uppercase tracking-widest mb-3">Telah Lunas</p>
                         <a href="{{ route('booking.receipt', $booking->id) }}" class="inline-block w-full bg-white border border-[#EBEBDF] hover:border-[#F5D042] text-[#0A174E] font-bold py-2 rounded-lg text-xs transition-colors">
-                            Lihat Tiket
+                            Lihat Bukti Pembayaran
                         </a>
                     </div>
                 

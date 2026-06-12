@@ -5,26 +5,6 @@
 @section('content')
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-36 pb-20">
 
-        {{-- Page Header (Uber style: Minimalist) --}}
-        <div class="mb-12 relative rounded-[2rem] overflow-hidden bg-[#0A174E] text-[#EBEBDF] p-10 lg:p-14">
-            <!-- Abstract gradient overlay -->
-            <div
-                class="absolute top-0 left-0 w-[400px] h-[400px] bg-[#F5D042] rounded-full mix-blend-multiply filter blur-[128px] opacity-15 pointer-events-none transform -translate-x-1/2 -translate-y-1/2">
-            </div>
-            <div
-                class="absolute bottom-0 right-0 w-[300px] h-[300px] bg-white rounded-full mix-blend-overlay filter blur-[100px] opacity-10 pointer-events-none transform translate-x-1/3 translate-y-1/3">
-            </div>
-
-            <div class="relative z-10">
-                <h1 class="text-4xl lg:text-5xl font-bold tracking-tight mb-4 inline-flex items-center gap-3">
-                    Katalog Armada
-                </h1>
-                <p class="text-[#EBEBDF]/80 font-medium text-lg max-w-2xl leading-relaxed">
-                    Pilih kendaraan premium terbaik untuk perjalanan nyaman dan tak terlupakan Anda hari ini.
-                </p>
-            </div>
-        </div>
-
         <div class="flex flex-col lg:flex-row gap-12">
 
             {{-- ===== SIDEBAR FILTER (Uber Style: Flat & Functional) ===== --}}
@@ -75,15 +55,19 @@
                         </div>
                     </div>
 
+                    @php
+                        $maxVehiclePrice = $vehicles->max('price_per_day') ?? 3000000;
+                        // Pastikan step-nya masuk akal jika harga maksimalnya aneh, namun kita biarkan default step 50000
+                    @endphp
                     {{-- Harga --}}
                     <div class="mb-8 border-t border-[#EBEBDF] pt-8">
                         <label class="text-xs font-bold text-[#8F8F7E] uppercase tracking-widest block mb-3">Harga
                             Maksimum</label>
-                        <input type="range" id="price-range" min="50000" max="2000000" step="50000" value="2000000"
+                        <input type="range" id="price-range" min="50000" max="{{ $maxVehiclePrice }}" step="50000" value="{{ $maxVehiclePrice }}"
                             class="w-full h-1.5 bg-[#D4D4C3] rounded-lg appearance-none cursor-pointer accent-#0A174E">
                         <div class="flex justify-between mt-3">
                             <span class="text-[10px] font-bold text-[#8F8F7E]">Rp 50K</span>
-                            <span id="price-display" class="text-sm font-bold text-[#0A174E]">Rp 2.000.000</span>
+                            <span id="price-display" class="text-sm font-bold text-[#0A174E]">Rp {{ number_format($maxVehiclePrice, 0, ',', '.') }}</span>
                         </div>
                     </div>
 
@@ -288,8 +272,8 @@
         document.getElementById('reset-filter').addEventListener('click', () => {
             searchInput.value = '';
             typeSelect.value = '';
-            priceRange.value = 2000000;
-            priceDisplay.textContent = 'Rp 2.000.000';
+            priceRange.value = {{ $maxVehiclePrice }};
+            priceDisplay.textContent = 'Rp ' + ({{ $maxVehiclePrice }}).toLocaleString('id-ID');
             regionButtons[0].click(); // Reset region to 'Semua'
             filterVehicles();
         });

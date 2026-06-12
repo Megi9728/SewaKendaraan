@@ -9,72 +9,19 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\MitraController;
 use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\Mitra\DriverController;
+use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Mitra\DashboardController as MitraDashboardController;
 
 // ============================================================
 // HALAMAN PUBLIK (Home, Browse, Detail)
 // ============================================================
 
-Route::get('/', function () {
-    $vehicles = \App\Models\Vehicle::with('category')->latest()->take(6)->get();
-    return view('home', compact('vehicles'));
-})->name('home');
-
-Route::get('/jelajah', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\Vehicle::with('category');
-
-    if ($request->filled('category')) {
-        $query->where('vehicle_category_id', $request->category);
-    }
-
-    if ($request->filled('domicile')) {
-        $query->where('domicile', $request->domicile);
-    }
-
-    if ($request->filled('type')) {
-        $query->where('type', $request->type);
-    }
-
-    if ($request->filled('start_date') && $request->filled('end_date')) {
-        $query->where(function ($q) use ($request) {
-            $q->whereRaw('(SELECT COUNT(*) FROM vehicle_units WHERE vehicle_units.vehicle_id = vehicles.id AND vehicle_units.status != "maintenance") > (
-                SELECT COUNT(*) FROM bookings
-                WHERE bookings.vehicle_id = vehicles.id
-                AND status NOT IN ("Cancelled", "Rejected", "Completed")
-                AND (
-                    (start_date BETWEEN ? AND ?) OR
-                    (end_date BETWEEN ? AND ?) OR
-                    (start_date <= ? AND end_date >= ?)
-                )
-            )', [
-                $request->start_date, $request->end_date,
-                $request->start_date, $request->end_date,
-                $request->start_date, $request->end_date,
-            ]);
-        });
-    }
-
-    $sort = $request->get('sort', 'latest');
-    match ($sort) {
-        'price_asc'  => $query->orderBy('price_per_day', 'asc'),
-        'price_desc' => $query->orderBy('price_per_day', 'desc'),
-        'rating'     => $query->orderBy('rating', 'desc'),
-        default      => $query->latest(),
-    };
-
-    $vehicles   = $query->get();
-    $categories = \App\Models\VehicleCategory::all();
-    return view('browse', compact('vehicles', 'categories'));
-})->name('browse');
-
-Route::get('/mobil/{vehicle}', function (\App\Models\Vehicle $vehicle) {
-    $vehicle->load(['images', 'mitra', 'units.pool', 'category', 'bookings' => function ($q) {
-        $q->whereNotNull('review')->where('review', '!=', '')->with('customer')->latest();
-    }]);
-    return view('vehicle-detail', compact('vehicle'));
-})->name('vehicle.detail');
-
-Route::get('/faq', fn() => view('how-it-works'))->name('how.it.works');
-Route::get('/bantuan', fn() => view('help'))->name('help');
+Route::get('/', [FrontendController::class, 'home'])->name('home');
+Route::get('/jelajah', [FrontendController::class, 'browse'])->name('browse');
+Route::get('/mobil/{vehicle}', [FrontendController::class, 'vehicleDetail'])->name('vehicle.detail');
+Route::get('/faq', [FrontendController::class, 'howItWorks'])->name('how.it.works');
+Route::get('/bantuan', [FrontendController::class, 'help'])->name('help');
 
 // ============================================================
 // AUTENTIKASI
@@ -121,19 +68,7 @@ Route::middleware(['auth.role:customer'])->group(function () {
 // ============================================================
 
 Route::middleware(['auth.role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        $stats = [
-            'total_mitra'    => \App\Models\Mitra::count(),
-            'total_vehicles' => \App\Models\Vehicle::count(),
-            'total_bookings' => \App\Models\Booking::count(),
-            'total_revenue'  => \App\Models\Payment::where('payment_status', 'fully_paid')->sum('amount'),
-            'pending_bookings' => \App\Models\Booking::where('status', 'Pending')->count(),
-            'rented_vehicles'=> \App\Models\VehicleUnit::where('status', 'disewa')->count(),
-        ];
-        $recentBookings = \App\Models\Booking::with(['customer', 'vehicle'])->latest()->take(5)->get();
-        $topMitras = \App\Models\Mitra::withCount(['vehicles', 'bookings'])->orderByDesc('bookings_count')->take(5)->get();
-        return view('admin.dashboard', compact('stats', 'recentBookings', 'topMitras'));
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/pemesanan', [AdminBookingController::class, 'index'])->name('booking.monitor');
     Route::put('/pemesanan/{booking}', [AdminBookingController::class, 'update'])->name('pemesanan.update');
@@ -150,6 +85,7 @@ Route::middleware(['auth.role:admin'])->prefix('admin')->name('admin.')->group(f
 
     Route::resource('kendaraan', VehicleController::class)->parameters(['kendaraan' => 'vehicle']);
     Route::delete('/kendaraan/image/{image}', [VehicleController::class, 'destroyImage'])->name('kendaraan.destroyImage');
+    Route::get('/laporan/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('laporan.export');
 });
 
 // ============================================================
@@ -157,32 +93,7 @@ Route::middleware(['auth.role:admin'])->prefix('admin')->name('admin.')->group(f
 // ============================================================
 
 Route::middleware(['auth.role:mitra'])->prefix('mitra')->name('mitra.')->group(function () {
-    Route::get('/dashboard', function () {
-        $mitra = auth('mitra')->user();
-        $mitraId = $mitra->id;
-
-        $stats = [
-            'total_mobil'   => \App\Models\Vehicle::where('mitra_id', $mitraId)->count(),
-            'total_booking' => \App\Models\Booking::whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))->count(),
-            'pending'       => \App\Models\Booking::where('status', 'Pending')->whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))->count(),
-            'active'        => \App\Models\Booking::whereIn('status', ['Active', 'Picked_Up'])->whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))->count(),
-            'revenue'       => \App\Models\Payment::whereHas('booking.vehicle', fn($q) => $q->where('mitra_id', $mitraId))->where('payment_status', 'fully_paid')->sum('amount'),
-            'total_drivers' => \App\Models\Driver::where('mitra_id', $mitraId)->count(),
-        ];
-
-        $chartData   = [];
-        $chartLabels = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $month         = now()->subMonths($i);
-            $chartLabels[] = $month->translatedFormat('F');
-            $chartData[]   = \App\Models\Booking::whereMonth('created_at', $month->month)
-                ->whereYear('created_at', $month->year)
-                ->whereHas('vehicle', fn($q) => $q->where('mitra_id', $mitraId))
-                ->count();
-        }
-
-        return view('mitra.dashboard', compact('stats', 'chartData', 'chartLabels', 'mitra'));
-    })->name('dashboard');
+    Route::get('/dashboard', [MitraDashboardController::class, 'index'])->name('dashboard');
 
     // Kendaraan
     Route::resource('vehicles', VehicleController::class);
@@ -203,6 +114,7 @@ Route::middleware(['auth.role:mitra'])->prefix('mitra')->name('mitra.')->group(f
 
     // GPS Monitoring
     Route::get('/monitoring', [VehicleTrackingController::class, 'monitor'])->name('monitoring');
+    Route::get('/laporan/export', [\App\Http\Controllers\Mitra\ReportController::class, 'export'])->name('laporan.export');
 });
 
 // ============================================================

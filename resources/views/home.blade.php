@@ -363,8 +363,8 @@
                     </div>
                 </div>
                 <div class="lg:w-1/2 min-h-[400px] lg:min-h-full relative">
-                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1200&q=80"
-                        alt="Kendaraan Jatara" class="absolute inset-0 w-full h-full object-cover">
+                    <img src="{{ asset('assets/img/hiw.jpg') }}" alt="Kendaraan Jatara"
+                        class="absolute inset-0 w-full h-full object-cover">
                 </div>
             </div>
         </section>
@@ -446,7 +446,7 @@
                     </div>
                 </div>
                 <div class="lg:w-[55%] min-h-[500px] lg:min-h-[700px] relative">
-                    <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1200&q=80"
+                    <img src="{{ asset('assets/img/home.jpg') }}"
                         alt="Supercar on winding road" class="absolute inset-0 w-full h-full object-cover rounded-[2rem]">
                 </div>
             </div>

@@ -9,7 +9,7 @@
     <section class="pt-28 pb-16 lg:pt-36 lg:pb-24 bg-[#F9F9F5] relative overflow-hidden">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#0A174E] tracking-tight mb-6 leading-tight">
-                Mobilitas Premium, <br><span class="text-[#F5D042]">Sederhana & Mudah.</span>
+                Sewa Kendaraan <br><span class="text-[#F5D042]">Sederhana & Mudah.</span>
             </h1>
             <p class="text-lg text-[#8F8F7E] max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
                 Sewa kendaraan jadi lebih mudah, cepat, dan aman untuk setiap kebutuhan perjalanan Anda. Dari proses pemesanan online yang praktis, pilihan armada
@@ -91,7 +91,7 @@
                     <div
                         class="absolute inset-0 bg-[#0A174E] rounded-[2.5rem] transform -rotate-2 opacity-10 group-hover:-rotate-4 transition-all duration-500">
                     </div>
-                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
+                    <img src="{{ asset('assets/img/layanan.png') }}"
                         alt="Jatara App Mobile Mockup"
                         class="relative z-10 w-full h-auto aspect-[4/5] object-cover rounded-[2.5rem] shadow-2xl border-4 border-white">
 

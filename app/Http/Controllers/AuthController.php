@@ -283,9 +283,7 @@ class AuthController extends Controller
                 }
             }
 
-            if ($pool->latitude && $pool->longitude) {
-                $pool->save();
-            }
+            $pool->save();
 
             if ($request->password) {
                 $user->password = Hash::make($request->password);

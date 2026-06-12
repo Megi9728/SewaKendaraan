@@ -153,7 +153,7 @@
                             <div>
                                 <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Alamat Lengkap Pool Utama</label>
                                 <div class="relative">
-                                    <input type="text" name="pool_address" id="f-pool-address" placeholder="Contoh: Jl. Sudirman No. 123, Jakarta" value="{{ $user->pool->address ?? '' }}" 
+                                    <input type="text" name="pool_address" id="f-pool-address" placeholder="Contoh: Jl. Sudirman No. 123, Jakarta" value="{{ $user->pools->first()?->address ?? '' }}" 
                                            class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-6 py-4 pl-14 text-sm font-bold text-gray-800 dark:text-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all shadow-sm">
                                     <i class="fas fa-map-marked-alt absolute left-6 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 </div>
@@ -162,8 +162,8 @@
                                     Klik atau geser pin pada peta untuk menentukan koordinat GPS pool Anda secara presisi.
                                 </p>
                                 
-                                <input type="hidden" name="latitude" id="f-lat" value="{{ $user->pool->latitude ?? '' }}">
-                                <input type="hidden" name="longitude" id="f-lng" value="{{ $user->pool->longitude ?? '' }}">
+                                <input type="hidden" name="latitude" id="f-lat" value="{{ $user->pools->first()?->latitude ?? '' }}">
+                                <input type="hidden" name="longitude" id="f-lng" value="{{ $user->pools->first()?->longitude ?? '' }}">
                             </div>
 
                             <div class="p-3 bg-gray-100 dark:bg-white/5 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 overflow-hidden shadow-inner">
@@ -215,8 +215,8 @@
     let marker;
 
     function initMap() {
-        const defaultLat = {{ $user->pool->latitude ?? -6.200000 }};
-        const defaultLng = {{ $user->pool->longitude ?? 106.816666 }};
+        const defaultLat = {{ $user->pools->first()?->latitude ?? -6.200000 }};
+        const defaultLng = {{ $user->pools->first()?->longitude ?? 106.816666 }};
         const loc = [defaultLat, defaultLng];
 
         map = L.map('pool-map', { zoomControl: false }).setView(loc, 15);

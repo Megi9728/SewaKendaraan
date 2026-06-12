@@ -164,7 +164,7 @@
             @csrf
             <div id="method-field"></div>
             
-            @if(!auth('mitra')->user()->pool_id)
+            @if(auth('mitra')->user()->pools()->count() === 0)
             <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
                 <i class="fas fa-exclamation-triangle text-amber-500"></i>
                 <p class="text-xs text-amber-700 font-medium">Anda belum menyetel lokasi pool. <a href="{{ route('mitra.profile') }}" class="font-bold underline">Set lokasi sekarang</a> agar armada dapat dipesan.</p>
@@ -240,13 +240,13 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-8">
+                <div class="col-span-2 lg:col-span-1">
                     <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Plat Nomor</label>
                     <input type="text" name="plate_number" id="f-plate" placeholder="B 1234 ABC" 
                            class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none transition-all uppercase">
                 </div>
-                <div>
+                <div class="col-span-2 lg:col-span-1">
                     <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Harga/Hari</label>
                     <input type="number" name="price_per_day" id="f-price" required placeholder="650000" 
                            class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none transition-all">
@@ -260,6 +260,14 @@
                     <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Mesin (CC)</label>
                     <input type="number" name="engine_capacity" id="f-cc" required placeholder="1500" 
                            class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none transition-all text-center">
+                </div>
+                <div class="col-span-2 lg:col-span-1">
+                    <label class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Status</label>
+                    <select name="status" id="f-status" required class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800 rounded-2xl px-5 py-4 text-sm font-bold text-gray-800 dark:text-white outline-none cursor-pointer transition-all">
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Perawatan">Perawatan</option>
+                        <option value="Disewa">Disewa</option>
+                    </select>
                 </div>
             </div>
 
@@ -442,6 +450,7 @@
         document.getElementById('f-plate').value = (vehicle.units && vehicle.units.length > 0) ? vehicle.units[0].plate_number : '';
         document.getElementById('f-price').value = vehicle.price_per_day;
         document.getElementById('f-desc').value = vehicle.description || '';
+        document.getElementById('f-status').value = vehicle.status || 'Tersedia';
         
         if (vehicle.image) {
             const img = document.getElementById('main-preview-img');

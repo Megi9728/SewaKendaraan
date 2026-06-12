@@ -13,6 +13,9 @@
         <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Ringkasan performa dan aktivitas platform hari ini</p>
     </div>
     <div class="flex items-center gap-3">
+        <button type="button" onclick="openExportModal()" class="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm hover:bg-gray-50 transition-colors text-[10px] font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300">
+            <i class="fas fa-file-export text-brand-500"></i> Ekspor Laporan
+        </button>
         <div class="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 px-4 py-2 rounded-xl flex items-center gap-3 shadow-sm">
             <div class="w-2 h-2 rounded-full bg-success-500 animate-pulse"></div>
             <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Sistem Online</span>
@@ -336,6 +339,55 @@
 
 </div>
 
+{{-- Modal Export Laporan Admin --}}
+<div id="modal-export" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeExportModal()"></div>
+    <div class="bg-white dark:bg-[#121212] rounded-[2.5rem] shadow-2xl w-full max-w-md z-10 overflow-hidden p-8 border border-white/10 animate-in zoom-in duration-300">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight">Ekspor Laporan</h3>
+            <button onclick="closeExportModal()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/10 hover:bg-gray-200 flex items-center justify-center text-gray-600 dark:text-gray-300 transition-colors"><i class="fas fa-times"></i></button>
+        </div>
+        <form action="{{ route('admin.laporan.export') }}" method="GET" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Bulan</label>
+                    <select name="month" class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-2 text-sm outline-none dark:text-white">
+                        <option value="">Semua</option>
+                        @for($i=1; $i<=12; $i++)
+                            <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Tahun</label>
+                    <select name="year" class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-2 text-sm outline-none dark:text-white">
+                        <option value="">Semua</option>
+                        @for($i=date('Y'); $i>=date('Y')-5; $i--)
+                            <option value="{{ $i }}">{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Wilayah (Domisili)</label>
+                <input type="text" name="domicile" placeholder="Cth: Jakarta" class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-2 text-sm outline-none dark:text-white">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Kategori Kendaraan</label>
+                <select name="category_id" class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-2 text-sm outline-none dark:text-white">
+                    <option value="">Semua Kategori</option>
+                    @foreach(\App\Models\VehicleCategory::all() as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="mt-6">
+                <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-brand-500/20"><i class="fas fa-download mr-2"></i> Unduh CSV</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -397,5 +449,12 @@
             }
         });
     });
+
+    function openExportModal() {
+        document.getElementById('modal-export').classList.remove('hidden');
+    }
+    function closeExportModal() {
+        document.getElementById('modal-export').classList.add('hidden');
+    }
 </script>
 @endpush

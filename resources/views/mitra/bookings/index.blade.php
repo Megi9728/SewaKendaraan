@@ -99,7 +99,10 @@
                                 @endif
                             </div>
                             @if($booking->driver_fee > 0 || !is_null($booking->driver_id))
-                                <p class="text-[9px] text-purple-600 font-bold uppercase tracking-widest leading-none"><i class="fas fa-user-tie mr-1 text-[8px]"></i> {{ $booking->driver->name ?? 'Menunggu Sopir' }}</p>
+                                @php
+                                    $driverText = $booking->driver->name ?? (in_array($booking->status, ['Pending', 'Confirmed']) ? 'Menunggu Sopir' : 'Sopir Ditugaskan');
+                                @endphp
+                                <p class="text-[9px] text-purple-600 font-bold uppercase tracking-widest leading-none"><i class="fas fa-user-tie mr-1 text-[8px]"></i> {{ $driverText }}</p>
                             @else
                                 <p class="text-[9px] text-orange-600 font-bold uppercase tracking-widest leading-none"><i class="fas fa-key mr-1 text-[8px]"></i> Lepas Kunci</p>
                             @endif

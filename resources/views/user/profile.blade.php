@@ -12,7 +12,7 @@
                 {{ substr($user->name, 0, 1) }}
             </div>
             <div>
-                <h1 class="text-2xl font-black text-slate-900">Halo, {{ $user->name }}! 👋</h1>
+                <h1 class="text-2xl font-black text-slate-900">Halo, {{ $user->name }}</h1>
                 <p class="text-slate-500">Kelola akun dan pengaturan profil Anda</p>
             </div>
         </div>
