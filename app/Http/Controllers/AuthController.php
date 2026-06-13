@@ -131,7 +131,7 @@ class AuthController extends Controller
         ], $messages);
 
         $ktpPath = $request->hasFile('ktp_photo')
-            ? $request->file('ktp_photo')->store('mitra/ktp', 'public')
+            ? \App\Services\ImageService::storeWithWatermark($request->file('ktp_photo'), 'mitra/ktp')
             : null;
 
         $mitra = Mitra::create([
@@ -250,8 +250,7 @@ class AuthController extends Controller
             }
 
             if ($request->hasFile('ktp_photo')) {
-                $user->ktp_photo = $request->file('ktp_photo')
-                    ->store('mitra/ktp', 'public');
+                $user->ktp_photo = \App\Services\ImageService::storeWithWatermark($request->file('ktp_photo'), 'mitra/ktp');
             }
 
             // Handle Pool update
@@ -314,13 +313,11 @@ class AuthController extends Controller
         $user->address = $request->address;
 
         if ($request->hasFile('ktp_photo')) {
-            $user->ktp_photo = $request->file('ktp_photo')
-                ->store('customer/ktp', 'public');
+            $user->ktp_photo = \App\Services\ImageService::storeWithWatermark($request->file('ktp_photo'), 'customer/ktp');
         }
 
         if ($request->hasFile('sim_photo')) {
-            $user->sim_photo = $request->file('sim_photo')
-                ->store('customer/sim', 'public');
+            $user->sim_photo = \App\Services\ImageService::storeWithWatermark($request->file('sim_photo'), 'customer/sim');
         }
 
         if ($request->password) {

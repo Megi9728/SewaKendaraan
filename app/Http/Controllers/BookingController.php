@@ -145,10 +145,10 @@ class BookingController extends Controller
         $ktpPath = null;
         $simPath = null;
         if ($request->hasFile('ktp_photo')) {
-            $ktpPath = $request->file('ktp_photo')->store('bookings/ktp', 'public');
+            $ktpPath = \App\Services\ImageService::storeWithWatermark($request->file('ktp_photo'), 'bookings/ktp');
         }
         if ($request->hasFile('sim_photo')) {
-            $simPath = $request->file('sim_photo')->store('bookings/sim', 'public');
+            $simPath = \App\Services\ImageService::storeWithWatermark($request->file('sim_photo'), 'bookings/sim');
         }
 
         // Buat booking

@@ -49,7 +49,11 @@ class DriverController extends Controller
 
         foreach (['ktp_photo', 'sim_photo', 'driver_photo'] as $file) {
             if ($request->hasFile($file)) {
-                $data[$file] = $request->file($file)->store('drivers/' . $file, 'public');
+                if (in_array($file, ['ktp_photo', 'sim_photo'])) {
+                    $data[$file] = \App\Services\ImageService::storeWithWatermark($request->file($file), 'drivers/' . $file);
+                } else {
+                    $data[$file] = $request->file($file)->store('drivers/' . $file, 'public');
+                }
             }
         }
 
@@ -90,7 +94,12 @@ class DriverController extends Controller
             if ($request->hasFile($file)) {
                 // Hapus file lama
                 if ($driver->$file) Storage::disk('public')->delete($driver->$file);
-                $data[$file] = $request->file($file)->store('drivers/' . $file, 'public');
+                
+                if (in_array($file, ['ktp_photo', 'sim_photo'])) {
+                    $data[$file] = \App\Services\ImageService::storeWithWatermark($request->file($file), 'drivers/' . $file);
+                } else {
+                    $data[$file] = $request->file($file)->store('drivers/' . $file, 'public');
+                }
             }
         }
 
