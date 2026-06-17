@@ -36,11 +36,11 @@ class Vehicle extends Model
 
     // ─── Attribute Helpers ───────────────────────────────────────────
     /**
-     * Hitung jumlah unit yang statusnya 'tersedia'
+     * Hitung jumlah unit yang dapat beroperasi (tidak sedang maintenance)
      */
     public function getAvailableUnitsCountAttribute(): int
     {
-        return $this->units()->where('status', 'tersedia')->count();
+        return $this->units()->where('status', '!=', 'maintenance')->count();
     }
 
     /**

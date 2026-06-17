@@ -198,7 +198,7 @@
                                         @endif
                                     </form>
                                 @else
-                                    <span class="text-[8px] font-bold text-warning-500 uppercase italic animate-pulse">Wait Pay...</span>
+                                    <span class="text-[8px] font-bold text-warning-500 uppercase italic animate-pulse">Menunggu Pembayaran...</span>
                                 @endif
                             @endif
 

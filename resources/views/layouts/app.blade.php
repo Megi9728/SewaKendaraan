@@ -90,7 +90,7 @@
                             </div>
                         </div>
                         <p class="text-[#EBEBDF]/70 text-sm leading-relaxed max-w-sm mb-8">
-                            Jatara adalah platform penyewaan kendaraan terpercaya yang memberikan kemudahan, kenyamanan, dan keamanan untuk setiap perjalanan Anda.
+                            Jatara merupakan platform penyewaan kendaraan terpercaya yang memberikan kemudahan, kenyamanan, dan keamanan untuk setiap perjalanan Anda.
                         </p>
                     </div>
                 </div>
@@ -108,16 +108,7 @@
                     </div>
                     
                     <!-- Kolom 2 -->
-                    <div>
-                        <h4 class="text-white text-lg font-bold mb-6">Layanan</h4>
-                        <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Syarat & Ketentuan</a></li>
-                            <li><a href="{{ route('help') }}" class="hover:text-[#F5D042] transition-colors {{ request()->routeIs('help') ? 'text-[#F5D042]' : '' }}">Bantuan Pelanggan</a></li>
-                            <li><a href="#" class="hover:text-[#F5D042] transition-colors">Kebijakan Privasi</a></li>
-                        </ul>
-                    </div>
 
-                    <!-- Kolom 3 -->
                     <div>
                         <h4 class="text-white text-lg font-bold mb-6">Kontak Kami</h4>
                         <ul class="space-y-4 font-medium text-sm text-[#EBEBDF]/80">
